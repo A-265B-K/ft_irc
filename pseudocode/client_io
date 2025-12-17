@@ -1,0 +1,21 @@
+function is_writable(client)
+	bytes_written = client.socket.write(client.output_buffer)
+	if client.output_buffer is empty:
+		eventloop.disable_write(client.socket)
+
+function handle_writable(client)
+
+
+function handle_client_io(client, event, channel_registry)
+	if event.is_readable():
+		data = client.socket.read()
+		if data == EOF:
+			disconnect(client)
+			return
+		else:
+			client.input_buffer.append(data)
+			while client.input_buffer.has_complete_line():
+				line = client.input_buffer.remove_line
+				message = parse_message(line)
+				get_commands(client, message, channel_registry)
+			return
