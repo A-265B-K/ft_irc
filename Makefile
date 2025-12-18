@@ -24,11 +24,11 @@ DIROBJ		:= obj
 
 DIRDEP		:= dep
 
-SRC != cat update_src.sh
+SRC			!= cat update_src.sh
 
-OBJ = $(addprefix $(DIROBJ)/, $(SRC:.cpp=.o))
+OBJ			= $(addprefix $(DIROBJ)/, $(SRC:.cpp=.o))
 
-MKFILE = $(lastword $(MAKEFILE_LIST))
+MKFILE		= $(lastword $(MAKEFILE_LIST))
 
 # primary targets --------------------------------------------------------------
 
@@ -39,6 +39,8 @@ $(NAME) :: $(MKFILE)
 
 $(NAME) :: $(OBJ)
 	@$(CXX) $^ -o $@
+	@echo
+	@echo "$(NAME) built!"
 
 $(OBJ) :| $(DIROBJ)
 $(DIROBJ) $(DIRDEP) &:
