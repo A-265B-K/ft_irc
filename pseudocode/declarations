@@ -1,0 +1,110 @@
+class server:
+	name < must be between 1 and 63 chars, The extended prefix (["!" user "@" host ]) MUST NOT be used
+	version = "xx.xx"
+	created_time
+
+
+   Because of IRC's scandanavian origin, the characters {}| are
+   considered to be the lower case equivalents of the characters []\,
+   respectively. This is a critical issue when determining the
+   equivalence of two nicknames.
+
+class client:
+	netwide_id	< format depends on type of client
+	server		< server to which it is connected
+
+class user:
+	socket
+	nickname	< must be between 1 and 9 chars, may never be 'anonymous'
+	host		< computer hostname
+	channels = set<channel>
+	registered = false
+	input_buffer
+	output_buffer
+	client
+
+# since we likely wont be implementing services I'm leaving this commented, 
+# but they have more rules to abide by
+# class service: 
+# 	servicename = nickname + server name
+# 	servicetype < this must be known by the server
+
+
+class channel:
+	name < must be between one and 50 chars, and start with any of the following: '&#+!'
+			it may not contain spaces, ASCII 7, a comma ',' or ':', '&' are local channels
+			for mor information see section 2 of rfc2811, if a channel operator left Because
+			of a network split the name must be temporarily unavailable to prevent the creation
+			of duplicate channels (mostly important for S2S comms). Thiso is only to be done for 
+			channels that start with '#' and sometimes for channels tarting with '+'. See also 'safe channels'
+
+	members = set<client>
+	creator < has '!' in front of their name, always have channel operator status and has the ability
+				to change modes that operators can't, see rfc2812 for more information
+				a user who creates a channel automatically becomes its operator except for 
+				channels that start with '+'
+	operators < may execute the following commands INVITE, KICK, MODE, PIVMSG (regardless of mode), TOPIC
+				they have '@' in front of their name when associated with a channel, so also within commands
+	topic < channel topic, not supported by all channel types
+	modes	< channels starting with '+' do not have modes and thus dont have channel operators
+			 The various modes available for channels are as follows:
+
+   		    O - give "channel creator" status; < only used for 'safe channels', may not be used by users
+    		o - give/take channel operator privilege;
+    		v - give/take the voice privilege;
+
+   		    a - toggle the anonymous channel flag; < if message origin is a user origin is set to anonymous!anonymous@anonymous
+														servers must not send QUIT but use PART instead, only available on 
+														channels & and !, however on ! channels it may only be set (NOT UNSET) by its owner
+														anonymity must be guaranteed even when WHOIS, WHO and NAMES commands are issued
+    	    i - toggle the invite-only channel flag; < user mask must match invite list, or be invited by channel operator, INVITE may only be used by channel operators
+   	 	    m - toggle the moderated channel; < only channel operators or users who have been given voice privilege my send messages
+   		    n - toggle the no messages to channel from clients on the
+            outside; < only channel members may send messages, only affects users
+     	    q - toggle the quiet channel flag; < only issued by servers, joins, parts and nick changes are not sent, to users it looks like there is just one person in the channel
+    	    p - toggle the private channel flag; < ommited from WHOIS, TOPIC, LIST, NAMES, servers still reply to MODE
+    	    s - toggle the secret channel flag; < ommited from WHOIS, TOPIC, LIST, NAMES, servers still reply to MODE, no reply in LUSERS command when mask is specified
+													p and s flag may not be set at the same time
+    	    r - toggle the server reop channel flag; < only on '!' channels, only toggled by channel creator, if all channel operators are gone for the set amount of time it will reop some or all users
+    	    t - toggle the topic settable by channel operator only flag; < if set TOPIC may only be set by channel operator
+
+   		    k - set/remove the channel key (password); < local users my only join when key is intered, only viible to channel members when MODE is sent
+     	    l - set/remove the user limit to channel; < if l is reached, local users my no longer join, limit is only available to members when sending MODE
+
+   	 	    b - set/remove ban mask to keep users out; < if mask matches user is denied unless exception mask is also found or user is channel operator or user have voice privilege
+   	 	    e - set/remove an exception mask to override a ban mask;
+   	 	    I - set/remove an invitation mask to automatically override
+       	     the invite-only flag;
+
+  			 Unless mentioned otherwise below, all these modes can be manipulated
+  			 by "channel operators" by using the MODE
+
+
+class client_registry:
+	clients = set<client>
+
+	function get_by_socket(socket):
+		for client in clients:
+			if client.socket == socket:
+				return client
+		return NULL
+
+	function nick_exists(nick):
+		for client in clients:
+			if client.nickname == nick:
+				return 1
+		return 0
+	
+	function remove(client)
+		clients.remove(client)
+
+class channel_registry:
+	channels = map<string, channel>
+
+	function get_or_create(name)
+		if name not in channels:
+			channels[name] = new channel(name)
+		return channels[name]
+	
+	function remove(name):
+		channels.remove(name)
