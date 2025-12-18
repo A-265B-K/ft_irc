@@ -41,7 +41,6 @@ $(NAME) :: $(OBJ)
 	@$(CXX) $^ -o $@
 
 $(OBJ) :| $(DIROBJ)
-$(DEP) :| $(DIRDEP)
 $(DIROBJ) $(DIRDEP) &:
 	@mkdir -p $(DIROBJ) $(DIRDEP)
 
