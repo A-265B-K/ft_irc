@@ -1,11 +1,13 @@
 # include <Server.hpp>
 # include <iostream>
 # include <unistd.h>
+# include <sys/socket.h>
 
 Server::Server() {
 	std::cout << "Starting up the server" << std::endl;
 	this->name = "ft_irc";
 	this->version = 0;
+	this->server_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0); // check if this can fail and set to nonblock
 }
 
 // Server::Server(std::string name) {

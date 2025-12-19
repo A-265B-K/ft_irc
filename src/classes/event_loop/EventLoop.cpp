@@ -3,19 +3,15 @@
 
 # define READ_SIZE 512
 # include <iostream>
+# include <errno.h>
 
-int		EventLoop::addEvent(int fd) {
+int		EventLoop::addEvent(int socket_fd) {
 	sockaddr_in			address{};
 	struct epoll_event	event{};
-	int					socket_fd;
-	if (fd == 0) {
-		socket_fd = socket(AF_INET, SOCK_STREAM, 0); // check if this can fail
-	} else {
-		socket_fd = fd;
-	}
-		address.sin_family = AF_INET;
-		address.sin_port = htons(8080); // forbidden funcitom
-		address.sin_addr.s_addr = INADDR_ANY;
+
+	address.sin_family = AF_INET;
+	address.sin_port = htons(8080); // forbidden funcitom
+	address.sin_addr.s_addr = INADDR_ANY;
 
 	bind(socket_fd, (struct sockaddr*)&address, sizeof(address));
 	listen(socket_fd, SOMAXCONN);
@@ -23,7 +19,9 @@ int		EventLoop::addEvent(int fd) {
 	event.events = EPOLLIN;
 	event.data.fd = socket_fd;
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, socket_fd, &event) == -1) {
-		std::cout << "EPOLL_CTL failed" << std::endl;
+		perror("epoll_ctl failed");
+	//	std::cout << "EPOLL_CTL failed" << std::endl;
+		return -1;
 	} // this can fail, implement a safeguard
 	return socket_fd;
 }

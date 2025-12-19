@@ -15,3 +15,7 @@ int		ClientRegistry::addClient(int server_socket) {
 
 	return client_socket;
 }
+
+Client	*ClientRegistry::getClientBySocket(int client_socket) {
+	return this->clients[client_socket];
+}

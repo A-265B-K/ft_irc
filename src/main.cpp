@@ -14,28 +14,37 @@ int	main(int ac, char **av) {
 	ChannelRegistry ChannelRegistry;
 	ClientRegistry	ClientRegistry;
 	EventLoop		EventLoop;
-	int				i, event_count, server_socket, client_socket;
+	int				i, event_count, server_socket, client_socket, event_socket;
+	Client			*Client;
 
 	// if (input_is_invalid(ac, av)) {
 	// 	std::cout << "INPUT INVALID" << std::endl; return 1;
 	// }
 
-	Server.setServerSocket(EventLoop.addEvent(0)); // mve this into server constructor
+
+	server_socket = Server.getServerSocket();
+	EventLoop.addEvent(server_socket);
 	while (RUNNING) {
 		event_count = EventLoop.waitForEvents();
+	
 		for (i = 0; i < event_count; i += 1) {
-			if (EventLoop.getEventSocket(i) == Server.getServerSocket()) {
-				client_socket = ClientRegistry.addClient(Server.getServerSocket());
+			event_socket = EventLoop.getEventSocket(i);
+	
+			if (event_socket == server_socket) {
+				client_socket = ClientRegistry.addClient(server_socket);
 				if (client_socket >= 0) {
 					EventLoop.addEvent(client_socket);
 				}
+
 			} else {
-				char buf[1024];
-				int bytes = recv(EventLoop.getEventSocket(i), buf, sizeof(buf), 0);
-				if (bytes > 0) {
-					buf[bytes] = '\0';
-					std::cout << buf << std::endl;
+				Client = ClientRegistry.getClientBySocket(event_socket);
+				if (Client->socketIsReadable()) { // for now isreadable always returns 1
+					Client->handleReadable(event_socket);
 				}
+				if (Client->socketIsWritable()) {
+					Client->handleWritable();
+				}
+
 
 			}
 		}
