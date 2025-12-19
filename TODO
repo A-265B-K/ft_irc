@@ -1,0 +1,21 @@
+1. Implment main loop.
+	TCP listening, handle readable / writeable
+
+2. Client registration.
+	Commands such as NICK, USER, numerics
+	implement register class
+
+3. Implment ping pong so idle clients wont disconnect
+
+4. Handle QUIT command
+
+5. Add channels
+	JOIN, PART, NAMES
+
+6. Allow chatting
+	PRIVMSG
+
+7. Error handling
+	implement error numerics such as nick in nuse, no channel by this name, unknown cmd, etc
+
+8. Add extra features

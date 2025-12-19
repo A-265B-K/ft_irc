@@ -30,6 +30,8 @@ class user:
 # 	servicetype < this must be known by the server
 
 
+# this is very detailed but contains lots of informaion we dont need, if anything
+# still needs to be implemented it can be found in rfc2811
 class channel:
 	name < must be between one and 50 chars, and start with any of the following: '&#+!'
 			it may not contain spaces, ASCII 7, a comma ',' or ':', '&' are local channels

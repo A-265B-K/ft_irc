@@ -1,0 +1,26 @@
+function main()
+	server_socket = tcp_listen(PORT)
+	client_registry = new client_registry()
+	channel_registry= new channel_registry()
+	eventloop = new eventloop()
+
+	eventloop.register(server_socket, READ)
+	while true:
+		events = eventloop.wait()
+	
+		for event in events:
+			if event.socket == server_socket:
+				client_socket = serversocket.accept()
+				client = new client(client_socket)
+				client.host = client_scoket.remote_address
+				client_registry.clients.add(client)
+				eventloop.register(client_socket, READ)
+
+			else:
+				client = client_registry.get_by_socket(event.socket)
+				if client == null:
+					continue
+				if event.is_readable():
+					handle_readable(client, event, channel_registry)
+				if event.is_writable():
+					handle_writable(client)

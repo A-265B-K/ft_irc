@@ -1,0 +1,3 @@
+function send_numeric(client, code, ...params):
+	message = ":" + server.name + " " " code + " " + join(params)
+	send(client, message)

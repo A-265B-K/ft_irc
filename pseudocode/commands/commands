@@ -1,25 +1,18 @@
-function execute_commands():
-    switch message.command:
-        case "NICK":
-            handle_nick(client, message)
-        case "USER":
-            handle_user(client, message)
-        case "JOIN":
-            handle_join(client, message)
-        case "PART":
-            handle_part(client, message)
-        case "PRIVMSG":
-            handle_privmsg(client, message)
-        case "PING":
-            send(client, "PONG :" + message.trailing)
-        case "QUIT":
-            disconnect(client)
-        default:
-            send_numeric(client, 421, message.command, ":Unknown command")
+function execute_commands(client, message):
+	switch message.command:
+		
+   The commands which may only be used by channel operators are:
+
+        KICK    - Eject a client from the channel
+        MODE    - Change the channel's mode
+        INVITE  - Invite a client to an invite-only channel (mode +i)
+        TOPIC   - Change the channel topic in a mode +t channel
+
+
 
 function get_commands(cient, message, channel_registry)
 	if not client.registered and message.command not in NICK, USER, QUIT:
 		send_message(ERROR USER NOT REGISTERED, client)
 		return
 	else
-		execute_command(message):
+		execute_commands(client, message):

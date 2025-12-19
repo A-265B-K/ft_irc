@@ -1,0 +1,8 @@
+function disconnect(client)
+	for channel in client.channels:
+		broadcast_message(QUIT_MESSAGE, client)
+		channel.members.remove(client)
+		if channel.members is empty:
+			channel_registry.remove(channel.name)
+	client_registry.remove(client)
+	close_socket(client.socket)

@@ -1,3 +1,2 @@
 #!/bin/bash
-cd src
-ls -pR | grep *.cpp | column > ../src.list
+find src -type f -printf '%f ' | column > src.list

@@ -2,13 +2,13 @@
 
 CXX 		:= c++
 
-CPPFLAGS	= -iquote $(DIRINC)
+CPPFLAGS	= -I $(DIRINC)
 
 SPACE		:=
 SPACE		+=
 VPATH		= $(subst $(SPACE),:,$(shell find $(DIRSRC) -type d))
 
-CXXFLAGS	:= -Wall -Wextra -Werror -std=c++11
+CXXFLAGS	:= -Wall -Wextra -Werror -std=c++11 -fsanitize=address
 
 NAME 		:= ircserv
 
@@ -24,7 +24,7 @@ DIROBJ		:= obj
 
 DIRDEP		:= dep
 
-SRC			!= cat update_src.sh
+SRC			!= cat src.list
 
 OBJ			= $(addprefix $(DIROBJ)/, $(SRC:.cpp=.o))
 
