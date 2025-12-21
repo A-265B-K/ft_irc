@@ -30,6 +30,7 @@ int main(int ac, char **av)
 	}
   //  const char* message = "Hello, server!";
     send(clientSocket, message, strlen(message), 0);
+	send(clientSocket, message, strlen(message), 0);
 
     // closing socket
     close(clientSocket);
