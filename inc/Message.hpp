@@ -33,7 +33,7 @@ public:
 
 		BadMessageException(const std::string&);
 
-	}
+	};
 
 // TODO "static" error replies for all commands
 
