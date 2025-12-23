@@ -42,6 +42,11 @@
 *.idb
 *.pdb
 
+# Swap files
+*.swp
+*.swo
+*.swn
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
