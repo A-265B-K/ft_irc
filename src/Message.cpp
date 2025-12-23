@@ -4,39 +4,134 @@ Message::Message() { }
 
 Message::Message(const std::string& str)
 {
-	const std::string::size_type length = str.length(), i0 = 0, i;
+	const std::string::size_type length = str.length();
+	std::string::size_type i0 = 0, i;
 	std::ostringstream error;
 
 	error << "Message::BadMessageException: ";
 
-	if (str.find('\r') != length - 2
-			|| str.find('\n') != length - 1
-			|| str.find('\0') != std::string::npos) {
-		error << "Unproper ending characters found";
+	// message separator
+	if (length < 2
+			|| str.rfind('\r') != length - 2
+			|| str.rfind('\n') != length - 1) {
+		error << "Unproper ending sequence";
 
 		throw Message::BadMessageException(error.str());
+	}
+	if (str.find('\0') != std::string::npos {
+			|| str.find('\r') != length - 2
+			|| str.find('\n') != length - 1) {
+		error << "Forbidden characters found";
 	}
 
 	// prefix
 	if (str[0] == ':') {
-		i0 = str.find(' ', 1);
-		_prefix(substr(1, i0 != std::string::npos ? i0 - 1 : i0));
-		i0 = find_first_not_of(' ', i0);
+		i = str.find(' ', 1);
+		if (i == 1) {
+			error << "Empty prefix";
+
+			throw Message::BadMessageException(error.str());
+		}
+		else if (i == std::string::npos) {
+			error << "Missing prefix separator";
+
+			throw Message::BadMessageException(error.str());
+		}
+		_prefix(substr(1, i - 1));
+		i0 = find_first_not_of(' ', ++i);
 	}
 
 	// command
-	if (
-
-	
-		
-		token << iss;
-		getline(iss, _command, ' ');
-
-		
-	} catch (const std::istringstream::failure& e) {
-
-		error << "Message::BadMessageException: Invalid format `" << str << "'";
+	else if (str[0] == ' ') {
+		error << "Empty command";
 
 		throw Message::BadMessageException(error.str());
 	}
-	
+	i = str.find(' ', i0 + 1);
+	if (i == std::string::npos) {
+		error << "Missing command separator";
+
+		throw Message::BadMessageException(error.str());
+	}
+	_command(substr(i0, i - i0));
+	i0 = find_first_not_of(' ', ++i);
+
+	// parameters
+	while (str[i0] != '\r')
+		if (str[i0] == ':') {
+			i = str.find('\r', ++i0);
+			_parameters.emplace_back(substr(i0, i - i0));
+			i0 = i;
+		}
+		else {
+			i = str.find(' ', i0 + 1);
+			if (i == std::string::npos) {
+				error << "Missing parameter separator";
+
+				throw Message::BadMessageException(error.str());
+			}
+			_parameters.emplace_back(substr(i0, i - i0));
+			i0 = find_first_not_of(' ', ++i);
+		}
+
+// TODO Regular expressions to verify the format of the prefix and command
+
+}
+
+Message::Message(const Message& m):
+	_prefix(m._prefix),
+	_command(m._command),
+	_parameters(m._parameters) { }
+
+Message::~Message() { }
+
+const std::string& getPrefix() const { return _prefix; }
+
+const std::string& getCommand() const { return _command; }
+
+const std::deque<std::string> getParameters() const { return _parameters; }
+
+Message& Message::operator=(const Message& m)
+{
+	if (this != &m) {
+		this->_prefix = m._prefix;
+		this->_command = m._command;
+		this->_parameters = m._parameters;
+	}
+
+	return *this;
+}
+
+std::string Message::build() const
+{
+	std::string message(_prefix.empty() ? "" : ":");
+	std::vector::size_type size = _parameters.size();
+
+	// prefix
+	if (!_prefix.empty()) {
+		message += _prefix;
+		message += ' ';
+	}
+
+	// command
+	message += _command;
+	message += ' '
+
+	// parameters
+	while (size--) {
+		if (!size)
+			message += ':';
+		message += _parameters.front();
+		_parameters.pop_front();
+		if (size)
+			message += ' ';
+	}
+
+	// message separator
+	message += CRLF;
+
+	return message;
+}
+
+Message::BadMessageException::BadMessageException(const std::string& what_arg):
+		std::invalid_argument(what_arg) { }

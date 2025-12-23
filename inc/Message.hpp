@@ -3,17 +3,16 @@
 
 # define CRLF "\r\n"
 
+# include <deque>
 # include <sstream>
 # include <stdexcept>
 # include <string>
-# include <vector>
 
 class Message {
 
 	std::string _prefix;
 	std::string _command;
-	std::vector<std::string> _middleParams;
-	std::string _trailingParam;
+	std::deque<std::string> _parameters;
 
 	Message();
 
@@ -24,13 +23,19 @@ public:
 
 	Message& operator=(const Message&);
 
-	std::string build();
+	const std::string& getPrefix() const;
+	const std::string& getCommand() const;
+	const std::deque<std::string> getParameters() const;
+
+	std::string build() const;
 
 	struct BadMessageException : public std::invalid_argument {
 
 		BadMessageException(const std::string&);
 
 	}
+
+// TODO "static" error replies for all commands
 
 };
 
