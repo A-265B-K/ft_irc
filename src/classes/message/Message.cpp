@@ -18,7 +18,7 @@ Message::Message(const std::string& str)
 
 		throw Message::BadMessageException(error.str());
 	}
-	if (str.find('\0') != std::string::npos) {
+	if (str.find('\0') != std::string::npos
 			|| str.find('\r') != length - 2
 			|| str.find('\n') != length - 1) {
 		error << "Forbidden characters found";
