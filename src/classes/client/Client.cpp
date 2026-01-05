@@ -27,7 +27,7 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 			Message::printMessage(client_socket, e.what());
 		}
 
-		input_buffer.erase(pos + 2);
+		input_buffer.erase(0, pos + 2);
 	}
 }
 
