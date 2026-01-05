@@ -1,0 +1,48 @@
+#ifndef MESSAGE_HPP
+# define MESSAGE_HPP
+
+# define CRLF "\r\n"
+
+# include <arpa/inet.h>
+# include <deque>
+# include <iostream>
+# include <netinet/in.h>
+# include <sstream>
+# include <stdexcept>
+# include <string>
+# include <sys/socket.h>
+
+class Message {
+
+	std::string _prefix;
+	std::string _command;
+	std::deque<std::string> _parameters;
+
+	Message();
+
+public:
+	Message(const std::string&);
+	Message(const Message&);
+	~Message();
+
+	Message& operator=(const Message&);
+
+	const std::string& getPrefix() const;
+	const std::string& getCommand() const;
+	const std::deque<std::string>& getParameters() const;
+
+	std::string build() const;
+
+	struct BadMessageException : public std::invalid_argument {
+
+		BadMessageException(const std::string&);
+
+	};
+
+	static void printMessage(int, const std::string&);
+
+// TODO "static" error replies for all commands
+
+};
+
+#endif
