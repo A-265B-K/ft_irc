@@ -1,8 +1,6 @@
 #ifndef MESSAGE_HPP
 # define MESSAGE_HPP
 
-# define CRLF "\r\n"
-
 # include <arpa/inet.h>
 # include <deque>
 # include <iostream>
@@ -11,6 +9,10 @@
 # include <stdexcept>
 # include <string>
 # include <sys/socket.h>
+
+# include "command.hpp"
+
+# define CRLF "\r\n"
 
 class Message {
 
@@ -40,6 +42,8 @@ public:
 	};
 
 	static void printMessage(int, const std::string&);
+
+	static const std::string commands[];
 
 // TODO "static" error replies for all commands
 

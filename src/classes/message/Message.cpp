@@ -1,5 +1,9 @@
 #include "Message.hpp"
 
+# define X(a) #a,
+    const std::string Message::commands[] = { COMMAND_TABLE };
+# undef X
+
 Message::Message() { }
 
 Message::Message(const std::string& str)
