@@ -27,9 +27,9 @@ std::string	getLine(std::string *buffer)
 }
 
 // Clean this up
-void	Client::handleReadable(int event_socket) {
+void	Client::handleReadable() {
 	char	data[200];
-	int		bytes = recv(event_socket, data, sizeof(data), 0); // replace with diff fucntion
+	int		bytes = recv(this->client_socket, data, sizeof(data), 0); // replace with diff fucntion
 	if (bytes <= 0) { return ; }
 	data[bytes] = '\0';
 	// if data EOF disconnect client

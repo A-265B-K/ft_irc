@@ -40,7 +40,7 @@ int	main(int ac, char **av) {
 			} else {
 				Client = ClientRegistry.getClientBySocket(event_socket);
 				if (Client->socketIsReadable()) { // for now isreadable always returns 1
-					Client->handleReadable(event_socket);
+					Client->handleReadable();
 				}
 				if (Client->socketIsWritable()) {
 					Client->handleWritable();

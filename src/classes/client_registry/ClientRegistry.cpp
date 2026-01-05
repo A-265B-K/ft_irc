@@ -10,7 +10,7 @@ int		ClientRegistry::addClient(int server_socket) {
 		std::cout << "ACCEPT failed" << std::endl;
 		return -1;
 	}
-	Client *client = new Client(server_socket);
+	Client *client = new Client(client_socket);
 	this->clients.insert( {client_socket, client} );
 
 	return client_socket;

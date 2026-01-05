@@ -16,7 +16,7 @@ class Client {
 
 		int		socketIsReadable();
 		int		socketIsWritable();
-		void	handleReadable(int event_socket);
+		void	handleReadable();
 		void	handleWritable();
 };
 
