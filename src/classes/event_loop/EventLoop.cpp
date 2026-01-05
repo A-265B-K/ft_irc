@@ -10,17 +10,17 @@ int		EventLoop::addEvent(int socket_fd) {
 	struct epoll_event	event{};
 
 	address.sin_family = AF_INET;
-	address.sin_port = htons(8080); // forbidden funcitom
+	std::cout << this->port << std::endl;
+	address.sin_port = this->port;
 	address.sin_addr.s_addr = INADDR_ANY;
 
-	bind(socket_fd, (struct sockaddr*)&address, sizeof(address));
+	bind(socket_fd, (struct sockaddr*)&address, sizeof(address)); // this is likely unnecessary
 	listen(socket_fd, SOMAXCONN);
 
 	event.events = EPOLLIN;
 	event.data.fd = socket_fd;
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, socket_fd, &event) == -1) {
-		perror("epoll_ctl failed");
-	//	std::cout << "EPOLL_CTL failed" << std::endl;
+		std::cout << "EPOLL_CTL failed" << std::endl;
 		return -1;
 	} // this can fail, implement a safeguard
 	return socket_fd;
@@ -39,6 +39,10 @@ void	EventLoop::printEvent(int	i) {
 	unsigned int	bytes_read = read(this->events[i].data.fd, read_buffer, READ_SIZE);
 	read_buffer[bytes_read] = '\0';
 	std::cout << "Read: " << read_buffer << std::endl;
+}
+
+void		EventLoop::setPort(ushort port) {
+	this->port = port;
 }
 
 int		EventLoop::getEpollFD() {

@@ -10,12 +10,14 @@
 class EventLoop {
 	private:
 		struct epoll_event	events[MAX_EVENTS];
-		int					epoll_fd;
+		int			epoll_fd;
+		ushort			port;
 	public:
 		EventLoop();
 		~EventLoop();
 
 		int		addEvent(int fd);
+		void		setPort(ushort port);
 		int		waitForEvents();
 		void	printEvent(int	i);
 		struct epoll_event *getEvents();

@@ -17,6 +17,7 @@ class Server {
 		Server(std::string name);
 		~Server();
 
+		void	setPassword(std::string password);
 		void	setServerSocket(int socket_fd);
 		int		getServerSocket();
 

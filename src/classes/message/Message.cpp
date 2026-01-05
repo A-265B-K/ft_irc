@@ -144,7 +144,7 @@ void Message::printMessage(const int socketFd, const std::string& text)
 		socklen_t len = 256;
 
 		if (getsockname(socketFd, (struct sockaddr*)buffer, &len) != -1) {
-			std::cout << "[ ";
+			std::cout << "[";
 			std::cout << inet_ntoa(((struct sockaddr_in*)buffer)->sin_addr);
 			std::cout << "] ";
 		}
