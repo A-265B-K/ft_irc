@@ -11,16 +11,17 @@
 
 int	main(int ac, char **av) {
 	Server 			Server;
-	ChannelRegistry ChannelRegistry;
-	ClientRegistry	ClientRegistry;
+	ChannelRegistry 	ChannelRegistry;
+	ClientRegistry		ClientRegistry;
 	EventLoop		EventLoop;
-	int				i, event_count, server_socket, client_socket, event_socket;
+	int			i, event_count, server_socket, client_socket, event_socket;
+	ushort			port;
 	Client			*Client;
 
-	// if (input_is_invalid(ac, av)) {
-	// 	std::cout << "INPUT INVALID" << std::endl; return 1;
-	// }
-
+	if (input_is_invalid(ac, av)) {
+	 	std::cout << "INPUT INVALID" << std::endl; return 1;
+	}
+	set_input_variables(av, &Server, &EventLoop);
 
 	server_socket = Server.getServerSocket();
 	EventLoop.addEvent(server_socket);
