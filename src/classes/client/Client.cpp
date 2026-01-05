@@ -19,7 +19,7 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 
 	std::string::size_type pos;
 	while ((pos = input_buffer.find(CRLF)) != std::string::npos) {
-		const std::string line(input_buffer.substr(pos + 2));
+		const std::string line(input_buffer.substr(0, pos + 2));
 
 		try {
 			messages.emplace_back(line);
