@@ -37,7 +37,7 @@ Message::Message(const std::string& str)
 
 			throw Message::BadMessageException(error.str());
 		}
-		_prefix(str.substr(1, i - 1));
+		_prefix = str.substr(1, i - 1);
 		i0 = str.find_first_not_of(' ', ++i);
 	}
 
@@ -53,7 +53,7 @@ Message::Message(const std::string& str)
 
 		throw Message::BadMessageException(error.str());
 	}
-	_command(str.substr(i0, i - i0));
+	_command = str.substr(i0, i - i0);
 	i0 = str.find_first_not_of(' ', ++i);
 
 	// parameters
@@ -105,7 +105,6 @@ Message& Message::operator=(const Message& m)
 std::string Message::build() const
 {
 	std::string message(_prefix.empty() ? "" : ":");
-	std::deque<std::string>::size_type size = _parameters.size();
 
 	// prefix
 	if (!_prefix.empty()) {
@@ -118,12 +117,14 @@ std::string Message::build() const
 	message += ' ';
 
 	// parameters
-	while (size--) {
-		if (!size)
+	for (std::deque<std::string>::const_iterator cit =_parameters.begin();
+			cit != _parameters.end(); ++cit) {
+		const bool last = (cit + 1 == _parameters.end());
+
+		if (last)
 			message += ':';
-		message += _parameters.front();
-		_parameters.pop_front();
-		if (size)
+		message += *cit;
+		if (!last)
 			message += ' ';
 	}
 
@@ -135,3 +136,18 @@ std::string Message::build() const
 
 Message::BadMessageException::BadMessageException(const std::string& what_arg):
 		std::invalid_argument(what_arg) { }
+
+void Message::printMessage(const int socketFd, const std::string& text)
+{
+	if (socketFd >= 0) {
+		char buffer[256];
+		socklen_t len = 256;
+
+		if (getsockname(socketFd, (struct sockaddr*)buffer, &len) != -1) {
+			std::cout << "[ ";
+			std::cout << inet_ntoa(((struct sockaddr_in*)buffer)->sin_addr);
+			std::cout << "] ";
+		}
+	}
+	std::cout << text << std::endl;
+}

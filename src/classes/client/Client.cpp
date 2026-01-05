@@ -1,45 +1,33 @@
-# include <Client.hpp>
-# include <iostream>
-# include <sys/socket.h>
-# include <string>
-# include <sstream>
+# include "Client.hpp"
 
-int	Client::socketIsReadable() {
+int	Client::socketIsReadable() const {
 	return 1;
 }
 
-int	Client::socketIsWritable() {
+int	Client::socketIsWritable() const {
 	return 0;
 }
 
-std::string	getLine(std::string *buffer)
-{
-	size_t newline_i = buffer->find('\n');
-	if (newline_i == std::string::npos) {
-		return "";
-	}
-	std::string line = buffer->substr(0, newline_i);
-	if (line.back() == '\r') {
-		line.pop_back();
-	}
-	buffer->erase(0, newline_i + 1);
-	return line;
-}
-
 // Clean this up
-void	Client::handleReadable(int event_socket) {
+void	Client::handleReadable(std::deque<Message>& messages) {
 	char	data[200];
-	int		bytes = recv(event_socket, data, sizeof(data), 0); // replace with diff fucntion
+	ssize_t	bytes = recv(client_socket, data, sizeof(data), 0); // replace with diff fucntion
+
 	if (bytes <= 0) { return ; }
-	data[bytes] = '\0';
 	// if data EOF disconnect client
-	input_buffer.append(data);
-	std::string line;
-	while (!(line = getLine(&input_buffer)).empty()) {
-		std::cout << "LINE: " << line << std::endl;
-		// if (current_message)
-		// 	delete current_message;
-		// current_message = new Message(line);
+	input_buffer.append(data, bytes);
+
+	std::string::size_type pos;
+	while ((pos = input_buffer.find(CRLF)) != std::string::npos) {
+		const std::string line(input_buffer.substr(pos + 2));
+
+		try {
+			messages.emplace_back(line);
+		} catch (const Message::BadMessageException& e) {
+			Message::printMessage(client_socket, e.what());
+		}
+
+		input_buffer.erase(pos + 2);
 	}
 }
 

@@ -1,9 +1,12 @@
-# include <Server.hpp>
-# include <ChannelRegistry.hpp>
-# include <ClientRegistry.hpp>
-# include <EventLoop.hpp>
-# include <function_declarations.hpp>
-# include <iostream>
+#include <Server.hpp>
+#include <ChannelRegistry.hpp>
+#include <ClientRegistry.hpp>
+#include <EventLoop.hpp>
+#include <function_declarations.hpp>
+#include <iostream>
+#include "Message.hpp"
+#include <algorithm>
+#include <deque>
 
 # define READ_SIZE 512
 
@@ -16,6 +19,7 @@ int	main(int ac, char **av) {
 	EventLoop		EventLoop;
 	int				i, event_count, server_socket, client_socket, event_socket;
 	Client			*Client;
+	std::deque<Message>	pendingMessages;
 
 	// if (input_is_invalid(ac, av)) {
 	// 	std::cout << "INPUT INVALID" << std::endl; return 1;
@@ -39,8 +43,14 @@ int	main(int ac, char **av) {
 			} else {
 				Client = ClientRegistry.getClientBySocket(event_socket);
 				if (Client->socketIsReadable()) { // for now isreadable always returns 1
-					Client->handleReadable(event_socket);
+					Client->handleReadable(pendingMessages);
 				}
+				for_each(pendingMessages.begin(), pendingMessages.end(),
+						[event_socket](const Message& m) {
+					const std::string newMessage("Received: ");
+
+					Message::printMessage(event_socket, newMessage + m.build());
+				});
 				if (Client->socketIsWritable()) {
 					Client->handleWritable();
 				}

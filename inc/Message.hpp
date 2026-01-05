@@ -3,10 +3,14 @@
 
 # define CRLF "\r\n"
 
+# include <arpa/inet.h>
 # include <deque>
+# include <iostream>
+# include <netinet/in.h>
 # include <sstream>
 # include <stdexcept>
 # include <string>
+# include <sys/socket.h>
 
 class Message {
 
@@ -25,7 +29,7 @@ public:
 
 	const std::string& getPrefix() const;
 	const std::string& getCommand() const;
-	const std::deque<std::string> getParameters() const;
+	const std::deque<std::string>& getParameters() const;
 
 	std::string build() const;
 
@@ -34,6 +38,8 @@ public:
 		BadMessageException(const std::string&);
 
 	};
+
+	static void printMessage(int, const std::string&);
 
 // TODO "static" error replies for all commands
 

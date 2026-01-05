@@ -1,8 +1,12 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include <string>
+# include <deque>
 # include <static_declarations.hpp>
+# include <string>
+# include <sys/socket.h>
+
+# include "Message.hpp"
 
 class Client {
 	private:
@@ -14,9 +18,9 @@ class Client {
 		Client(); // make it so this cant be called
 		Client(int server_socket);
 
-		int		socketIsReadable();
-		int		socketIsWritable();
-		void	handleReadable(int event_socket);
+		int		socketIsReadable() const;
+		int		socketIsWritable() const;
+		void	handleReadable(std::deque<Message>&);
 		void	handleWritable();
 };
 
