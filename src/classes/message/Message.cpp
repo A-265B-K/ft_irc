@@ -26,35 +26,25 @@ Message::Message(const std::string& str)
 
 	// prefix
 	if (str[0] == ':') {
-		i = str.find(' ', 1);
+		i = str.find_first_of(" \r", 1);
 		if (i == 1) {
 			error << "Empty prefix";
 
 			throw Message::BadMessageException(error.str());
 		}
-		else if (i == std::string::npos) {
-			error << "Missing prefix separator";
-
-			throw Message::BadMessageException(error.str());
-		}
 		_prefix = str.substr(1, i - 1);
-		i0 = str.find_first_not_of(' ', ++i);
+		i0 = str.find_first_not_of(' ', i);
 	}
 
 	// command
-	else if (str[0] == ' ') {
+	else if (str[0] == ' ' || str[0] == '\r') {
 		error << "Empty command";
 
 		throw Message::BadMessageException(error.str());
 	}
-	i = str.find(' ', i0 + 1);
-	if (i == std::string::npos) {
-		error << "Missing command separator";
-
-		throw Message::BadMessageException(error.str());
-	}
+	i = str.find_first_of(" \r", i0);
 	_command = str.substr(i0, i - i0);
-	i0 = str.find_first_not_of(' ', ++i);
+	i0 = str.find_first_not_of(' ', i);
 
 	// parameters
 	while (str[i0] != '\r')
@@ -64,14 +54,9 @@ Message::Message(const std::string& str)
 			i0 = i;
 		}
 		else {
-			i = str.find(' ', i0 + 1);
-			if (i == std::string::npos) {
-				error << "Missing parameter separator";
-
-				throw Message::BadMessageException(error.str());
-			}
+			i = str.find_first_of(" \r", i0 + 1);
 			_parameters.emplace_back(str.substr(i0, i - i0));
-			i0 = str.find_first_not_of(' ', ++i);
+			i0 = str.find_first_not_of(' ', i);
 		}
 
 // TODO Regular expressions to verify the format of the prefix and command
@@ -102,7 +87,7 @@ Message& Message::operator=(const Message& m)
 	return *this;
 }
 
-std::string Message::build() const
+std::string Message::build(const bool crlf) const
 {
 	std::string message(_prefix.empty() ? "" : ":");
 
@@ -114,22 +99,19 @@ std::string Message::build() const
 
 	// command
 	message += _command;
-	message += ' ';
 
 	// parameters
 	for (std::deque<std::string>::const_iterator cit =_parameters.begin();
 			cit != _parameters.end(); ++cit) {
-		const bool last = (cit + 1 == _parameters.end());
-
-		if (last)
+		message += ' ';
+		if (cit + 1 == _parameters.end() && cit->find(' ') != std::string::npos)
 			message += ':';
 		message += *cit;
-		if (!last)
-			message += ' ';
 	}
 
 	// message separator
-	message += CRLF;
+	if (crlf)
+		message += CRLF;
 
 	return message;
 }

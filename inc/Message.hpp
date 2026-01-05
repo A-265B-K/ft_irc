@@ -31,7 +31,7 @@ public:
 	const std::string& getCommand() const;
 	const std::deque<std::string>& getParameters() const;
 
-	std::string build() const;
+	std::string build(const bool = true) const;
 
 	struct BadMessageException : public std::invalid_argument {
 

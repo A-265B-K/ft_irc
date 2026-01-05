@@ -48,9 +48,9 @@ int	main(int ac, char **av) {
 				}
 				for_each(pendingMessages.begin(), pendingMessages.end(),
 						[event_socket](const Message& m) {
-					const std::string newMessage("Received: ");
+					const std::string newMessage("recv `");
 
-					Message::printMessage(event_socket, newMessage + m.build());
+					Message::printMessage(event_socket, newMessage + m.build(false) + '\'');
 				});
 				if (Client->socketIsWritable()) {
 					Client->handleWritable();
