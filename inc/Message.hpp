@@ -10,7 +10,7 @@
 # include <string>
 # include <sys/socket.h>
 
-# include "command.hpp"
+# include "Command.hpp"
 
 # define CRLF "\r\n"
 
