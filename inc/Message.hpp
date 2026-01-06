@@ -1,9 +1,8 @@
 #ifndef MESSAGE_HPP
 # define MESSAGE_HPP
 
-# define CRLF "\r\n"
-
 # include <arpa/inet.h>
+# include <array>
 # include <deque>
 # include <iostream>
 # include <netinet/in.h>
@@ -12,10 +11,14 @@
 # include <string>
 # include <sys/socket.h>
 
+# include "Command.hpp"
+
+# define CRLF "\r\n"
+
 class Message {
 
 	std::string _prefix;
-	std::string _command;
+	Command  _command;
 	std::deque<std::string> _parameters;
 
 	Message();
@@ -28,7 +31,7 @@ public:
 	Message& operator=(const Message&);
 
 	const std::string& getPrefix() const;
-	const std::string& getCommand() const;
+	Command getCommand() const;
 	const std::deque<std::string>& getParameters() const;
 
 	std::string build(const bool = true) const;

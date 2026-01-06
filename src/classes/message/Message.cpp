@@ -1,5 +1,15 @@
 #include "Message.hpp"
 
+# define X(a) #a,
+static constexpr std::array commString{ COMMAND_TABLE };
+# undef X
+
+# define X(a) Command::a,
+static constexpr std::array commValue{ COMMAND_TABLE };
+# undef X
+
+# define commandToString(a) commString[static_cast<size_t>(a)]
+
 Message::Message() { }
 
 Message::Message(const std::string& str)
@@ -43,8 +53,21 @@ Message::Message(const std::string& str)
 		throw Message::BadMessageException(error.str());
 	}
 	i = str.find_first_of(" \r", i0);
-	_command = str.substr(i0, i - i0);
+	const std::string commandStr(str.substr(i0, i - i0));
 	i0 = str.find_first_not_of(' ', i);
+
+	std::array<Command, commValue.size()>::const_iterator cit = commValue.begin();
+	while (cit != commValue.end()) {
+		if (commandStr == commandToString(*cit))
+			break;
+		++cit;
+	}
+	if (cit != commValue.end())
+		_command = *cit;
+	else {
+		_command = Command::UNKNOWN;
+		_parameters.emplace_back(commandStr);
+	}
 
 	// parameters
 	while (str[i0] != '\r')
@@ -72,7 +95,7 @@ Message::~Message() { }
 
 const std::string& Message::getPrefix() const { return _prefix; }
 
-const std::string& Message::getCommand() const { return _command; }
+Command Message::getCommand() const { return _command; }
 
 const std::deque<std::string>& Message::getParameters() const { return _parameters; }
 
@@ -98,11 +121,14 @@ std::string Message::build(const bool crlf) const
 	}
 
 	// command
-	message += _command;
+	if (_command != Command::UNKNOWN)
+		message += commandToString(_command);
+	else
+		message += _parameters.front();
 
 	// parameters
-	for (std::deque<std::string>::const_iterator cit =_parameters.begin();
-			cit != _parameters.end(); ++cit) {
+	for (std::deque<std::string>::const_iterator cit = _parameters.begin()
+			+ (_command == Command::UNKNOWN); cit != _parameters.end(); ++cit) {
 		message += ' ';
 		if (cit + 1 == _parameters.end() && cit->find(' ') != std::string::npos)
 			message += ':';
