@@ -2,6 +2,7 @@
 # define MESSAGE_HPP
 
 # include <arpa/inet.h>
+# include <array>
 # include <deque>
 # include <iostream>
 # include <netinet/in.h>
@@ -17,7 +18,7 @@
 class Message {
 
 	std::string _prefix;
-	std::string _command;
+	Command  _command;
 	std::deque<std::string> _parameters;
 
 	Message();
@@ -30,7 +31,7 @@ public:
 	Message& operator=(const Message&);
 
 	const std::string& getPrefix() const;
-	const std::string& getCommand() const;
+	Command getCommand() const;
 	const std::deque<std::string>& getParameters() const;
 
 	std::string build(const bool = true) const;
@@ -42,8 +43,6 @@ public:
 	};
 
 	static void printMessage(int, const std::string&);
-
-	static const std::string commands[];
 
 // TODO "static" error replies for all commands
 
