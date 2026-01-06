@@ -57,14 +57,17 @@ Message::Message(const std::string& str)
 	i0 = str.find_first_not_of(' ', i);
 
 	std::array<Command, commValue.size()>::const_iterator cit = commValue.begin();
-	while (*cit != Command::UNKNOWN) {
+	while (cit != commValue.end()) {
 		if (commandStr == commandToString(*cit))
 			break;
 		++cit;
 	}
-	_command = *cit;
-	if (_command == Command::UNKNOWN)
+	if (cit != commValue.end())
+		_command = *cit;
+	else {
+		_command = Command::UNKNOWN;
 		_parameters.emplace_back(commandStr);
+	}
 
 	// parameters
 	while (str[i0] != '\r')
@@ -120,10 +123,12 @@ std::string Message::build(const bool crlf) const
 	// command
 	if (_command != Command::UNKNOWN)
 		message += commandToString(_command);
+	else
+		message += _parameters.front();
 
 	// parameters
-	for (std::deque<std::string>::const_iterator cit =_parameters.begin();
-			cit != _parameters.end(); ++cit) {
+	for (std::deque<std::string>::const_iterator cit = _parameters.begin()
+			+ (_command == Command::UNKNOWN); cit != _parameters.end(); ++cit) {
 		message += ' ';
 		if (cit + 1 == _parameters.end() && cit->find(' ') != std::string::npos)
 			message += ':';
