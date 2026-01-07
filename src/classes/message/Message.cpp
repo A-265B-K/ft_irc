@@ -1,14 +1,17 @@
 #include "Message.hpp"
 
+typedef std::array<std::string, static_cast<size_t>(Command::UNKNOWN)> arrayS_t;
+typedef std::array<Command, static_cast<size_t>(Command::UNKNOWN)> arrayC_t;
+
 # define X(a) #a,
-static constexpr std::array commString{ COMMAND_TABLE };
+static const arrayS_t commString{ {COMMAND_TABLE} };
 # undef X
 
 # define X(a) Command::a,
-static constexpr std::array commValue{ COMMAND_TABLE };
+static constexpr arrayC_t commValue{ {COMMAND_TABLE} };
 # undef X
 
-# define commandToString(a) commString[static_cast<size_t>(a)]
+# define commandToString(a) commString[static_cast<arrayS_t::size_type>(a)]
 
 Message::Message() { }
 
@@ -56,7 +59,7 @@ Message::Message(const std::string& str)
 	const std::string commandStr(str.substr(i0, i - i0));
 	i0 = str.find_first_not_of(' ', i);
 
-	std::array<Command, commValue.size()>::const_iterator cit = commValue.begin();
+	arrayC_t::const_iterator cit = commValue.begin();
 	while (cit != commValue.end()) {
 		if (commandStr == commandToString(*cit))
 			break;
