@@ -20,7 +20,7 @@ int	main(int ac, char **av) {
 	int			i, event_count, server_socket, client_socket, event_socket;
 	ushort			port;
 	Client			*Client;
-	std::deque<Message>	pendingMessages;
+	std::deque<Message>	incomingMessages;
 
 	if (input_is_invalid(ac, av)) {
 	 	std::cout << "INPUT INVALID" << std::endl; return 1;
@@ -44,19 +44,13 @@ int	main(int ac, char **av) {
 			} else {
 				Client = ClientRegistry.getClientBySocket(event_socket);
 				if (Client->socketIsReadable()) { // for now isreadable always returns 1
-					Client->handleReadable(pendingMessages);
+					Client->handleReadable(incomingMessages);
 				}
-				for_each(pendingMessages.begin(), pendingMessages.end(),
-						[event_socket](const Message& m) {
-					const std::string newMessage("recv `");
-
-					Message::printMessage(event_socket, newMessage + m.build(false) + '\'');
-				});
+				logMessages(event_socket, "recv `", "'", incomingMessages);
 				if (Client->socketIsWritable()) {
 					Client->handleWritable();
 				}
-
-
+				incomingMessages.clear();
 			}
 		}
 	}
