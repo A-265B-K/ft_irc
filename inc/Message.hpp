@@ -14,6 +14,7 @@
 # include "Command.hpp"
 
 # define CRLF "\r\n"
+# define LIMIT 512
 
 class Message {
 
