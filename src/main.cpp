@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <deque>
 
-# define READ_SIZE 512
 
 // Add some more descriptive error messages
 
@@ -21,6 +20,7 @@ int	main(int ac, char **av) {
 	ushort			port;
 	Client			*Client;
 	std::deque<Message>	incomingMessages;
+	std::deque<Message>	outgoingMessages;
 
 	if (input_is_invalid(ac, av)) {
 	 	std::cout << "INPUT INVALID" << std::endl; return 1;
@@ -50,7 +50,9 @@ int	main(int ac, char **av) {
 				if (Client->socketIsWritable()) {
 					Client->handleWritable();
 				}
+				logMessages(event_socket, "send `", "'", outgoingMessages);
 				incomingMessages.clear();
+				outgoingMessages.clear();
 			}
 		}
 	}

@@ -23,6 +23,12 @@ Message::Message(const std::string& str)
 
 	error << "Message::BadMessageException: ";
 
+	if (length > LIMIT) {
+		error << "Exceeded the " << LIMIT << "-character limit";
+
+		throw Message::BadMessageException(error.str());
+	}
+
 	// message separator
 	if (length < 2
 			|| str.rfind('\r') != length - 2
