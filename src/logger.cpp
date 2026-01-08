@@ -1,9 +1,9 @@
-#include "function_declarations.hpp"
+#include <function_declarations.hpp>
 
-void logMessages(int clientSocket, const std::string& head,
+void logMessages(const Client *client, const std::string& head,
 		const std::string& tail, const std::deque<Message>& messages)
 {
 	for_each(messages.begin(), messages.end(), [&](const Message& m) {
-		Message::printMessage(clientSocket, head + m.build(false) + tail);
+		client->printMessage(head + m.build(false) + tail);
 	});
 }

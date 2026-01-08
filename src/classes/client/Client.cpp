@@ -24,7 +24,7 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 		try {
 			messages.emplace_back(line);
 		} catch (const Message::BadMessageException& e) {
-			Message::printMessage(client_socket, e.what());
+			printMessage(e.what());
 		}
 
 		input_buffer.erase(0, pos + 2);
@@ -35,9 +35,10 @@ void	Client::handleWritable() {
 
 }
 
-				// char buf[1024];
-				// int bytes = recv(event_socket, buf, sizeof(buf), 0);
-				// if (bytes > 0) {
-				// 	buf[bytes] = '\0';
-				// 	std::cout << buf << std::endl;
-				// }
+void    Client::printMessage(const std::string& text) const
+{
+	std::ostringstream output;
+
+	output << '[' << address << "] " << text;
+	::printMessage(output.str());
+}

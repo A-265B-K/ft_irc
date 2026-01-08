@@ -154,17 +154,3 @@ std::string Message::build(const bool crlf) const
 Message::BadMessageException::BadMessageException(const std::string& what_arg):
 		std::invalid_argument(what_arg) { }
 
-void Message::printMessage(const int socketFd, const std::string& text)
-{
-	if (socketFd >= 0) {
-		char buffer[256];
-		socklen_t len = 256;
-
-		if (getsockname(socketFd, (struct sockaddr*)buffer, &len) != -1) {
-			std::cout << "[";
-			std::cout << inet_ntoa(((struct sockaddr_in*)buffer)->sin_addr);
-			std::cout << "] ";
-		}
-	}
-	std::cout << text << std::endl;
-}

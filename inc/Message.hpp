@@ -1,17 +1,14 @@
 #ifndef MESSAGE_HPP
 # define MESSAGE_HPP
 
-# include <arpa/inet.h>
 # include <array>
 # include <deque>
 # include <iostream>
-# include <netinet/in.h>
 # include <sstream>
 # include <stdexcept>
 # include <string>
-# include <sys/socket.h>
 
-# include "Command.hpp"
+# include <Command.hpp>
 
 # define CRLF "\r\n"
 # define LIMIT 512
@@ -42,8 +39,6 @@ public:
 		BadMessageException(const std::string&);
 
 	};
-
-	static void printMessage(int, const std::string&);
 
 // TODO "static" error replies for all commands
 

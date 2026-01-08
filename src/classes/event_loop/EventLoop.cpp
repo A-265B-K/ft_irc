@@ -1,21 +1,26 @@
 # include <EventLoop.hpp>
+# include <function_declarations.hpp>
 # include <static_declarations.hpp>
 
 # define READ_SIZE 512
 # include <iostream>
 # include <errno.h>
+# include <sstream>
 
 int		EventLoop::addEvent(int socket_fd) {
 	sockaddr_in			address{};
 	struct epoll_event	event{};
+	std::ostringstream output{};
 
 	address.sin_family = AF_INET;
-	std::cout << this->port << std::endl;
 	address.sin_port = this->port;
 	address.sin_addr.s_addr = INADDR_ANY;
 
 	bind(socket_fd, (struct sockaddr*)&address, sizeof(address)); // this is likely unnecessary
 	listen(socket_fd, SOMAXCONN);
+
+	output << "Listening to port " << ntohs(this->port) << "...";
+	::printMessage(output.str());
 
 	event.events = EPOLLIN;
 	event.data.fd = socket_fd;
