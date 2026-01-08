@@ -22,10 +22,11 @@ int		EventLoop::addEvent(int socket_fd) {
 	output << "Listening to port " << ntohs(this->port) << "...";
 	::printMessage(output.str());
 
-	event.events = EPOLLIN;
+	event.events = EPOLLIN | EPOLLET;
 	event.data.fd = socket_fd;
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, socket_fd, &event) == -1) {
 		std::cout << "EPOLL_CTL failed" << std::endl;
+		close(socket_fd);
 		return -1;
 	} // this can fail, implement a safeguard
 	return socket_fd;
