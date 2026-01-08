@@ -46,11 +46,11 @@ int	main(int ac, char **av) {
 				if (Client->socketIsReadable()) { // for now isreadable always returns 1
 					Client->handleReadable(incomingMessages);
 				}
-				logMessages(event_socket, "recv `", "'", incomingMessages);
+				logMessages(Client, "recv `", "'", incomingMessages);
 				if (Client->socketIsWritable()) {
 					Client->handleWritable();
 				}
-				logMessages(event_socket, "send `", "'", outgoingMessages);
+				logMessages(Client, "send `", "'", outgoingMessages);
 				incomingMessages.clear();
 				outgoingMessages.clear();
 			}
