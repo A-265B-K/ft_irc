@@ -5,22 +5,34 @@
 # define READ_SIZE 512
 # include <iostream>
 # include <errno.h>
+# include <netdb.h>
 # include <sstream>
+# include <arpa/inet.h>
 
-int		EventLoop::addEvent(int socket_fd) {
+void	EventLoop::bindServer(int server_fd) {
 	sockaddr_in			address{};
-	struct epoll_event	event{};
-	std::ostringstream output{};
+	std::ostringstream	output{};
 
 	address.sin_family = AF_INET;
 	address.sin_port = this->port;
 	address.sin_addr.s_addr = INADDR_ANY;
 
-	bind(socket_fd, (struct sockaddr*)&address, sizeof(address)); // this is likely unnecessary
-	listen(socket_fd, SOMAXCONN);
+	bind(server_fd, (struct sockaddr*)&address, sizeof(address));
+	listen(server_fd, SOMAXCONN);
 
-	output << "Listening to port " << ntohs(this->port) << "...";
+	char hostname[256];
+	gethostname(hostname, sizeof(hostname));
+
+	hostent* host = gethostbyname(hostname);
+	for (int i = 0; host->h_addr_list[i] != nullptr; i++) {
+		char* ip = inet_ntoa(*(in_addr*)host->h_addr_list[i]); //unsure if this is okay
+		output << "Listening on IP " << ip << ", port " << ntohs(this->port) << "...\n";
+	}
 	::printMessage(output.str());
+}
+
+int		EventLoop::addEvent(int socket_fd) {
+	struct epoll_event	event{};
 
 	event.events = EPOLLIN | EPOLLET;
 	event.data.fd = socket_fd;

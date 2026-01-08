@@ -28,6 +28,7 @@ int	main(int ac, char **av) {
 	set_input_variables(av, &Server, &EventLoop);
 
 	server_socket = Server.getServerSocket();
+	EventLoop.bindServer(server_socket);
 	EventLoop.addEvent(server_socket);
 	while (RUNNING) {
 		event_count = EventLoop.waitForEvents();
