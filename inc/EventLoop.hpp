@@ -16,6 +16,7 @@ class EventLoop {
 		EventLoop();
 		~EventLoop();
 
+		void	bindServer(int server_fd);
 		int		addEvent(int fd);
 		void		setPort(ushort port);
 		int		waitForEvents();
