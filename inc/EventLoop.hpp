@@ -1,28 +1,37 @@
 #ifndef EVENTLOOP_HPP
 # define EVENTLOOP_HPP
 
+# include <ChannelRegistry.hpp>
+# include <Client.hpp>
+# include <ClientRegistry.hpp>
+# include <function_declarations.hpp>
+# include <Message.hpp>
+# include <Server.hpp>
 # include <static_declarations.hpp>
-# include <unistd.h>
+
+# include <algorithm>
+# include <deque>
+# include <netinet/in.h>
+# include <sstream>
 # include <sys/epoll.h>
 # include <sys/socket.h>
-# include <netinet/in.h>
+# include <unistd.h>
 
 class EventLoop {
-	private:
-		struct epoll_event	events[MAX_EVENTS];
-		int			epoll_fd;
-		ushort			port;
-	public:
-		EventLoop();
-		~EventLoop();
+private:
+	struct epoll_event	events[MAX_EVENTS];
+	int			epoll_fd;
 
-		int		addEvent(int fd);
-		void		setPort(ushort port);
-		int		waitForEvents();
-		void	printEvent(int	i);
-		struct epoll_event *getEvents();
-		int		getEpollFD();
-		int		getEventSocket(int i);
+	int		addEvent(int fd);
+	void    logMessages(const Client*, const std::string&,
+			const std::string&, const std::deque<Message>&) const;
+	int		waitForEvents();
+
+public:
+	EventLoop();
+	~EventLoop();
+
+	int		run(const Server&, ChannelRegistry&, ClientRegistry&);
 };
 
 #endif

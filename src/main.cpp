@@ -3,59 +3,22 @@
 #include <ClientRegistry.hpp>
 #include <EventLoop.hpp>
 #include <function_declarations.hpp>
-#include <iostream>
-#include "Message.hpp"
-#include <algorithm>
-#include <deque>
-
 
 // Add some more descriptive error messages
 
 int	main(int ac, char **av) {
-	Server 			Server;
+	if (input_is_invalid(ac, av)) {
+	 	printMessage("INPUT INVALID"); return 1;
+	}
+
+	Server 			Server(htons(std::atoi(av[1])), av[2]);
 	ChannelRegistry 	ChannelRegistry;
 	ClientRegistry		ClientRegistry;
 	EventLoop		EventLoop;
-	int			i, event_count, server_socket, client_socket, event_socket;
-	ushort			port;
-	Client			*Client;
-	std::deque<Message>	incomingMessages;
-	std::deque<Message>	outgoingMessages;
 
-	if (input_is_invalid(ac, av)) {
-	 	std::cout << "INPUT INVALID" << std::endl; return 1;
-	}
-	set_input_variables(av, &Server, &EventLoop);
+	Server.setToPassive();
+	EventLoop.run(Server, ChannelRegistry, ClientRegistry);
 
-	server_socket = Server.getServerSocket();
-	EventLoop.addEvent(server_socket);
-	while (RUNNING) {
-		event_count = EventLoop.waitForEvents();
-	
-		for (i = 0; i < event_count; i += 1) {
-			event_socket = EventLoop.getEventSocket(i);
-	
-			if (event_socket == server_socket) {
-				client_socket = ClientRegistry.addClient(server_socket);
-				if (client_socket >= 0) {
-					EventLoop.addEvent(client_socket);
-				}
-
-			} else {
-				Client = ClientRegistry.getClientBySocket(event_socket);
-				if (Client->socketIsReadable()) { // for now isreadable always returns 1
-					Client->handleReadable(incomingMessages);
-				}
-				logMessages(Client, "recv `", "'", incomingMessages);
-				if (Client->socketIsWritable()) {
-					Client->handleWritable();
-				}
-				logMessages(Client, "send `", "'", outgoingMessages);
-				incomingMessages.clear();
-				outgoingMessages.clear();
-			}
-		}
-	}
 	return 0;
 }
 
