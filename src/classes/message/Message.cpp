@@ -21,6 +21,7 @@ Message::Message(const std::string& str)
 	std::string::size_type i0 = 0, i;
 	std::ostringstream error;
 
+
 	error << "Message::BadMessageException: ";
 
 	if (length > LIMIT) {
@@ -41,7 +42,10 @@ Message::Message(const std::string& str)
 			|| str.find('\r') != length - 2
 			|| str.find('\n') != length - 1) {
 		error << "Forbidden characters found";
+
+		throw Message::BadMessageException(error.str());
 	}
+	this->length = 2;
 
 	// prefix
 	if (str[0] == ':') {
@@ -52,17 +56,19 @@ Message::Message(const std::string& str)
 			throw Message::BadMessageException(error.str());
 		}
 		_prefix = str.substr(1, i - 1);
+		this->length += i + 1;
 		i0 = str.find_first_not_of(' ', i);
 	}
 
 	// command
-	else if (str[0] == ' ' || str[0] == '\r') {
+	if (str[i0] == ' ' || str[i0] == '\r') {
 		error << "Empty command";
 
 		throw Message::BadMessageException(error.str());
 	}
 	i = str.find_first_of(" \r", i0);
 	const std::string commandStr(str.substr(i0, i - i0));
+	this->length += i - i0;
 	i0 = str.find_first_not_of(' ', i);
 
 	arrayC_t::const_iterator cit = commValue.begin();
@@ -83,11 +89,14 @@ Message::Message(const std::string& str)
 		if (str[i0] == ':') {
 			i = str.find('\r', ++i0);
 			_parameters.emplace_back(str.substr(i0, i - i0));
+			this->length += i - i0 + 1
+					+ (_parameters.back().find(' ') != std::string::npos);
 			i0 = i;
 		}
 		else {
 			i = str.find_first_of(" \r", i0 + 1);
 			_parameters.emplace_back(str.substr(i0, i - i0));
+			this->length += i - i0 + 1;
 			i0 = str.find_first_not_of(' ', i);
 		}
 

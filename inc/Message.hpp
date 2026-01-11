@@ -22,6 +22,8 @@ class Message {
 	Message();
 
 public:
+	size_t length = 0;
+
 	Message(const std::string&);
 	Message(const Message&);
 	~Message();

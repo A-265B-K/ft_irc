@@ -5,7 +5,6 @@ int EventLoop::run(const Server& server, ChannelRegistry& channelReg, ClientRegi
 	const int server_socket = server.getServerSocket();
 	int client_socket;
 	std::deque<Message>	incomingMessages;
-	std::deque<Message>	outgoingMessages;
 
 	addEvent(server_socket);
 
@@ -23,16 +22,12 @@ int EventLoop::run(const Server& server, ChannelRegistry& channelReg, ClientRegi
 
 			} else {
 				Client *const client = clientReg.getClientBySocket(event_socket);
+
 				if (client->socketIsReadable()) { // for now isreadable always returns 1
 					client->handleReadable(incomingMessages);
 				}
-				logMessages(client, "recv `", "'", incomingMessages);
-				if (client->socketIsWritable()) {
-					client->handleWritable();
-				}
-				logMessages(client, "send `", "'", outgoingMessages);
+				processMessages(client, incomingMessages);
 				incomingMessages.clear();
-				outgoingMessages.clear();
 			}
 		}
 	}
@@ -53,17 +48,20 @@ int		EventLoop::addEvent(int socket_fd) {
 }
 
 int		EventLoop::waitForEvents() {
-	int ec = epoll_wait(this->epoll_fd, this->events, MAX_EVENTS, 300000);
+	int ec = epoll_wait(this->epoll_fd, this->events, MAX_EVENTS, TIMEOUT);
 	if (ec < 0) {
 		::printMessage("EPOLL_WAIT failed");
 	}
 	return ec;
 }
 
-void EventLoop::logMessages(const Client *client, const std::string& head,
-		const std::string& tail, const std::deque<Message>& messages) const
+void EventLoop::processMessages(Client *client, const std::deque<Message>& messages) const
 {
-	for_each(messages.begin(), messages.end(), [&](const Message& m) {
-		client->printMessage(head + m.build(false) + tail);
+	for_each(messages.begin(), messages.end(), [client](const Message& m) {
+		// testing: returning message to sender
+		if (client->socketIsWritable()) {
+			client->handleWritable(m);
+		}
 	});
+
 }

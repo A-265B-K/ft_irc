@@ -20,11 +20,10 @@
 class EventLoop {
 private:
 	struct epoll_event	events[MAX_EVENTS];
-	int			epoll_fd;
+	int		epoll_fd;
 
 	int		addEvent(int fd);
-	void    logMessages(const Client*, const std::string&,
-			const std::string&, const std::deque<Message>&) const;
+	void	processMessages(Client*, const std::deque<Message>&) const;	
 	int		waitForEvents();
 
 public:

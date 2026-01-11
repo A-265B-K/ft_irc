@@ -14,7 +14,7 @@ class Client {
 		int		client_socket;
 		std::string		address;
 		std::string		input_buffer;
-		std::string		output_buffer;
+
 	public:
 		Client(); // make it so this cant be called
 		Client(int server_socket, const std::string& address);
@@ -22,7 +22,7 @@ class Client {
 		int		socketIsReadable() const;
 		int		socketIsWritable() const;
 		void	handleReadable(std::deque<Message>&);
-		void	handleWritable();
+		void	handleWritable(const Message&);
 		void	printMessage(const std::string&) const;
 };
 

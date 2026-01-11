@@ -5,13 +5,12 @@ int	Client::socketIsReadable() const {
 }
 
 int	Client::socketIsWritable() const {
-	return 0;
+	return 1;
 }
 
-// Clean this up
 void	Client::handleReadable(std::deque<Message>& messages) {
-	char	data[200];
-	ssize_t	bytes = recv(client_socket, data, sizeof(data), 0); // replace with diff fucntion
+	char	data[INPUT_BUFFER];
+	ssize_t	bytes = recv(client_socket, data, INPUT_BUFFER, 0); // replace with diff fucntion
 
 	if (bytes <= 0) { return ; }
 	// if data EOF disconnect client
@@ -23,6 +22,7 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 
 		try {
 			messages.emplace_back(line);
+			printMessage(std::string("recv `") + messages.back().build(false) + '\'');
 		} catch (const Message::BadMessageException& e) {
 			printMessage(e.what());
 		}
@@ -31,8 +31,12 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 	}
 }
 
-void	Client::handleWritable() {
+void	Client::handleWritable(const Message& message) {
+	ssize_t bytes = send(client_socket, message.build().data(), message.length,
+			MSG_DONTWAIT | MSG_NOSIGNAL);
 
+	if (bytes == message.length)
+		printMessage(std::string("send `") + message.build(false) + '\'');
 }
 
 void    Client::printMessage(const std::string& text) const
