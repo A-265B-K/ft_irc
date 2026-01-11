@@ -1,6 +1,6 @@
-# include <EventLoop.hpp>
+#include <EventLoop.hpp>
 
-int EventLoop::run(const Server& server, ChannelRegistry& channelReg, ClientRegistry& clientReg)
+int EventLoop::run()
 {
 	const int server_socket = server.getServerSocket();
 	int client_socket;
@@ -55,7 +55,7 @@ int		EventLoop::waitForEvents() {
 	return ec;
 }
 
-void EventLoop::processMessages(Client *client, const std::deque<Message>& messages) const
+void EventLoop::processMessages(Client *client, const std::deque<Message>& messages)
 {
 	for_each(messages.begin(), messages.end(), [client](const Message& m) {
 		// testing: returning message to sender
@@ -63,5 +63,4 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 			client->handleWritable(m);
 		}
 	});
-
 }

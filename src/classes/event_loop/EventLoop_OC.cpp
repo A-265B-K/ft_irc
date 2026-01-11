@@ -1,10 +1,11 @@
 # include <EventLoop.hpp>
-# include <iostream>
 
-EventLoop::EventLoop() {
+EventLoop::EventLoop(Server& server, ChannelRegistry& channelReg, ClientRegistry& clientReg):
+		server(server), channelReg(channelReg), clientReg(clientReg)
+{
 	this->epoll_fd = epoll_create(1);
 	if (this->epoll_fd == -1) {
-		std::cout << "EPOLL_CREATE failed" << std::endl;
+		::printMessage("EPOLL_CREATE failed");
 	} // Implement check, returns -1 if it fails.
 }
 

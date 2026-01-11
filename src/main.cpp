@@ -11,13 +11,13 @@ int	main(int ac, char **av) {
 	 	printMessage("INPUT INVALID"); return 1;
 	}
 
-	Server 			Server(htons(std::atoi(av[1])), av[2]);
-	ChannelRegistry 	ChannelRegistry;
-	ClientRegistry		ClientRegistry;
-	EventLoop		EventLoop;
+	Server 			server(htons(std::atoi(av[1])), av[2]);
+	ChannelRegistry channelRegistry;
+	ClientRegistry	clientRegistry;
+	EventLoop		eventLoop(server, channelRegistry, clientRegistry);
 
-	Server.setToPassive();
-	EventLoop.run(Server, ChannelRegistry, ClientRegistry);
+	server.setToPassive();
+	eventLoop.run();
 
 	return 0;
 }

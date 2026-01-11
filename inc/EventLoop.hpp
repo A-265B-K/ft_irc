@@ -19,18 +19,21 @@
 
 class EventLoop {
 private:
+	Server				server;
+	ChannelRegistry		channelReg;
+	ClientRegistry		clientReg;
 	struct epoll_event	events[MAX_EVENTS];
-	int		epoll_fd;
+	int					epoll_fd;
 
 	int		addEvent(int fd);
-	void	processMessages(Client*, const std::deque<Message>&) const;	
+	void	processMessages(Client*, const std::deque<Message>&);
 	int		waitForEvents();
 
 public:
-	EventLoop();
+	EventLoop(Server&, ChannelRegistry&, ClientRegistry&);
 	~EventLoop();
 
-	int		run(const Server&, ChannelRegistry&, ClientRegistry&);
+	int		run();
 };
 
 #endif
