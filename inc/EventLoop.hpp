@@ -4,6 +4,7 @@
 # include <ChannelRegistry.hpp>
 # include <Client.hpp>
 # include <ClientRegistry.hpp>
+# include <Command.hpp>
 # include <function_declarations.hpp>
 # include <Message.hpp>
 # include <Server.hpp>
@@ -25,9 +26,19 @@ private:
 	struct epoll_event	events[MAX_EVENTS];
 	int					epoll_fd;
 
-	int		addEvent(int fd);
-	void	processMessages(Client*, const std::deque<Message>&);
-	int		waitForEvents();
+	int			addEvent(int fd);
+	void		processMessages(Client*, const std::deque<Message>&);
+	int			waitForEvents();
+
+	typedef void (*command_t)(Client*);
+
+# define X(A, B) command_t B;
+	COMMAND_TABLE
+# undef X
+
+# define X(A, B) B,
+	const command_t commands[COMMANDS] = { COMMAND_TABLE };
+# undef X
 
 public:
 	EventLoop(Server&, ChannelRegistry&, ClientRegistry&);

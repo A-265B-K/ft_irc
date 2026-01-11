@@ -1,17 +1,17 @@
 #include "Message.hpp"
 
-typedef std::array<std::string, static_cast<size_t>(Command::UNKNOWN)> arrayS_t;
-typedef std::array<Command, static_cast<size_t>(Command::UNKNOWN)> arrayC_t;
+typedef std::array<std::string, COMMANDS> arrayS_t;
+typedef std::array<Command, COMMANDS> arrayC_t;
 
-# define X(a) #a,
-static const arrayS_t commString{ {COMMAND_TABLE} };
+# define X(A, B) #A,
+static const arrayS_t commString{ { COMMAND_TABLE } };
 # undef X
 
-# define X(a) Command::a,
-static constexpr arrayC_t commValue{ {COMMAND_TABLE} };
+# define X(A, B) Command::A,
+static constexpr arrayC_t commValue{ { COMMAND_TABLE } };
 # undef X
 
-# define commandToString(a) commString[static_cast<arrayS_t::size_type>(a)]
+# define commandToString(A) commString[static_cast<arrayS_t::size_type>(A)]
 
 Message::Message() { }
 

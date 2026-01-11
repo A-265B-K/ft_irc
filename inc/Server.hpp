@@ -27,6 +27,7 @@ class Server {
 		~Server();
 
 		int getServerSocket() const;
+
 		void setToPassive();
 };
 

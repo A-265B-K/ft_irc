@@ -1,29 +1,31 @@
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 
-# define COMMAND_TABLE \
-X(CAP)     \
-X(DEBUG)   \
-X(INVITE)  \
-X(JOIN)    \
-X(KICK)    \
-X(MODE)    \
-X(NOTICE)  \
-X(NICK)    \
-X(PART)    \
-X(PASS)    \
-X(PING)    \
-X(PONG)    \
-X(PRIVMSG) \
-X(TOPIC)   \
-X(QUIT)    \
-X(USER)
+# define COMMAND_TABLE	\
+X(CAP, cap)				\
+X(DEBUG, debug)			\
+X(INVITE, invite)		\
+X(JOIN, join)			\
+X(KICK, kick)			\
+X(MODE, mode)			\
+X(NOTICE, notice)		\
+X(NICK, nick)			\
+X(PART, part)			\
+X(PASS, pass)			\
+X(PING, ping)			\
+X(PONG, pong)			\
+X(PRIVMSG, privmsg)		\
+X(TOPIC, topic)			\
+X(QUIT, quit)			\
+X(USER, user)
 
-# define X(a) a,
+# define X(A, B) A,
 enum class Command {
 	COMMAND_TABLE
 	UNKNOWN
 };
 # undef X
+
+# define COMMANDS (static_cast<size_t>(Command::UNKNOWN))
 
 #endif
