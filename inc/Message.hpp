@@ -3,6 +3,7 @@
 
 # include <array>
 # include <deque>
+# include <iomanip>
 # include <iostream>
 # include <sstream>
 # include <stdexcept>
@@ -16,7 +17,11 @@
 class Message {
 
 	std::string _prefix;
-	Command  _command;
+	bool _response;
+	union {
+		Command  _command;
+		unsigned short _numeric;
+	};
 	std::deque<std::string> _parameters;
 
 	Message();
@@ -35,6 +40,8 @@ public:
 	const std::deque<std::string>& getParameters() const;
 
 	std::string build(const bool = true) const;
+
+	static Message generateResponse(const std::string&, unsigned short, const std::string&);
 
 	struct BadMessageException : public std::invalid_argument {
 

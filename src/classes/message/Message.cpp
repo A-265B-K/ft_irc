@@ -71,17 +71,28 @@ Message::Message(const std::string& str)
 	this->length += i - i0;
 	i0 = str.find_first_not_of(' ', i);
 
-	arrayC_t::const_iterator cit = commValue.begin();
-	while (cit != commValue.end()) {
-		if (commandStr == commandToString(*cit))
-			break;
-		++cit;
+	_response = commandStr.find_first_not_of("0123456789") == std::string::npos;
+	if (_response) { // numeric command
+		if (commandStr.length() != 3) {
+			error << "Numeric command must contain 3 digits";
+
+			throw Message::BadMessageException(error.str());
+		}
+		_numeric = std::stoi(commandStr);
 	}
-	if (cit != commValue.end())
-		_command = *cit;
 	else {
-		_command = Command::UNKNOWN;
-		_parameters.emplace_back(commandStr);
+		arrayC_t::const_iterator cit = commValue.begin();
+		while (cit != commValue.end()) {
+			if (commandStr == commandToString(*cit))
+				break;
+			++cit;
+		}
+		if (cit != commValue.end())
+			_command = *cit;
+		else {
+			_command = Command::UNKNOWN;
+			_parameters.emplace_back(commandStr);
+		}
 	}
 
 	// parameters
@@ -139,10 +150,18 @@ std::string Message::build(const bool crlf) const
 	}
 
 	// command
-	if (_command != Command::UNKNOWN)
-		message += commandToString(_command);
-	else
-		message += _parameters.front();
+	if (_response) {
+		std::ostringstream numericStr;
+
+		numericStr << std::setfill('0') << std::setw(3) << std::to_string(_numeric);
+		message += numericStr.str();
+	}
+	else {
+		if (_command != Command::UNKNOWN)
+			message += commandToString(_command);
+		else
+			message += _parameters.front();
+	}
 
 	// parameters
 	for (std::deque<std::string>::const_iterator cit = _parameters.begin()
@@ -160,6 +179,11 @@ std::string Message::build(const bool crlf) const
 	return message;
 }
 
+Message Message::generateResponse(const std::string& source, unsigned short numeric,
+		const std::string& text)
+{
+	return Message();
+}
+
 Message::BadMessageException::BadMessageException(const std::string& what_arg):
 		std::invalid_argument(what_arg) { }
-
