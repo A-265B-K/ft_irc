@@ -13,59 +13,39 @@ static constexpr arrayC_t commValue{ { COMMAND_TABLE } };
 
 # define commandToString(A) commString[static_cast<arrayS_t::size_type>(A)]
 
-Message::Message() { }
-
-Message::Message(const std::string& str)
+void Message::generate(const std::string& str)
 {
 	const std::string::size_type length = str.length();
 	std::string::size_type i0 = 0, i;
-	std::ostringstream error;
 
-
-	error << "Message::BadMessageException: ";
-
-	if (length > LIMIT) {
-		error << "Exceeded the " << LIMIT << "-character limit";
-
-		throw Message::BadMessageException(error.str());
-	}
+	if (length > LIMIT)
+		throw Message::BadMessageException(ERR_INPUTTOOLONG,
+				"Exceeded the " XSTR(LIMIT) "-character limit");
 
 	// message separator
 	if (length < 2
 			|| str.rfind('\r') != length - 2
-			|| str.rfind('\n') != length - 1) {
-		error << "Unproper ending sequence";
-
-		throw Message::BadMessageException(error.str());
-	}
+			|| str.rfind('\n') != length - 1)
+		throw Message::BadMessageException(ERR_UNKNOWNERROR, "Unproper ending sequence");
 	if (str.find('\0') != std::string::npos
 			|| str.find('\r') != length - 2
-			|| str.find('\n') != length - 1) {
-		error << "Forbidden characters found";
-
-		throw Message::BadMessageException(error.str());
-	}
+			|| str.find('\n') != length - 1)
+		throw Message::BadMessageException(ERR_UNKNOWNERROR, "Forbidden characters found");
 	this->length = 2;
 
 	// prefix
 	if (str[0] == ':') {
 		i = str.find_first_of(" \r", 1);
-		if (i == 1) {
-			error << "Empty prefix";
-
-			throw Message::BadMessageException(error.str());
-		}
+		if (i == 1)
+			throw Message::BadMessageException(ERR_UNKNOWNERROR, "Empty prefix");
 		_prefix = str.substr(1, i - 1);
 		this->length += i + 1;
 		i0 = str.find_first_not_of(' ', i);
 	}
 
 	// command
-	if (str[i0] == ' ' || str[i0] == '\r') {
-		error << "Empty command";
-
-		throw Message::BadMessageException(error.str());
-	}
+	if (str[i0] == ' ' || str[i0] == '\r')
+		throw Message::BadMessageException(ERR_UNKNOWNERROR, "Empty command");
 	i = str.find_first_of(" \r", i0);
 	const std::string commandStr(str.substr(i0, i - i0));
 	this->length += i - i0;
@@ -73,11 +53,9 @@ Message::Message(const std::string& str)
 
 	_response = commandStr.find_first_not_of("0123456789") == std::string::npos;
 	if (_response) { // numeric command
-		if (commandStr.length() != 3) {
-			error << "Numeric command must contain 3 digits";
-
-			throw Message::BadMessageException(error.str());
-		}
+		if (commandStr.length() != 3)
+			throw Message::BadMessageException(ERR_UNKNOWNERROR,
+					"Numeric command must contain 3 digits");
 		_numeric = std::stoi(commandStr);
 	}
 	else {
@@ -113,6 +91,20 @@ Message::Message(const std::string& str)
 
 // TODO Regular expressions to verify the format of the prefix and command
 
+}
+
+Message::Message() { }
+
+Message::Message(const std::string& str) { generate(str); }
+
+Message::Message(const std::string& source, unsigned short numeric, const std::string& text)
+{
+	std::ostringstream response;
+
+	response << ':' << source << ' ' << std::setfill('0') << std::setw(3) << numeric
+			<< ' ' << text << CRLF;
+
+	generate(response.str());
 }
 
 Message::Message(const Message& m):
@@ -153,7 +145,7 @@ std::string Message::build(const bool crlf) const
 	if (_response) {
 		std::ostringstream numericStr;
 
-		numericStr << std::setfill('0') << std::setw(3) << std::to_string(_numeric);
+		numericStr << std::setfill('0') << std::setw(3) << _numeric;
 		message += numericStr.str();
 	}
 	else {
@@ -179,11 +171,6 @@ std::string Message::build(const bool crlf) const
 	return message;
 }
 
-Message Message::generateResponse(const std::string& source, unsigned short numeric,
-		const std::string& text)
-{
-	return Message();
-}
-
-Message::BadMessageException::BadMessageException(const std::string& what_arg):
-		std::invalid_argument(what_arg) { }
+Message::BadMessageException::BadMessageException(unsigned short _numeric,
+		const std::string& what_arg) :
+		std::invalid_argument(what_arg), _numeric(_numeric) { }

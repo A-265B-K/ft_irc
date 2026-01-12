@@ -8,9 +8,10 @@ int	Client::socketIsWritable() const {
 	return 1;
 }
 
-void	Client::handleReadable(std::deque<Message>& messages) {
-	char	data[INPUT_BUFFER];
-	ssize_t	bytes = recv(client_socket, data, INPUT_BUFFER, 0); // replace with diff fucntion
+void	Client::handleReadable(const std::string& serverName, std::deque<Message>& messages)
+{
+	char	data[IBUFFER];
+	ssize_t	bytes = recv(client_socket, data, IBUFFER, 0); // replace with diff fucntion
 
 	if (bytes <= 0) { return ; }
 	// if data EOF disconnect client
@@ -24,14 +25,19 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 			messages.emplace_back(line);
 			printMessage(std::string("recv `") + messages.back().build(false) + '\'');
 		} catch (const Message::BadMessageException& e) {
-			printMessage(e.what());
+			const std::string error("Message::BadMessageException: ");
+
+			printMessage(error + e.what());
+// TODO Substitute the "<client>" placeholder with user nickname when User is implemented
+			handleWritable(Message(serverName, e._numeric,
+					std::string("<client>") + " :" + e.what()));
 		}
 
 		input_buffer.erase(0, pos + 2);
 	}
 }
 
-void	Client::handleWritable(const Message& message) {
+void	Client::handleWritable(const Message& message) const {
 	ssize_t bytes = send(client_socket, message.build().data(), message.length,
 			MSG_DONTWAIT | MSG_NOSIGNAL);
 

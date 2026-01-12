@@ -24,7 +24,7 @@ int EventLoop::run()
 				Client *const client = clientReg.getClientBySocket(event_socket);
 
 				if (client->socketIsReadable()) { // for now isreadable always returns 1
-					client->handleReadable(incomingMessages);
+					client->handleReadable(server.getName(), incomingMessages);
 				}
 				processMessages(client, incomingMessages);
 				incomingMessages.clear();

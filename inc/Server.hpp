@@ -13,22 +13,24 @@
 # define HOST_IP_ADDRESS INADDR_ANY
 
 class Server {
-	private:
-		std::string 	name;
-		int				version;
-		uint16_t		port;
-		std::string		password; // hash passsword
-		int				server_socket;
-		sockaddr_in		address;
-		//t_time		creation_time; // I don't think we are allowed to use a function for this
-	public:
-		Server(uint16_t port, const std::string& password);
-		//Server(std::string name);
-		~Server();
+private:
+	std::string 	name;
+	int				version;
+	uint16_t		port;
+	std::string		password; // hash passsword
+	int				server_socket;
+	sockaddr_in		address;
+	//t_time		creation_time; // I don't think we are allowed to use a function for this
 
-		int getServerSocket() const;
+public:
+	Server(uint16_t port, const std::string& password);
+	//Server(std::string name);
+	~Server();
 
-		void setToPassive();
+	const std::string& getName() const;
+	int getServerSocket() const;
+
+	void setToPassive();
 };
 
 #endif

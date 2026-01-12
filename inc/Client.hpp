@@ -21,8 +21,8 @@ class Client {
 
 		int		socketIsReadable() const;
 		int		socketIsWritable() const;
-		void	handleReadable(std::deque<Message>&);
-		void	handleWritable(const Message&);
+		void	handleReadable(const std::string&, std::deque<Message>&);
+		void	handleWritable(const Message&) const;
 		void	printMessage(const std::string&) const;
 };
 

@@ -10,9 +10,10 @@
 # include <string>
 
 # include <Command.hpp>
+# include <static_declarations.hpp>
 
-# define CRLF "\r\n"
-# define LIMIT 512
+# define STR(S) #S
+# define XSTR(S) STR(S)
 
 class Message {
 
@@ -24,12 +25,14 @@ class Message {
 	};
 	std::deque<std::string> _parameters;
 
+	void generate(const std::string&);
 	Message();
 
 public:
 	size_t length = 0;
 
 	Message(const std::string&);
+	Message(const std::string&, unsigned short, const std::string&);
 	Message(const Message&);
 	~Message();
 
@@ -41,15 +44,19 @@ public:
 
 	std::string build(const bool = true) const;
 
-	static Message generateResponse(const std::string&, unsigned short, const std::string&);
-
 	struct BadMessageException : public std::invalid_argument {
 
-		BadMessageException(const std::string&);
+		unsigned short _numeric;
+
+		BadMessageException(unsigned short, const std::string&);
 
 	};
 
 // TODO "static" error replies for all commands
+
+# define ERR_UNKNOWNERROR   400
+# define ERR_INPUTTOOLONG   417
+# define ERR_UNKNOWNCOMMAND 421
 
 };
 
