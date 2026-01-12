@@ -21,17 +21,18 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 	while ((pos = input_buffer.find(CRLF)) != std::string::npos) {
 		const std::string line(input_buffer.substr(0, pos + 2));
 
-		try {
-			messages.emplace_back(line);
-			printMessage(std::string("recv `") + messages.back().build(false) + '\'');
-		} catch (const Message::BadMessageException& e) {
-			const std::string error("Message::BadMessageException: ");
+		if (line.length() != 2) // empty commands ("\r\n") are silently dropped
+			try {
+				messages.emplace_back(line);
+				printMessage(std::string("recv `") + messages.back().build(false) + '\'');
+			} catch (const Message::BadMessageException& e) {
+				const std::string error("Message::BadMessageException: ");
 
-			printMessage(error + e.what());
+				printMessage(error + e.what());
 // TODO Substitute the "<client>" placeholder with user nickname when User is implemented
-			handleWritable(Message(serverName, e._numeric,
-					std::string("<client>") + " :" + e.what()));
-		}
+				handleWritable(Message(serverName, e._numeric,
+						std::string("<client>") + " :" + e.what()));
+			}
 
 		input_buffer.erase(0, pos + 2);
 	}
@@ -45,7 +46,15 @@ void	Client::handleWritable(const Message& message) const {
 		printMessage(std::string("send `") + message.build(false) + '\'');
 }
 
-void    Client::printMessage(const std::string& text) const
+void Client::generateResponse(const std::string& serverName, const unsigned short numeric,
+		const char* replyName, const std::string& text) const
+{
+	printMessage(replyName);
+
+	handleWritable(Message(serverName, numeric, text));
+}
+
+void Client::printMessage(const std::string& text) const
 {
 	std::ostringstream output;
 

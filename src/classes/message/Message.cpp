@@ -42,10 +42,12 @@ void Message::generate(const std::string& str)
 		this->length += i + 1;
 		i0 = str.find_first_not_of(' ', i);
 	}
+	else if (str[0] == '\r') // Empty command
+		return;
 
 	// command
 	if (str[i0] == ' ' || str[i0] == '\r')
-		throw Message::BadMessageException(ERR_UNKNOWNERROR, "Empty command");
+		throw Message::BadMessageException(ERR_UNKNOWNERROR, "Missing command");
 	i = str.find_first_of(" \r", i0);
 	const std::string commandStr(str.substr(i0, i - i0));
 	this->length += i - i0;
@@ -116,6 +118,8 @@ Message::~Message() { }
 
 const std::string& Message::getPrefix() const { return _prefix; }
 
+bool Message::isResponse() const { return _response; }
+
 Command Message::getCommand() const { return _command; }
 
 const std::deque<std::string>& Message::getParameters() const { return _parameters; }
@@ -171,6 +175,6 @@ std::string Message::build(const bool crlf) const
 	return message;
 }
 
-Message::BadMessageException::BadMessageException(unsigned short _numeric,
+Message::BadMessageException::BadMessageException(unsigned short numeric,
 		const std::string& what_arg) :
-		std::invalid_argument(what_arg), _numeric(_numeric) { }
+		std::invalid_argument(what_arg), _numeric(numeric) { }

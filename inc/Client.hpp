@@ -3,10 +3,13 @@
 
 # include <deque>
 # include <Message.hpp>
-# include <sstream>
 # include <static_declarations.hpp>
+
+# include <sstream>
 # include <string>
 # include <sys/socket.h>
+
+# define response(srvrName, reply, txt) generateResponse(srvrName, reply, #reply, txt)
 
 class Client {
 	private:
@@ -21,6 +24,8 @@ class Client {
 
 		int		socketIsReadable() const;
 		int		socketIsWritable() const;
+		void	generateResponse(const std::string&, const unsigned short, const char*,
+					const std::string&) const;
 		void	handleReadable(const std::string&, std::deque<Message>&);
 		void	handleWritable(const Message&) const;
 		void	printMessage(const std::string&) const;

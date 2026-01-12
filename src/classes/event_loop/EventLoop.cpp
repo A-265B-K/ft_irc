@@ -57,10 +57,18 @@ int		EventLoop::waitForEvents() {
 
 void EventLoop::processMessages(Client *client, const std::deque<Message>& messages)
 {
-	for_each(messages.begin(), messages.end(), [client](const Message& m) {
-		// testing: returning message to sender
-		if (client->socketIsWritable()) {
-			client->handleWritable(m);
+	for_each(messages.begin(), messages.end(), [this, client](const Message& m) {
+		if (!m.isResponse()) {
+			if (m.getCommand() == Command::UNKNOWN)
+// TODO Substitute the "<client>" placeholder with user nickname when User is implemented
+				client->response(server.getName(), ERR_UNKNOWNCOMMAND,
+						std::string("<client>") + ' ' + m.getParameters().front() + " :Unknown command");
+
+// TODO ... (Returning message to sender as placeholder)
+			else if (client->socketIsWritable())
+				client->handleWritable(m);
 		}
+		else
+			client->printMessage("Numeric reply from client silently dropped");
 	});
 }

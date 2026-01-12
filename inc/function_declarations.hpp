@@ -4,6 +4,9 @@
 # include <iostream>
 # include <string>
 
+# define STR(S) #S
+# define XSTR(S) STR(S)
+
 int	input_is_invalid(int ac, char **av);
 void	printMessage(const std::string&);
 

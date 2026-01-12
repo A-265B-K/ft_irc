@@ -10,10 +10,8 @@
 # include <string>
 
 # include <Command.hpp>
+# include <function_declarations.hpp>
 # include <static_declarations.hpp>
-
-# define STR(S) #S
-# define XSTR(S) STR(S)
 
 class Message {
 
@@ -39,6 +37,7 @@ public:
 	Message& operator=(const Message&);
 
 	const std::string& getPrefix() const;
+	bool isResponse() const;
 	Command getCommand() const;
 	const std::deque<std::string>& getParameters() const;
 
