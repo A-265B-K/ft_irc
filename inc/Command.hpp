@@ -8,15 +8,15 @@ X(INVITE, invite)		\
 X(JOIN, join)			\
 X(KICK, kick)			\
 X(MODE, mode)			\
-X(NOTICE, notice)		\
 X(NICK, nick)			\
+X(NOTICE, notice)		\
 X(PART, part)			\
 X(PASS, pass)			\
 X(PING, ping)			\
 X(PONG, pong)			\
 X(PRIVMSG, privmsg)		\
-X(TOPIC, topic)			\
 X(QUIT, quit)			\
+X(TOPIC, topic)			\
 X(USER, user)
 
 # define X(A, B) A,

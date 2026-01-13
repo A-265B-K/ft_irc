@@ -59,14 +59,14 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 {
 	for_each(messages.begin(), messages.end(), [this, client](const Message& m) {
 		if (!m.isResponse()) {
-			if (m.getCommand() == Command::UNKNOWN)
+			const Command comm = m.getCommand();
+
+			if (comm == Command::UNKNOWN)
 // TODO Substitute the "<client>" placeholder with user nickname when User is implemented
 				client->response(server.getName(), ERR_UNKNOWNCOMMAND,
 						std::string("<client>") + ' ' + m.getParameters().front() + " :Unknown command");
-
-// TODO ... (Returning message to sender as placeholder)
-			else if (client->socketIsWritable())
-				client->handleWritable(m);
+			else
+				(this->*commands[static_cast<size_t>(comm)])(client);
 		}
 		else
 			client->printMessage("Numeric reply from client silently dropped");

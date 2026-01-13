@@ -30,14 +30,12 @@ private:
 	void		processMessages(Client*, const std::deque<Message>&);
 	int			waitForEvents();
 
-	typedef void (*command_t)(Client*);
-
-# define X(A, B) command_t B;
+# define X(A, B) void B(Client*);
 	COMMAND_TABLE
 # undef X
 
-# define X(A, B) B,
-	const command_t commands[COMMANDS] = { COMMAND_TABLE };
+# define X(A, B) &EventLoop::B,
+	void (EventLoop::*commands[COMMANDS])(Client*) = { COMMAND_TABLE };
 # undef X
 
 public:
