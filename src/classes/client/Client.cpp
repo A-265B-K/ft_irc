@@ -5,13 +5,13 @@ int	Client::socketIsReadable() const {
 }
 
 int	Client::socketIsWritable() const {
-	return 0;
+	return 1;
 }
 
-// Clean this up
-void	Client::handleReadable(std::deque<Message>& messages) {
-	char	data[200];
-	ssize_t	bytes = recv(client_socket, data, sizeof(data), 0); // replace with diff fucntion
+void	Client::handleReadable(const std::string& serverName, std::deque<Message>& messages)
+{
+	char	data[IBUFFER];
+	ssize_t	bytes = recv(client_socket, data, IBUFFER, 0); // replace with diff fucntion
 
 	if (bytes <= 0) { return ; }
 	// if data EOF disconnect client
@@ -21,21 +21,40 @@ void	Client::handleReadable(std::deque<Message>& messages) {
 	while ((pos = input_buffer.find(CRLF)) != std::string::npos) {
 		const std::string line(input_buffer.substr(0, pos + 2));
 
-		try {
-			messages.emplace_back(line);
-		} catch (const Message::BadMessageException& e) {
-			printMessage(e.what());
-		}
+		if (line.length() != 2) // empty commands ("\r\n") are silently dropped
+			try {
+				messages.emplace_back(line);
+				printMessage(std::string("recv `") + messages.back().build(false) + '\'');
+			} catch (const Message::BadMessageException& e) {
+				const std::string error("Message::BadMessageException: ");
+
+				printMessage(error + e.what());
+// TODO Substitute the "<client>" placeholder with user nickname when User is implemented
+				handleWritable(Message(serverName, e._numeric,
+						std::string("<client>") + " :" + e.what()));
+			}
 
 		input_buffer.erase(0, pos + 2);
 	}
 }
 
-void	Client::handleWritable() {
+void	Client::handleWritable(const Message& message) const {
+	ssize_t bytes = send(client_socket, message.build().data(), message.length,
+			MSG_DONTWAIT | MSG_NOSIGNAL);
 
+	if (bytes == message.length)
+		printMessage(std::string("send `") + message.build(false) + '\'');
 }
 
-void    Client::printMessage(const std::string& text) const
+void Client::generateResponse(const std::string& serverName, const unsigned short numeric,
+		const char* replyName, const std::string& text) const
+{
+	printMessage(replyName);
+
+	handleWritable(Message(serverName, numeric, text));
+}
+
+void Client::printMessage(const std::string& text) const
 {
 	std::ostringstream output;
 

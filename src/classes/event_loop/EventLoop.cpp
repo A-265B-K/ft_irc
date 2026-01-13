@@ -1,63 +1,74 @@
-# include <EventLoop.hpp>
-# include <function_declarations.hpp>
-# include <static_declarations.hpp>
+#include <EventLoop.hpp>
 
-# define READ_SIZE 512
-# include <iostream>
-# include <errno.h>
-# include <sstream>
+int EventLoop::run()
+{
+	const int server_socket = server.getServerSocket();
+	int client_socket;
+	std::deque<Message>	incomingMessages;
+
+	addEvent(server_socket);
+
+	while (RUNNING) {
+		const int event_count = waitForEvents();
+
+		for (epoll_event *event = events; event - events < event_count; event++) {
+			const int event_socket = event->data.fd;
+
+			if (event_socket == server_socket) {
+				client_socket = clientReg.addClient(server_socket);
+				if (client_socket >= 0) {
+					addEvent(client_socket);
+				}
+
+			} else {
+				Client *const client = clientReg.getClientBySocket(event_socket);
+
+				if (client->socketIsReadable()) { // for now isreadable always returns 1
+					client->handleReadable(server.getName(), incomingMessages);
+				}
+				processMessages(client, incomingMessages);
+				incomingMessages.clear();
+			}
+		}
+	}
+
+	return 0;
+}
 
 int		EventLoop::addEvent(int socket_fd) {
-	sockaddr_in			address{};
 	struct epoll_event	event{};
-	std::ostringstream output{};
-
-	address.sin_family = AF_INET;
-	address.sin_port = this->port;
-	address.sin_addr.s_addr = INADDR_ANY;
-
-	bind(socket_fd, (struct sockaddr*)&address, sizeof(address)); // this is likely unnecessary
-	listen(socket_fd, SOMAXCONN);
-
-	output << "Listening to port " << ntohs(this->port) << "...";
-	::printMessage(output.str());
 
 	event.events = EPOLLIN;
 	event.data.fd = socket_fd;
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, socket_fd, &event) == -1) {
-		std::cout << "EPOLL_CTL failed" << std::endl;
+		::printMessage("EPOLL_CTL failed");
 		return -1;
 	} // this can fail, implement a safeguard
 	return socket_fd;
 }
 
 int		EventLoop::waitForEvents() {
-	int ec = epoll_wait(this->epoll_fd, this->events, MAX_EVENTS, 300000);
+	int ec = epoll_wait(this->epoll_fd, this->events, MAX_EVENTS, TIMEOUT);
 	if (ec < 0) {
-		std::cout << "EPOLL_WAIT failed" << std::endl;
+		::printMessage("EPOLL_WAIT failed");
 	}
 	return ec;
 }
 
-void	EventLoop::printEvent(int	i) {
-	char	read_buffer[READ_SIZE + 1];
-	unsigned int	bytes_read = read(this->events[i].data.fd, read_buffer, READ_SIZE);
-	read_buffer[bytes_read] = '\0';
-	std::cout << "Read: " << read_buffer << std::endl;
-}
+void EventLoop::processMessages(Client *client, const std::deque<Message>& messages)
+{
+	for_each(messages.begin(), messages.end(), [this, client](const Message& m) {
+		if (!m.isResponse()) {
+			const Command comm = m.getCommand();
 
-void		EventLoop::setPort(ushort port) {
-	this->port = port;
-}
-
-int		EventLoop::getEpollFD() {
-	return this->epoll_fd;
-}
-
-struct epoll_event *EventLoop::getEvents() {
-	return this->events;
-}
-
-int		EventLoop::getEventSocket(int i) {
-	return this->events[i].data.fd;
+			if (comm == Command::UNKNOWN)
+// TODO Substitute the "<client>" placeholder with user nickname when User is implemented
+				client->response(server.getName(), ERR_UNKNOWNCOMMAND,
+						std::string("<client>") + ' ' + m.getParameters().front() + " :Unknown command");
+			else
+				(this->*commands[static_cast<size_t>(comm)])(client);
+		}
+		else
+			client->printMessage("Numeric reply from client silently dropped");
+	});
 }

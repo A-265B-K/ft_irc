@@ -10,8 +10,8 @@ class User {
 		std::string	nickname;
 		std::string	hostname;
 		std::string *channels;
-		char		input_buffer[513];
-		char		output_buffer[OP_BUFF_S];
+//		char		input_buffer[513];
+//		char		output_buffer[OP_BUFF_S];
 		Client		client;
 	public:
 

@@ -1,10 +1,8 @@
 # include <Server.hpp>
-# include <iostream>
-# include <unistd.h>
-# include <sys/socket.h>
 
-Server::Server() {
-	std::cout << "Starting up the server" << std::endl;
+Server::Server(uint16_t port, const std::string& password): port(port), password(password)
+{
+	::printMessage("Starting up the server");
 	this->name = "ft_irc";
 	this->version = 0;
 	this->server_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0); // check if this can fail and set to nonblock
@@ -19,6 +17,25 @@ Server::Server() {
 // 	this->address.sin_addr.s_addr = INADDR_ANY;
 // }
 
+void Server::setToPassive()
+{
+	std::ostringstream output;
+
+	address.sin_family = AF_INET;
+	address.sin_port = this->port;
+	address.sin_addr.s_addr = HOST_IP_ADDRESS;
+
+	bind(server_socket, (struct sockaddr*)&address, sizeof(address));
+	output << "Binded to address " << inet_ntoa(address.sin_addr);
+	::printMessage(output.str());
+	output.str("");
+
+	listen(server_socket, SOMAXCONN);
+	output << "Listening to port " << ntohs(this->port) << "...";
+	::printMessage(output.str());
+}
+
+
 Server::~Server() {
-	std::cout << "Server is shutting down" << std::endl;
+	::printMessage("Server is shutting down");
 }

@@ -3,32 +3,41 @@
 
 # include <array>
 # include <deque>
+# include <iomanip>
 # include <iostream>
 # include <sstream>
 # include <stdexcept>
 # include <string>
 
 # include <Command.hpp>
-
-# define CRLF "\r\n"
-# define LIMIT 512
+# include <function_declarations.hpp>
+# include <static_declarations.hpp>
 
 class Message {
 
 	std::string _prefix;
-	Command  _command;
+	bool _response;
+	union {
+		Command  _command;
+		unsigned short _numeric;
+	};
 	std::deque<std::string> _parameters;
 
+	void generate(const std::string&);
 	Message();
 
 public:
+	size_t length = 0;
+
 	Message(const std::string&);
+	Message(const std::string&, unsigned short, const std::string&);
 	Message(const Message&);
 	~Message();
 
 	Message& operator=(const Message&);
 
 	const std::string& getPrefix() const;
+	bool isResponse() const;
 	Command getCommand() const;
 	const std::deque<std::string>& getParameters() const;
 
@@ -36,11 +45,17 @@ public:
 
 	struct BadMessageException : public std::invalid_argument {
 
-		BadMessageException(const std::string&);
+		unsigned short _numeric;
+
+		BadMessageException(unsigned short, const std::string&);
 
 	};
 
 // TODO "static" error replies for all commands
+
+# define ERR_UNKNOWNERROR   400
+# define ERR_INPUTTOOLONG   417
+# define ERR_UNKNOWNCOMMAND 421
 
 };
 
