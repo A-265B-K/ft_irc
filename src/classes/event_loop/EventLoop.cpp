@@ -74,7 +74,7 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 				client->response(server.getName(), ERR_UNKNOWNCOMMAND,
 						std::string("<client>") + ' ' + m.getParameters().front() + " :Unknown command");
 			else
-				(this->*commands[static_cast<size_t>(comm)])(client);
+				(this->*commands[static_cast<size_t>(comm)])(client, m);
 		}
 		else
 			client->printMessage("Numeric reply from client silently dropped");

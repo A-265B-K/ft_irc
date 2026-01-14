@@ -19,13 +19,13 @@
 # include <unistd.h>
 
 class EventLoop {
-private:
 	Server				server;
 	ChannelRegistry		channelReg;
 	ClientRegistry		clientReg;
 	struct epoll_event	events[MAX_EVENTS];
 	int					epoll_fd;
 
+<<<<<<< HEAD
 	int			addEvent(int fd);
 	int			removeEvent(int fd);
 	void		processMessages(Client*, const std::deque<Message>&);
@@ -33,10 +33,19 @@ private:
 
 # define X(A, B) void B(Client*);
 	COMMAND_TABLE
+=======
+	typedef	void (EventLoop::*command_t)(Client*, const Message&);
+# define X(A, B) &EventLoop::B,
+	const command_t		commands[COMMANDS] = { COMMAND_TABLE };
+>>>>>>> f3e127659b4db368a1d6cee1a3cdbe1ef33357c3
 # undef X
 
-# define X(A, B) &EventLoop::B,
-	void (EventLoop::*commands[COMMANDS])(Client*) = { COMMAND_TABLE };
+	int		addEvent(int fd);
+	void	processMessages(Client*, const std::deque<Message>&);
+	int		waitForEvents();
+
+# define X(A, B) void B(Client*, const Message&);
+	COMMAND_TABLE
 # undef X
 
 public:

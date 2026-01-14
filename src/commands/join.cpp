@@ -1,7 +1,7 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::join(Client *client)
+void EventLoop::join(Client *client, const Message& message)
 {
 /*
   Remember that inside this EventLoop instantiation, we have access to:
@@ -48,6 +48,10 @@ void EventLoop::join(Client *client)
 	client2->handleWritable(m)
 
   where m is some well-formed Message.
+
+  Access the components of the message with getPrefix() and getParameters().
+  Note that neither the colon (:) of the prefix nor that of a trailing parameter
+  are stored within the Message attributes.
 
   Ideally, some descriptive account of the server's doings should be logged. As
   a placeholder...

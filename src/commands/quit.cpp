@@ -1,7 +1,7 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::quit(Client *client)
+void EventLoop::quit(Client *client, const Message& message)
 {
 	int	clientSocket = client->getSocket();
 
@@ -52,6 +52,10 @@ void EventLoop::quit(Client *client)
 	client2->handleWritable(m)
 
   where m is some well-formed Message.
+
+  Access the components of the message with getPrefix() and getParameters().
+  Note that neither the colon (:) of the prefix nor that of a trailing parameter
+  are stored within the Message attributes.
 
   Ideally, some descriptive account of the server's doings should be logged. As
   a placeholder...
