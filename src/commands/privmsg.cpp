@@ -3,6 +3,23 @@
 // TODO
 void EventLoop::privmsg(Client *client, const Message& message)
 {
+	std::deque<std::string> p = message.getParameters();
+
+	// TODO: Add logic to support sending to multiple channels at once and users
+	Channel *channel = this->channelReg.getChannel(p.front());
+	if (!channel) {
+		// TODO: send error code, channel doesnt exist
+	}
+
+	std::string text;
+
+	p.pop_front();
+	for (const auto& s : p) {
+		text += s;
+	}
+
+		
+
 /*
   Remember that inside this EventLoop instantiation, we have access to:
 

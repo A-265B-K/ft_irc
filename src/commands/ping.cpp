@@ -3,6 +3,11 @@
 // TODO
 void EventLoop::ping(Client *client, const Message& message)
 {
+	std::deque<std::string> p = message.getParameters();
+
+	if (p.front() == server.getName()) {
+		// TODO: keep connection on
+	}
 /*
   Remember that inside this EventLoop instantiation, we have access to:
 

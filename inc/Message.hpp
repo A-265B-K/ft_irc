@@ -53,6 +53,7 @@ public:
 
 // TODO "static" error replies for all commands
 
+# define WELCOME			001
 # define ERR_UNKNOWNERROR   400
 # define ERR_INPUTTOOLONG   417
 # define ERR_UNKNOWNCOMMAND 421

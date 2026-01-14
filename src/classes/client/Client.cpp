@@ -65,3 +65,23 @@ void Client::printMessage(const std::string& text) const
 int	Client::getSocket() {
 	return this->client_socket;
 }
+
+bool	Client::isUser() {
+	if (user == nullptr) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+User	*Client::getUser() {
+	return this->user;
+}
+
+void	Client::createUser() {
+	this->user = new User();
+}
+
+void	Client::deleteUser() {
+	delete this->user;
+}

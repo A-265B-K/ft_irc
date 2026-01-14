@@ -1,4 +1,6 @@
 # include <Server.hpp>
+# include <cerrno>
+# include <cstring>
 
 Server::Server(uint16_t port, const std::string& password): port(port), password(password)
 {
@@ -25,7 +27,10 @@ void Server::setToPassive()
 	address.sin_port = this->port;
 	address.sin_addr.s_addr = HOST_IP_ADDRESS;
 
-	bind(server_socket, (struct sockaddr*)&address, sizeof(address));
+	if (bind(server_socket, (struct sockaddr*)&address, sizeof(address)) < 0) {
+		std::cerr << "Bind failed: " << std::strerror(errno) << std::endl;
+		exit(1);
+	}
 	output << "Binded to address " << inet_ntoa(address.sin_addr);
 	::printMessage(output.str());
 	output.str("");

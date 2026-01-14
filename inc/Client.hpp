@@ -2,24 +2,28 @@
 # define CLIENT_HPP
 
 # include <deque>
-# include <Message.hpp>
-# include <static_declarations.hpp>
-
 # include <sstream>
 # include <string>
 # include <sys/socket.h>
 
+# include <Message.hpp>
+# include <static_declarations.hpp>
+# include <User.hpp>
+
 # define response(srvrName, reply, txt) generateResponse(srvrName, reply, #reply, txt)
+
+class User;
 
 class Client {
 	private:
 		std::string		netwide_id; // see if this can be set to be more CPP, as well as the requirements
-		int		client_socket;
+		int				client_socket;
 		std::string		address;
 		std::string		input_buffer;
+		User			*user;
 
 	public:
-		Client(); // make it so this cant be called
+		Client() = delete;
 		Client(int server_socket, const std::string& address);
 
 		int		getSocket();
@@ -30,6 +34,10 @@ class Client {
 		void	handleReadable(const std::string&, std::deque<Message>&);
 		void	handleWritable(const Message&) const;
 		void	printMessage(const std::string&) const;
+		bool	isUser();
+		void	createUser();
+		void	deleteUser();
+		User	*getUser();
 };
 
 # include <function_declarations.hpp>
