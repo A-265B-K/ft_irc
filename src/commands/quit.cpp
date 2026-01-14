@@ -3,6 +3,10 @@
 // TODO
 void EventLoop::quit(Client *client)
 {
+	int	clientSocket = client->getSocket();
+
+	this->removeEvent(clientSocket);
+	this->clientReg.removeClient(clientSocket);
 /*
   Remember that inside this EventLoop instantiation, we have access to:
 

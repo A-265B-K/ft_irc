@@ -9,8 +9,9 @@ class ClientRegistry {
 	private:
 		std::map<int, Client *>	clients; // potentially change to reference
 	public:
-		int		addClient(int server_socket);
-		Client	*getClientBySocket(int client_socket);
+		int		addClient(int serverSocket);
+		Client	*getClientBySocket(int clientSocket);
+		void	removeClient(int clientSocket);
 };
 
 #endif

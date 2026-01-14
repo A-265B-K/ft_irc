@@ -1,6 +1,10 @@
 #include <function_declarations.hpp>
 
+int	VERBOSE = 1; // add this to parsing
+
 void printMessage(const std::string& text)
 {
-	std::cout << text << std::endl;
+	if (VERBOSE) {
+		std::cout << text << std::endl;
+	}
 }

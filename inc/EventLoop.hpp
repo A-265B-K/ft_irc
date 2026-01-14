@@ -27,6 +27,7 @@ private:
 	int					epoll_fd;
 
 	int			addEvent(int fd);
+	int			removeEvent(int fd);
 	void		processMessages(Client*, const std::deque<Message>&);
 	int			waitForEvents();
 

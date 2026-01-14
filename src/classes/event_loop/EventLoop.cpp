@@ -47,6 +47,14 @@ int		EventLoop::addEvent(int socket_fd) {
 	return socket_fd;
 }
 
+int	EventLoop::removeEvent(int socket_fd) {
+	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, socket_fd, NULL) == -1) {
+		::printMessage("EPOLL_CTL failed");
+		return -1;
+	}
+	return 0;
+}
+
 int		EventLoop::waitForEvents() {
 	int ec = epoll_wait(this->epoll_fd, this->events, MAX_EVENTS, TIMEOUT);
 	if (ec < 0) {

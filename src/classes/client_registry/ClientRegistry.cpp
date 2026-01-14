@@ -25,6 +25,12 @@ int		ClientRegistry::addClient(int server_socket) {
 	return client_socket;
 }
 
+void	ClientRegistry::removeClient(int clientSocket) {
+	Client *c = getClientBySocket(clientSocket);
+	this->clients.erase(clientSocket);
+	delete c;
+}
+
 Client	*ClientRegistry::getClientBySocket(int client_socket) {
 	return this->clients[client_socket];
 }

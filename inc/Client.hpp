@@ -22,6 +22,7 @@ class Client {
 		Client(); // make it so this cant be called
 		Client(int server_socket, const std::string& address);
 
+		int		getSocket();
 		int		socketIsReadable() const;
 		int		socketIsWritable() const;
 		void	generateResponse(const std::string&, const unsigned short, const char*,

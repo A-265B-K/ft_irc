@@ -61,3 +61,7 @@ void Client::printMessage(const std::string& text) const
 	output << '[' << address << "] " << text;
 	::printMessage(output.str());
 }
+
+int	Client::getSocket() {
+	return this->client_socket;
+}
