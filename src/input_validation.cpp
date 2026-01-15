@@ -1,23 +1,40 @@
-# include <string>
-# include <arpa/inet.h>
-# include <Server.hpp>
-# include <iostream>
+# include <function_declarations.hpp>
 
-static int	port_is_invalid(char *port_in) {
-	// add further checks, such as reserved ports
+static void check_port(uint16_t& port, const char *port_in)
+{
+	errno = 0;
+	char *port_end{};
+	const long i = std::strtol(port_in, &port_end, 10);
 
-	return 0;
+	if (!*port_in || *port_end) {
+		printMessage("Syntax Error. Numerical port expected");
+		std::exit(ERR_SYNTAX);
+	}
+	if (errno == ERANGE || i < 0 || i > 65535) {
+		printMessage("Input Error. Port out of range");
+		std::exit(ERR_PORT);
+	}
+	if (i < 1024) {
+		printMessage("Input Error. Port in the privileged range");
+		std::exit(ERR_PORT);
+	}
+	if (i > 49151)
+		printMessage("** Warning ** Port in the dynamic range");
+
+	port = static_cast<uint16_t>(i);
 }
 
-static int password_is_invalid(char *password_in) {
-	std::string	password_str = password_in;
+static void check_password(const std::string& password) {
 	// Add checks for forbidden characters
-	return 0;
 }
 
-int	input_is_invalid(int	ac, char **av) {
-	if (ac != 3) { return 1; }
-	if (port_is_invalid(av[1])) { return 1; }
-	if (password_is_invalid(av[2])) { return 1; }
-	return 0;
+void check_input(uint16_t& port, std::string& password, int ac, char **av) {
+	if (ac != 3) {
+		printMessage("Syntax Error. Proper usage: ./"
+				COMMAND_NAME " port password");
+		std::exit(ERR_SYNTAX);
+	}
+	check_port(port, av[1]);
+	password = av[2];
+	check_password(password);
 }

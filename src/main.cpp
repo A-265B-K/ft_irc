@@ -7,11 +7,12 @@
 // Add some more descriptive error messages
 
 int	main(int ac, char **av) {
-	if (input_is_invalid(ac, av)) {
-	 	printMessage("INPUT INVALID"); return 1;
-	}
+	uint16_t		port;
+	std::string		password;
 
-	Server 			server(htons(std::atoi(av[1])), av[2]);
+	check_input(port, password, ac, av);
+
+	Server 			server(htons(port), password);
 	ChannelRegistry channelRegistry;
 	ClientRegistry	clientRegistry;
 	EventLoop		eventLoop(server, channelRegistry, clientRegistry);
