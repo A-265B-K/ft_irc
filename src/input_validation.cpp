@@ -1,6 +1,6 @@
 # include <function_declarations.hpp>
 
-static void check_port(uint16_t& port, const char *port_in)
+static void validatePort(uint16_t& port, const char *port_in)
 {
 	errno = 0;
 	char *port_end{};
@@ -24,17 +24,33 @@ static void check_port(uint16_t& port, const char *port_in)
 	port = static_cast<uint16_t>(i);
 }
 
-static void check_password(const std::string& password) {
-	// Add checks for forbidden characters
+static void validatePassword(const std::string& password) {
+	const std::string::size_type x = password.find_first_not_of(
+			LETTERS NUMBERS SPECIAL);
+
+	if (x != std::string::npos) {
+		std::string error{"Input Error. Unacceptable character `"};
+		error += password[x];
+		error += "' in the password";
+		printMessage(error);
+		std::exit(ERR_PASS);
+	}
 }
 
 void check_input(uint16_t& port, std::string& password, int ac, char **av) {
-	if (ac != 3) {
+	const char *portStr = STR(DEFAULT_PORT);
+	password = DEFAULT_PASS;
+
+	switch(ac) {
+	case 1: break;
+	case 2: password = av[1]; break;
+	case 3: portStr = av[1]; password = av[2]; break;
+	default:
 		printMessage("Syntax Error. Proper usage: ./"
-				COMMAND_NAME " port password");
+				COMMAND_NAME " [[port] password]");
 		std::exit(ERR_SYNTAX);
 	}
-	check_port(port, av[1]);
-	password = av[2];
-	check_password(password);
+
+	validatePort(port, portStr);
+	validatePassword(password);
 }

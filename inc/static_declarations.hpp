@@ -7,9 +7,14 @@
 # define IBUFFER 200	// client input buffer
 # define CRLF "\r\n"	// message termination sequence
 # define LIMIT 512		// message character-limit
-# define COMMAND_NAME "ircserv" // executable name
+# define COMMAND_NAME "ircserv"	// executable name
+# define DEFAULT_PORT 6667		// TCP port for plain text connections
+# define DEFAULT_PASS ""		// default password
 # define ERR_SYNTAX 1	// error: improper argument count
 # define ERR_PORT 2		// error: invalid port
 # define ERR_PASS 3		// error: invalid password
+# define LETTERS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# define NUMBERS "0123456789"
+# define SPECIAL "-[]\\`^{}"
 
 #endif
