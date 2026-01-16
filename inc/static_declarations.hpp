@@ -1,6 +1,16 @@
 #ifndef STATIC_DECLARATIONS_HPP
 # define STATIC_DECLARATIONS_HPP
 
+/* Colours and other terminal codes */
+
+# define RED "\033[91m"
+# define GREEN "\033[92m"
+# define YELLOW "\033[93m"
+# define BLUE "\033[94m"
+# define RESET "\033[0m"
+
+
+
 # define RUNNING 1		// boolean TRUE
 # define MAX_EVENTS 5	// maximum events returned by epoll_wait
 # define TIMEOUT 300000	// wait timeout in milliseconds
