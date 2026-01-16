@@ -10,11 +10,9 @@
 # define COMMAND_NAME "ircserv"	// executable name
 # define DEFAULT_PORT 6667		// TCP port for plain text connections
 # define DEFAULT_PASS ""		// default password
+# define DISALLOWED " :\r\n"	// space 0x20, colon 0x3a, CR 0x0d, LF 0x0a
 # define ERR_SYNTAX 1	// error: improper argument count
 # define ERR_PORT 2		// error: invalid port
 # define ERR_PASS 3		// error: invalid password
-# define LETTERS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-# define NUMBERS "0123456789"
-# define SPECIAL "-[]\\`^{}"
 
 #endif

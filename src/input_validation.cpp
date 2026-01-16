@@ -25,11 +25,10 @@ static void validatePort(uint16_t& port, const char *port_in)
 }
 
 static void validatePassword(const std::string& password) {
-	const std::string::size_type x = password.find_first_not_of(
-			LETTERS NUMBERS SPECIAL);
+	const std::string::size_type x = password.find_first_of(DISALLOWED);
 
 	if (x != std::string::npos) {
-		std::string error{"Input Error. Unacceptable character `"};
+		std::string error{"Input Error. Disallowed character `"};
 		error += password[x];
 		error += "' in the password";
 		printMessage(error);
@@ -38,9 +37,9 @@ static void validatePassword(const std::string& password) {
 }
 
 void check_input(uint16_t& port, std::string& password, int ac, char **av) {
-	const char *portStr = STR(DEFAULT_PORT);
-	password = DEFAULT_PASS;
+	const char *portStr = XSTR(DEFAULT_PORT);
 
+	password = DEFAULT_PASS;
 	switch(ac) {
 	case 1: break;
 	case 2: password = av[1]; break;
