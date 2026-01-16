@@ -7,19 +7,32 @@ static void validatePort(uint16_t& port, const char *port_in)
 	const long i = std::strtol(port_in, &port_end, 10);
 
 	if (!*port_in || *port_end) {
-		printMessage("Syntax Error. Numerical port expected");
+		std::string error{"Syntax Error. `"};
+		error += port_in;
+		error += "' Numerical port expected";
+		printMessage(error);
 		std::exit(ERR_SYNTAX);
 	}
 	if (errno == ERANGE || i < 0 || i > 65535) {
-		printMessage("Input Error. Port out of range");
+		std::string error{"Input Error. Port "};
+		error += port_in;
+		error += " out of range";
+		printMessage(error);
 		std::exit(ERR_PORT);
 	}
 	if (i < 1024) {
-		printMessage("Input Error. Port in the privileged range");
+		std::string error{"Input Error. Port "};
+		error += port_in;
+		error += " in the privileged range";
+		printMessage(error);
 		std::exit(ERR_PORT);
 	}
-	if (i > 49151)
-		printMessage("** Warning ** Port in the dynamic range");
+	if (i > 49151) {
+		std::string warning{"** Warning ** Port "};
+		warning += port_in;
+		warning += " in the dynamic range";
+		printMessage(warning);
+	}
 
 	port = static_cast<uint16_t>(i);
 }
