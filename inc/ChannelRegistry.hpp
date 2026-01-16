@@ -7,11 +7,12 @@
 class ChannelRegistry {
 	private:
 		std::map<std::string, Channel *>	channels;
+		const int isValidChannelName(const std::string& channelName);
 
 	public:
-		void	joinChannel(std::string channelName, Client *client);
-		void	partChannel(std::string channelName, Client *client);
-		Channel	*getChannel(std::string channelName);
+		int		joinChannel(const std::string& channelName, Client *client);
+		int		partChannel(const std::string& channelName, Client *client);
+		Channel	*getChannel(const std::string& channelName);
 };
 
 #endif

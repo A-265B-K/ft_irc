@@ -26,21 +26,18 @@ void EventLoop::user(Client *client, const Message& message)
 	}
 
 	/* Set username, hostname, servername and realname */
-	user->setUsername(p.front());
+	p.front() == "=" ? user->setUsername("anon") : user->setUsername(p.front());
 	p.pop_front();
 
-	user->setHostname(p.front());
+	user->setHostname(client->getAddress());
 	p.pop_front();
 
-	user->setServername(p.front());
+	p.front() == "=" ? user->setServername("noserv") : user->setServername(p.front());
 	p.pop_front();
 
-	/* realname can contain spaces, hence it needs different logic */
 	std::string realname = "";
-
-	while (p.size()) {
-		realname += p.front();
-		p.pop_front();
+	for (const auto& s : p) {
+		realname += s;
 	}
 
 	user->setRealname(realname);

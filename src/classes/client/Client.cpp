@@ -66,6 +66,10 @@ int	Client::getSocket() {
 	return this->client_socket;
 }
 
+std::string	Client::getAddress() {
+	return this->address;
+}
+
 bool	Client::isUser() {
 	if (user == nullptr) {
 		return false;

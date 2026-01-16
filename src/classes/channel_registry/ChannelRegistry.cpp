@@ -1,41 +1,57 @@
 # include <ChannelRegistry.hpp>
 
-/* Allows a client to join a channel, if it does not exist it will be created */
-// TODO: ensure that users who aren't registered can't join
-void	ChannelRegistry::joinChannel(std::string channelName, Client *client) {
+const int ChannelRegistry::isValidChannelName(const std::string& channelName) {
+	if (channelName.empty()) {
+		return 0;
+	}
+	switch(channelName.front()) {
+		case '#': case '$':
+			break ;
+		default:
+			return 0;			
+	}
+	// TODO: add other channel prefixes and check if no invalid characters
+	return 1;
+}
+
+/* Allows a client to join a channel, if it does not exist it will be created 
+   Return -1 if the supplied channel name isn't valid */
+int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client) {
+	if (!this->isValidChannelName(channelName)) {
+		return -1;
+	}
+
+	Channel *channel;
 	auto it = this->channels.find(channelName);
 
-	if (it != this->channels.end()) {
-		Channel *channel = new Channel(channelName);
+	if (it == this->channels.end()) {
+		channel = new Channel(channelName);
 		this->channels[channelName] = channel;
-		channel->addClient(client);
+
 	} else {
-		it->second->addClient(client);
+		channel = it->second;
 	}
+	channel->addClient(client);
+	return 0;
 }
 
 /* Removes a cient from a channel */
-void	ChannelRegistry::partChannel(std::string channelName, Client *client) {
+int	ChannelRegistry::partChannel(const std::string& channelName, Client *client) {
 	auto it = this->channels.find(channelName);
 
 	if (it != this->channels.end()) {
-		// TODO: send error message to client hat channe does not exist
+		return 0;
 	} else {
 		it->second->removeClient(client);
 		if (!it->second) {
 			this->channels.erase(channelName);
 		}
-		// TODO: send parting message
+		return 1;
 	}
 }
 
 /* Returns a pointer to a channel if it exists in the registry, else it returns nullptr */
-Channel	*ChannelRegistry::getChannel(std::string channelName) {
+Channel	*ChannelRegistry::getChannel(const std::string& channelName) {
 	auto it = this->channels.find(channelName);
-
-	if (it != this->channels.end()) {
-		return nullptr;
-	} else {
-		return it->second;
-	}
+	return (it != this->channels.end()) ? it->second : nullptr;
 }

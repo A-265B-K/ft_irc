@@ -1,77 +1,46 @@
-#include <EventLoop.hpp>
+# include <EventLoop.hpp>
+# include <set>
+# include <string>
 
-// TODO
+
 void EventLoop::privmsg(Client *client, const Message& message)
 {
 	std::deque<std::string> p = message.getParameters();
-
-	// TODO: Add logic to support sending to multiple channels at once and users
-	Channel *channel = this->channelReg.getChannel(p.front());
-	if (!channel) {
-		// TODO: send error code, channel doesnt exist
+	if (p.empty()) {
+		return ; // TODO SEND ERROR
 	}
+	std::stringstream		sstreamParams(p.front());
+	std::stringstream		sstreamMessage;
+	std::string				tmp;
 
-	std::string text;
+	Channel *channel;
+	Client	*tempClient;
 
 	p.pop_front();
-	for (const auto& s : p) {
-		text += s;
+	for (size_t i = 0; i < p.size(); ++i) {
+		if (i != 0) sstreamMessage << p[i];
 	}
 
-		
-
-/*
-  Remember that inside this EventLoop instantiation, we have access to:
-
-	server
-	channelReg
-	clientReg
-
-  Numeric responses from the server can make use of the macro interface found in
-  the Client.hpp header:
-
-	response(srvrName, reply, txt)
-
-  Bear in mind that a correct irc message must be formed, otherwise a program-
-  terminating exception might be thrown. In particular, any and all of the blank
-  spaces of the text should go in the last parameter, which starts with ':'. The
-  ending sequence "\r\n" is automatically affixed.
-
-	srvrName <- prefix. In our case, server.getName()
-	reply <- named response. Please add them at the bottom of the Message header
-	txt <- all of the parameters that form the message
-
-  Currently, a working example of this response mechanism can be found in
-  EventLoop::processMessages
-
-	client->response(
-			server.getName(),
-			ERR_UNKNOWNCOMMAND,
-			std::string("<client>")  <-  currently a placeholder
-				+ ' ' + m.getParameters().front()  <- (*)
-				+ " :Unknown command"
-	);
-
-  (*) In this particular case of a command not being recognized, the parser will
-  store it as the first parameter of the message received. This is generally not
-  the case!
-
-  This response's parameters conform to the expected format
-
-	"<client> <command> :Unknown command"
-
-  Messages sent to some other Client* client2 can make use of the call
-
-	client2->handleWritable(m)
-
-  where m is some well-formed Message.
-
-  Access the components of the message with getPrefix() and getParameters().
-  Note that neither the colon (:) of the prefix nor that of a trailing parameter
-  are stored within the Message attributes.
-
-  Ideally, some descriptive account of the server's doings should be logged. As
-  a placeholder...
-*/
-	::printMessage("PRIVMSG");
+	/* Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
+	while (std::getline(sstreamParams, tmp, ',')) {
+		if (tmp.empty()) {
+			continue ;
+		}
+		/* If the parameters is a channel, check if it exists, if so request the list of users subscribed to that channel and add it to the users set */
+		if (tmp.front() == '#') {// TODO: add the other channel starting chars 
+			channel = this->channelReg.getChannel(tmp);
+			if (channel) {
+				channel->broadcast(client, "PRIVMSG", sstreamMessage.str());
+			} else {
+				// TODO: send error code, channel does not exist.
+			}
+		} else { /* Check if the user exists and is registered, and then add it to the users set */
+			tempClient = this->clientReg.getRegisteredClientByNick(tmp);
+			if (tempClient) {
+			//	tempClient->sendMessage()
+			} else {
+				// TODO: send error code, user does not exist.
+			}
+		}
+	}
 }

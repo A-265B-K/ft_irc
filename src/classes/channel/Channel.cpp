@@ -29,3 +29,37 @@ void	Channel::removeClient(Client *client) {
 		delete this;
 	}
 }
+
+std::set<Client *> Channel::getClients() {
+	std::set<Client *> clients;
+
+	for (auto const& x : this->clients){
+		Client *c = x.first;
+		if (!c) {
+			std::cerr << RED << "WARNING DANGLING CLIENT POINTER" << RESET << std::endl;
+			continue ;
+		}
+		clients.insert(c);
+	}
+	return clients;
+}
+
+void	Channel::broadcast(Client *sender, const std::string& command, const std::string& message) {
+	User 				*user = sender->getUser();
+	std::stringstream	text;
+	text  << ":"  << user->getNickname() <<
+			 "!~" << user->getUsername() <<
+			 "@"  << user->getHostname() << 
+			 " "  << command <<
+			 " "  << this->name <<
+			 " :" << message << "\r\n";
+
+	// TODO: Implement check, to ensure that sender has the correct permissions
+
+	for (auto it : this->clients) {
+		Client *recipient = it.first;
+		if (recipient != sender) {
+			recipient->handleWritable(text.str());
+		}
+	}
+}

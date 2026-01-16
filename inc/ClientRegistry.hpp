@@ -4,6 +4,7 @@
 # include <map>
 # include <string>
 # include <Client.hpp>
+# include <User.hpp>
 
 class ClientRegistry {
 	private:
@@ -12,6 +13,7 @@ class ClientRegistry {
 		int		addClient(int serverSocket);
 		Client	*getClientBySocket(int clientSocket);
 		void	removeClient(int clientSocket);
+		Client	*getRegisteredClientByNick(std::string nickname);
 };
 
 #endif

@@ -3,6 +3,18 @@
 // TODO
 void EventLoop::join(Client *client, const Message& message)
 {
+	std::deque<std::string> p = message.getParameters();
+
+	/* Check if parameters are valid */
+	if (p.size() != 1) {
+		return ;
+	}
+
+	if (channelReg.joinChannel(p.front(), client)) {
+		return ;
+	} else {
+		// TODO: send error message to client, invalid channel name
+	}
 /*
   Remember that inside this EventLoop instantiation, we have access to:
 
@@ -56,5 +68,4 @@ void EventLoop::join(Client *client, const Message& message)
   Ideally, some descriptive account of the server's doings should be logged. As
   a placeholder...
 */
-	::printMessage("JOIN");
 }

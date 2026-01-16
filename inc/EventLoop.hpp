@@ -34,6 +34,7 @@ class EventLoop {
 	int		removeEvent(int fd);
 	void	processMessages(Client*, const std::deque<Message>&);
 	int		waitForEvents();
+	void 	sendMessageToClientList(Client *sender, std::set<Client *> recipients, std::string message);
 
 # define X(A, B) void B(Client*, const Message&);
 	COMMAND_TABLE

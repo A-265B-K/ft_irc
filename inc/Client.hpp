@@ -27,6 +27,7 @@ class Client {
 		Client(int server_socket, const std::string& address);
 
 		int		getSocket();
+		std::string		getAddress();
 		int		socketIsReadable() const;
 		int		socketIsWritable() const;
 		void	generateResponse(const std::string&, const unsigned short, const char*,

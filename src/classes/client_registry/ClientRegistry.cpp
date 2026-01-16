@@ -34,3 +34,12 @@ void	ClientRegistry::removeClient(int clientSocket) {
 Client	*ClientRegistry::getClientBySocket(int client_socket) {
 	return this->clients[client_socket];
 }
+
+Client	*ClientRegistry::getRegisteredClientByNick(std::string nickname) {
+	for (auto const& x : this->clients){
+		if (nickname == x.second->getUser()->getNickname() && x.second->getUser()->isRegistered()) {
+			return x.second;
+		}
+	}
+	return nullptr;
+}

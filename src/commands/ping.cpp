@@ -1,13 +1,8 @@
 #include <EventLoop.hpp>
 
-// TODO
 void EventLoop::ping(Client *client, const Message& message)
 {
-	std::deque<std::string> p = message.getParameters();
 
-	if (p.front() == server.getName()) {
-		// TODO: keep connection on
-	}
 /*
   Remember that inside this EventLoop instantiation, we have access to:
 
@@ -60,6 +55,6 @@ void EventLoop::ping(Client *client, const Message& message)
 
   Ideally, some descriptive account of the server's doings should be logged. As
   a placeholder...
-*/
-	::printMessage("PING");
+ */
+
 }
