@@ -51,8 +51,6 @@ public:
 
 	};
 
-// TODO "static" error replies for all commands
-
 # define WELCOME			001
 # define RPL_PRIVMSG		353
 # define ERR_UNKNOWNERROR   400

@@ -90,9 +90,6 @@ void Message::generate(const std::string& str)
 			this->length += i - i0 + 1;
 			i0 = str.find_first_not_of(' ', i);
 		}
-
-// TODO Regular expressions to verify the format of the prefix and command
-
 }
 
 Message::Message() { }
