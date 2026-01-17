@@ -73,8 +73,13 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 // TODO Substitute the "<client>" placeholder with user nickname when User is implemented
 				client->response(server.getName(), ERR_UNKNOWNCOMMAND,
 						std::string("<client>") + ' ' + m.getParameters().front() + " :Unknown command");
-			else
+			else try {
 				(this->*commands[static_cast<size_t>(comm)])(client, m);
+			} catch (const Message::BadMessageException& e) {
+				const std::string error("Message::BadMessageException: ");
+
+				::printMessage(error + e.what());
+			}
 		}
 		else
 			client->printMessage("Numeric reply from client silently dropped");
