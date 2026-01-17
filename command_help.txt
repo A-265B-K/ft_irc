@@ -1,0 +1,67 @@
+All commands are of this type:
+
+	void EventLoop::xxx(Client *client, const Message& message)
+
+These are all methods to a particular instantiation of the EventLoop class.
+Remember that inside this object, we have direct access to:
+
+	server
+	channelReg
+	clientReg
+
+The actual Client* that sent the `xxx' command is the first argument.
+
+The second argument will be the full message sent. Access the components of the
+message with getPrefix() and getParameters(). Note that neither the colon (:) of
+the prefix nor that of a trailing parameter are stored within the Message
+attributes.
+
+Should you require to send some other message (m) to another client (c) through
+the command:
+	1. The communication must be a proper IRC-valid message, otherwise a
+		program-terminating exception might be thrown. In particular, any and
+		all of the blank spaces of the text should go into the last parameter,
+		which starts with ':'. 
+	2. Use the Message(const std::string&) constructor to build `m'.
+	3. A valid IRC message ends with "\r\n". You can use macro CRLF for this.
+		(Defined in static_declaration.hpp)
+	4. Execute the message with
+
+		c.handlewritable(m);
+
+	5. The server will automatically log the sent message.
+
+Numeric responses from the server can make use of the macro interface found in
+the Client.hpp header:
+
+	response(srvrName, reply, txt)
+
+	srvrName <- prefix. In our case, server.getName()
+	reply <- named response. Please add them at the bottom of the Message header
+	txt <- all of the parameters that form the message
+
+ONLY with this macro, the ending sequence "\r\n" is automatically affixed. A
+colon will be necessary to mark the beginning of the trailing parameter should 
+this parameter contain blank spaces.
+
+Currently, a working example of the response mechanism can be found in
+EventLoop::processMessages
+
+	client->response(
+			server.getName(),
+			ERR_UNKNOWNCOMMAND,
+			std::string("<client>")  <-  currently a placeholder
+				+ ' ' + m.getParameters().front()  <- (*)
+				+ " :Unknown command"
+	);
+
+(*) In this particular case of a command not being recognized, the parser will
+store it as the first parameter of the message received. This is generally NOT
+the case!
+
+This response's parameters conform to the expected format
+
+	"<client> <command> :Unknown command"
+
+Note the blank spaces separating the three parameters and the colon prior to the
+"human-readable" informational string (that contains a blank space of its own).
