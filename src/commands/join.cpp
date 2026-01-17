@@ -1,10 +1,8 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::join(Client *client, const Message& message)
+void EventLoop::join(Client *client, const std::deque<std::string>& p)
 {
-	std::deque<std::string> p = message.getParameters();
-
 	/* Check if parameters are valid */
 	if (p.size() != 1) {
 		return ;

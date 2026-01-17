@@ -1,11 +1,8 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::quit(Client *client, const Message& message)
+void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 {
-	// If there is a message, send it to the other members.
-	std::deque<std::string> p = message.getParameters();
-
 	if (p.size() > 1) {
 		// send error message
 		return ;

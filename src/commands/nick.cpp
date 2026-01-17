@@ -1,10 +1,8 @@
 #include <EventLoop.hpp>
 
 // TODO parse nickname for invalid options
-void EventLoop::nick(Client *client, const Message& message)
+void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 {
-	std::deque<std::string> p = message.getParameters();
-
 	if (p.size() != 1) {
 		// send error message
 		return ;

@@ -1,9 +1,8 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::part(Client *client, const Message& message)
+void EventLoop::part(Client *client, const std::deque<std::string>& p)
 {
-	std::deque<std::string> p = message.getParameters();
 	std::stringstream		sstreamParams(p.front());
 	std::stringstream		sstreamMessage;
 	std::string				tmp;

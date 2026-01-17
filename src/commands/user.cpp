@@ -1,10 +1,8 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::user(Client *client, const Message& message)
+void EventLoop::user(Client *client, const std::deque<std::string>& p)
 {
-	std::deque<std::string> p = message.getParameters();
-
 	/* Check if the correct amount of parameters are present */
 	if (p.size() < 4) {
 		// TODO: send error message
@@ -25,20 +23,20 @@ void EventLoop::user(Client *client, const Message& message)
 		return ;
 	}
 
+	std::deque<std::string>::const_iterator it = p.begin();
 	/* Set username, hostname, servername and realname */
-	p.front() == "=" ? user->setUsername("anon") : user->setUsername(p.front());
-	p.pop_front();
+	*it == "=" ? user->setUsername("anon") : user->setUsername(*it);
+	it++;
 
 	user->setHostname(client->getAddress());
-	p.pop_front();
+	it++;
 
-	p.front() == "=" ? user->setServername("noserv") : user->setServername(p.front());
-	p.pop_front();
+	*it == "=" ? user->setServername("noserv") : user->setServername(*it);
+	it++;
 
 	std::string realname = "";
-	for (const auto& s : p) {
-		realname += s;
-	}
+	while (it != p.end())
+		realname += *it++;
 
 	user->setRealname(realname);
 
