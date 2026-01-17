@@ -1,9 +1,8 @@
 #include <EventLoop.hpp>
 
 // TODO this can probably be dleeted
-void EventLoop::cap(Client *client, const Message& message)
+void EventLoop::cap(Client *client, const std::deque<std::string>& p)
 {
-	std::deque<std::string> p = message.getParameters();
 /*
   Help can be found (I hope) in `command_help.txt'.
 

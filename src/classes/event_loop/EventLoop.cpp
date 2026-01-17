@@ -74,7 +74,7 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 				client->response(server.getName(), ERR_UNKNOWNCOMMAND,
 						std::string("<client>") + ' ' + m.getParameters().front() + " :Unknown command");
 			else try {
-				(this->*commands[static_cast<size_t>(comm)])(client, m);
+				(this->*commands[static_cast<size_t>(comm)])(client, m.getParameters());
 			} catch (const Message::BadMessageException& e) {
 				const std::string error("Message::BadMessageException: ");
 

@@ -3,9 +3,8 @@
 # include <string>
 
 
-void EventLoop::privmsg(Client *client, const Message& message)
+void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 {
-	std::deque<std::string> p = message.getParameters();
 	if (p.empty()) {
 		return ; // TODO SEND ERROR
 	}
@@ -16,7 +15,6 @@ void EventLoop::privmsg(Client *client, const Message& message)
 	Channel *channel;
 	Client	*tempClient;
 
-	p.pop_front();
 	for (size_t i = 0; i < p.size(); ++i) {
 		if (i != 0) sstreamMessage << p[i];
 	}

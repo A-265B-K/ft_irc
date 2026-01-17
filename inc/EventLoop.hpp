@@ -25,7 +25,7 @@ class EventLoop {
 	struct epoll_event	events[MAX_EVENTS];
 	int					epoll_fd;
 
-	typedef	void (EventLoop::*command_t)(Client*, const Message&);
+	typedef	void (EventLoop::*command_t)(Client*, const std::deque<std::string>&);
 # define X(A, B) &EventLoop::B,
 	const command_t		commands[COMMANDS] = { COMMAND_TABLE };
 # undef X
@@ -36,7 +36,7 @@ class EventLoop {
 	int		waitForEvents();
 	void 	sendMessageToClientList(Client *sender, std::set<Client *> recipients, std::string message);
 
-# define X(A, B) void B(Client*, const Message&);
+# define X(A, B) void B(Client*, const std::deque<std::string>&);
 	COMMAND_TABLE
 # undef X
 

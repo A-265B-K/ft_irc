@@ -1,7 +1,7 @@
 #include <EventLoop.hpp>
 
 // TODO
-void EventLoop::debug(Client *client, const Message& message)
+void EventLoop::debug(Client *client, const std::deque<std::string>& p)
 {
 /*
   Help can be found (I hope) in `command_help.txt'.
