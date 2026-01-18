@@ -31,6 +31,23 @@ the command:
 
 	5. The server will automatically log the sent message.
 
+To slightly reduce the workload required, a message to any client (c) can also
+be handled through the macro
+
+	replyTo(srvrName, txt)
+
+	srvrName <- prefix. In our case, server.getName()
+	txt <- the rest of the message, excluding CRLF
+
+Of course, :<srvrName> <text>\r\n should still be a valid IRC message.
+
+A working example from command MODE:
+
+	client->replyTo(
+			server.getName(),
+			std::string("MODE ") + t.str + ' ' + flagsTouched
+	);
+
 Numeric responses from the server can make use of the macro interface found in
 the Client.hpp header:
 
@@ -40,7 +57,7 @@ the Client.hpp header:
 	reply <- named response. Please add them at the bottom of the Message header
 	txt <- all of the parameters that form the message
 
-ONLY with this macro, the ending sequence "\r\n" is automatically affixed. A
+ONLY with these macros, the ending sequence "\r\n" is automatically affixed. A
 colon will be necessary to mark the beginning of the trailing parameter should 
 this parameter contain blank spaces.
 

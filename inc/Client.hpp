@@ -12,8 +12,8 @@
 
 # define response(srvrName, reply, txt) generateResponse((srvrName), reply, #reply, (txt))
 
-# define replyBack(srvrName, text) \
-		handleWritable(Message(std::string(":") + (srvrName) + (text) + CRLF))
+# define replyTo(srvrName, text) \
+		handleWritable(Message(std::string(":") + (srvrName) + ' ' +  (text) + CRLF))
 
 class User;
 

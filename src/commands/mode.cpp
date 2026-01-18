@@ -82,7 +82,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				const std::string flagsTouched = user->editModes(modestring);
 
 				if (!flagsTouched.empty())
-					client->replyBack(
+					client->replyTo(
 							server.getName(),
 							std::string("MODE ") + t.str + ' ' + flagsTouched
 					);
