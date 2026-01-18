@@ -113,6 +113,9 @@ std::string User::editModes(const std::string& modestring)
 			for (size_t m = 0; m < 5; m++)
 				if (flags[m] == *cit) {
 					modes |= mask[m];
+					// NOTE: +o and +O are technically not allowed
+					//	from MODE command, but the subject does not
+					//	require the appropriate OPER command
 					flagsTouched += *cit;
 					break;
 				}

@@ -78,7 +78,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				);
 			}
 			else {
-				::printMessage("MODE edtion requested by client " + nick);
+				::printMessage("MODE edition requested by client " + nick);
 				const std::string flagsTouched = user->editModes(modestring);
 
 				if (!flagsTouched.empty())
