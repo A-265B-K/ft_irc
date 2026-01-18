@@ -17,15 +17,15 @@ Target::Target(const std::string& target)
 	switch (target.front()) {
 	case '#':
 		type = TargetType::HASH;
-		str = target.substr(1);
+		str = target;
 		break;
 	case '&':
 		type = TargetType::AMPERSAND;
-		str = target.substr(1);
+		str = target;
 		break;
 	case '$':
 		type = TargetType::DOLLAR;
-		str = target.substr(1);
+		str = target;
 		break;
 	default:
 		const std::string::size_type idx = target.find('@');
