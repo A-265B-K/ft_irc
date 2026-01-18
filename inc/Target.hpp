@@ -20,10 +20,7 @@ enum class TargetType {
 
 struct Target {
 	TargetType type;
-	union {
-		std::string	str;
-		std::string user;
-	};
+	std::string	str;
 	std::string host;
 
 	Target(const Target&);

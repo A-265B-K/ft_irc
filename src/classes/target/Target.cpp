@@ -30,13 +30,11 @@ Target::Target(const std::string& target)
 	default:
 		const std::string::size_type idx = target.find('@');
 
+		str = target.substr(0, idx);
 		if (idx != std::string::npos) {
 			type = TargetType::USER;
-			user = target.substr(0, idx);
 			host = target.substr(idx + 1);
-		} else {
+		} else
 			type = TargetType::NICK;
-			str = target;
-		}
 	}
 }
