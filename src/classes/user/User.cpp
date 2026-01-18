@@ -70,3 +70,70 @@ bool	User::registerUser() {
 bool	User::isRegistered() {
 	return this->registered;
 }
+
+char User::flags[] = {
+		'i', // invisible user mode
+		'o', // oper user moder
+		'O', // local oper user mode
+		'r', // registered user mode
+		'w'  // WALLOPS user mode
+};
+
+unsigned char User::mask[] = {
+		001,
+		002,
+		004,
+		010,
+		020
+};
+
+std::string User::getModestring() const
+{
+	std::string modestring(modes ? "+" : "");
+
+	for (size_t m = 5; m--; )
+		if (modes & mask[m])
+			modestring += flags[m];
+
+	return modestring;
+}
+
+std::string User::editModes(const std::string& modestring)
+{
+	if (modestring.empty())
+		return 0;
+
+	std::string flagsTouched;
+	std::string::const_iterator cit = modestring.begin();
+
+	switch (*cit++) {
+	case '+':
+		flagsTouched += '+';
+		while (cit != modestring.end()) {
+			for (size_t m = 0; m < 5; m++)
+				if (flags[m] == *cit) {
+					modes |= mask[m];
+					flagsTouched += *cit;
+					break;
+				}
+			cit++;
+		}
+		break;
+	case '-':
+		flagsTouched += '-';
+		while (cit != modestring.end()) {
+			for (size_t m = 0; m < 5; m++)
+				if (flags[m] == *cit) {
+					modes &= ~mask[m];
+					flagsTouched += *cit;
+					break;
+				}
+			cit++;
+		}
+		break;
+	default:
+		;
+	}
+
+	return flagsTouched;
+}

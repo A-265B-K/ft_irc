@@ -5,8 +5,13 @@
 
 void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 {
-	const std::string nick = client->getUser()->getNickname();
 	User *const user = client->getUser();
+
+	if (!user || !user->isRegistered()) {
+			::printMessage("MODE requested from unregistered client");
+
+			return;
+	}
 
 	if (p.empty()) {
 		client->response(
@@ -18,6 +23,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 		return;
 	}
 
+	const std::string nick = user->getNickname();
 	std::deque<std::string>::const_iterator pcit = p.begin();
 	const std::list<Target> listOfTargets{Target::markTargets(*pcit++)};
 	const std::string modestring{pcit == p.end() ? "" : *pcit++};
@@ -33,15 +39,16 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						nick + ' ' + t.str + " :No such channel"
 				);	
 			else if (modestring.empty()) {
-				std::string reply(nick + ' ' + t.str + ' ' + targetChannel->getModestring());
-				while (pcit != p.end())
-					reply += ' ' + *pcit++;
+			//	std::string reply(nick + ' ' + t.str + ' ' + targetChannel->getModestring());
+			//	while (pcit != p.end())
+			//		reply += ' ' + *pcit++;
 
-				client->response(
-						server.getName(),
-						RPL_CHANNELMODEIS,
-						reply
-				);
+				::printMessage("MODE information requested on channel " + t.str);
+			//	client->response(
+			//			server.getName(),
+			//			RPL_CHANNELMODEIS,
+			//			reply
+			//	);
 				// RPL_CREATIONTIME (329) not sent because time functions not allowed by subject
 			}
 			else
@@ -56,20 +63,35 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						ERR_NOSUCHNICK,
 						nick + ' ' + t.str + " :No such nick"
 				);
-			else if (t.str != client->getUser()->getNickname())
+			else if (t.str != nick)
 				client->response(
 						server.getName(),
 						ERR_USERSDONTMATCH,
 						nick + " :Can't change mode for other users"
 				);
-			else if (modestring.empty())
+			else if (modestring.empty()) {
+				::printMessage("MODE information requested by client " + nick);
 				client->response(
 						server.getName(),
 						RPL_UMODEIS,
-						nick + ' ' + (user ? user->getModestring() : "")
+						nick + ' ' + user->getModestring()
 				);
-			else
-				; // TODO
+			}
+			else {
+				::printMessage("MODE edtion requested by client " + nick);
+				const std::string flagsTouched = user->editModes(modestring);
+
+				if (!flagsTouched.empty())
+					client->replyBack(
+							server.getName(),
+							std::string("MODE ") + t.str + ' ' + flagsTouched
+					);
+				if (flagsTouched.size() != modestring.size())
+					client->response(
+							server.getName(),
+							ERR_UMODEUNKNOWNFLAG,
+							nick + " :Unknown MODE flag"
+					);
+			}
 		}
-//	::printMessage("MODE");
 }

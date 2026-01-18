@@ -20,12 +20,21 @@ class User {
 //		char		input_buffer[513];
 //		char		output_buffer[OP_BUFF_S];
 		bool						registered;
+		unsigned char				modes;
+
+		static char flags[];
+		static unsigned char mask[];
 
 	public:
 		User();
 		~User();
+
 		bool		isRegistered();
 		bool		registerUser();
+
+		std::string	getModestring() const;
+		std::string	editModes(const std::string&);
+
 		void		setNickname(const std::string& nickname);
 		void		setUsername(const std::string& username);
 		void		setHostname(const std::string& hostname);

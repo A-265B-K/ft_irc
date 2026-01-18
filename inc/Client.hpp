@@ -10,7 +10,10 @@
 # include <static_declarations.hpp>
 # include <User.hpp>
 
-# define response(srvrName, reply, txt) generateResponse(srvrName, reply, #reply, txt)
+# define response(srvrName, reply, txt) generateResponse((srvrName), reply, #reply, (txt))
+
+# define replyBack(srvrName, text) \
+		handleWritable(Message(std::string(":") + (srvrName) + (text) + CRLF))
 
 class User;
 

@@ -1,6 +1,6 @@
 # include <User.hpp>
 
-User::User() : registered(false) {
+User::User() : registered(false), modes(0) {
 
 }
 
