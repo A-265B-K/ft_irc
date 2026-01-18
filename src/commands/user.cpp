@@ -42,6 +42,6 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 
 	/* Register user */
 	if (user->registerUser() == true) {
-		client->response(server.getName(), 001, user->getNickname() + " :" + "Welcome to the IRC network");
+		client->response(server.getName(), WELCOME, user->getNickname() + " :" + "Welcome to the IRC network");
 	}
 }
