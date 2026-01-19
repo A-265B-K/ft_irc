@@ -20,6 +20,7 @@ class User {
 		std::string					nickname;
 		std::deque<std::string>  	channels;
 		Client						*client;
+		bool						hasPassword;
 //		char		input_buffer[513];
 //		char		output_buffer[OP_BUFF_S];
 		bool						registered;
@@ -46,6 +47,7 @@ class User {
 		void		setHostname(const std::string& hostname);
 		void		setServername(const std::string& servername);
 		void		setRealname(const std::string& realname);
+		void		setHasPassword();
 
 		std::string getNickname();
 		std::string getUsername();

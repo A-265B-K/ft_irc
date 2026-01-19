@@ -3,11 +3,13 @@
 // TODO
 void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 {
-/*
-  Help can be found (I hope) in `command_help.txt'.
-
-  Ideally, some descriptive account of the server's doings should be logged. As
-  a placeholder...
-*/
-	::printMessage("PASS");
+	if (p.size() != 1) {
+		return ;
+		// TODO: send error
+	}
+	User *user = client->getUser();
+	if (p.front() == server.getPassword()) {
+		user->setHasPassword();
+	}
+	user->isRegistered();
 }

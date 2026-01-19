@@ -16,7 +16,6 @@ void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 	int	clientSocket = client->getSocket();
 	this->removeEvent(clientSocket);
 	this->clientReg.removeClient(clientSocket);
-	delete client;
 /*
   Help can be found (I hope) in `command_help.txt'.
 

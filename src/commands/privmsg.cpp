@@ -16,7 +16,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 	std::string				tmp;
 
 	Channel *channel;
-	Client	*tempClient;
+	Client	*recipient;
 
 	for (size_t i = 0; i < p.size(); ++i) {
 		if (i != 0) sstreamMessage << p[i];
@@ -36,9 +36,9 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 				// TODO: send error code, channel does not exist.
 			}
 		} else { /* Check if the user exists and is registered, and then add it to the users set */
-			tempClient = this->clientReg.getRegisteredClientByNick(tmp);
-			if (tempClient) {
-			//	tempClient->sendMessage()
+			recipient = this->clientReg.getRegisteredClientByNick(tmp);
+			if (recipient) {
+				// TODO: send private message
 			} else {
 				// TODO: send error code, user does not exist.
 			}

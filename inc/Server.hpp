@@ -17,7 +17,7 @@ private:
 	std::string 	name;
 	int				version;
 	uint16_t		port;
-	std::string		password; // hash passsword
+	std::string		password;
 	int				server_socket;
 	sockaddr_in		address;
 	//t_time		creation_time; // I don't think we are allowed to use a function for this
@@ -29,8 +29,8 @@ public:
 
 	const std::string& getName() const;
 	int getServerSocket() const;
-
 	void setToPassive();
+	const std::string&	getPassword() const;
 };
 
 #endif

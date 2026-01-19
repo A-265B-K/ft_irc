@@ -11,5 +11,5 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	user->setNickname(p.front());
 
-	::printMessage("NICK");
+	user->isRegistered();
 }

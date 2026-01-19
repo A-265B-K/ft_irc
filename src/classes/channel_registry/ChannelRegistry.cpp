@@ -44,6 +44,7 @@ int	ChannelRegistry::partChannel(const std::string& channelName, Client *client)
 	} else {
 		it->second->removeClient(client);
 		if (!it->second) {
+			// TODO: delete channel
 			this->channels.erase(channelName);
 		}
 		return 1;
