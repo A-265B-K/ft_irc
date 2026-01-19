@@ -22,8 +22,7 @@ class User {
 		bool						registered;
 		unsigned char				modes;
 
-		static char flags[];
-		static unsigned char mask[];
+		static const std::string flags; // "ioOrw"
 
 	public:
 		User();
@@ -32,8 +31,12 @@ class User {
 		bool		isRegistered();
 		bool		registerUser();
 
+		// 1 mode set, 0 mode unset, -1 mode unrecognized
+		int			isMode(char) const;
+		void		setMode(char);
+		void		unsetMode(char);
 		std::string	getModestring() const;
-		std::string	editModes(const std::string&);
+		int 		editModes(std::string&, const std::string&);
 
 		void		setNickname(const std::string& nickname);
 		void		setUsername(const std::string& username);

@@ -67,10 +67,11 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				client->response(
 						server.getName(),
 						ERR_USERSDONTMATCH,
-						nick + " :Can't change mode for other users"
+						nick + " :Can't " + (modestring.empty() ? "view": "change") + " modes for other users"
 				);
 			else if (modestring.empty()) {
 				::printMessage("MODE information requested by client " + nick);
+
 				client->response(
 						server.getName(),
 						RPL_UMODEIS,
@@ -79,14 +80,15 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 			}
 			else {
 				::printMessage("MODE edition requested by client " + nick);
-				const std::string flagsTouched = user->editModes(modestring);
 
-				if (!flagsTouched.empty())
-					client->replyTo(
-							server.getName(),
-							std::string("MODE ") + t.str + ' ' + flagsTouched
-					);
-				if (flagsTouched.size() != modestring.size())
+				std::string changedModes;
+				const int unknownFlags = user->editModes(changedModes, modestring);
+
+				client->replyTo(
+					server.getName(),
+					std::string("MODE ") + t.str + (changedModes.empty() ? "" : " ") + changedModes
+				);
+				if (unknownFlags)
 					client->response(
 							server.getName(),
 							ERR_UMODEUNKNOWNFLAG,
