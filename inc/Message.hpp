@@ -51,13 +51,18 @@ public:
 
 	};
 
-// TODO "static" error replies for all commands
-
-# define WELCOME			001
-# define RPL_PRIVMSG		353
-# define ERR_UNKNOWNERROR   400
-# define ERR_INPUTTOOLONG   417
-# define ERR_UNKNOWNCOMMAND 421
+# define WELCOME				001
+# define RPL_UMODEIS			221
+# define RPL_CHANNELMODEIS		324
+# define RPL_PRIVMSG			353
+# define ERR_UNKNOWNERROR		400
+# define ERR_NOSUCHNICK			401
+# define ERR_NOSUCHCHANNEL		403
+# define ERR_INPUTTOOLONG		417
+# define ERR_UNKNOWNCOMMAND		421
+# define ERR_NEEDMOREPARAMS		461
+# define ERR_UMODEUNKNOWNFLAG	501
+# define ERR_USERSDONTMATCH		502
 
 };
 

@@ -70,3 +70,96 @@ bool	User::registerUser() {
 bool	User::isRegistered() {
 	return this->registered;
 }
+
+/*
+ i: invisible user mode
+ o: oper user moder
+ O: local oper user mode
+ r: registered user mode
+ w: WALLOPS user mode
+*/
+const std::string User::flags{"ioOrw"};
+
+// 1 mode set, 0 mode unset, -1 mode unrecognized
+int User::isMode(char c) const
+{
+	const std::string::size_type idx = flags.find(c);
+
+	if (idx != std::string::npos)
+		return (modes & 1 << idx) > 0;
+	return -1;
+}
+
+void User::setMode(char c)
+{
+	const std::string::size_type idx = flags.find(c);
+
+	if (idx != std::string::npos)
+		modes |= 1 << idx;
+}
+
+void User::unsetMode(char c)
+{
+	const std::string::size_type idx = flags.find(c);
+
+	if (idx != std::string::npos)
+		modes &= ~(1 << idx);
+}
+
+std::string User::getModestring() const
+{
+	std::string modestring(modes ? "+" : "");
+
+	for (const char c : flags)
+		if (isMode(c))
+			modestring += c;
+
+	return modestring;
+}
+
+int User::editModes(std::string& changedModes, const std::string& modestring)
+{
+	int unknownFlag = 0;
+	std::string::const_iterator cit = modestring.begin();
+
+	switch (*cit++) {
+	case '+':
+		changedModes += '+';
+		while (cit != modestring.end()) {
+			switch (isMode(*cit)) {
+			case 0: 
+				setMode(*cit);
+				// NOTE: +o and +O are technically not allowed
+				//	in the MODE command, but the subject does not
+				//	require the appropriate OPER command
+				changedModes += *cit;
+			case 1: break;
+			default: unknownFlag++;
+			}
+			cit++;
+		}
+		break;
+	case '-':
+		changedModes += '-';
+		while (cit != modestring.end()) {
+			switch (isMode(*cit)) {
+			case 1: 
+				unsetMode(*cit);
+				// NOTE: However, a user may -o or -O itself
+				//  through a MODE command
+				changedModes += *cit;
+			case 0: break;
+			default: unknownFlag++;
+			}
+			cit++;
+		}
+		break;
+	default:
+		;
+	}
+
+	if (changedModes.size() == 1)
+		changedModes.clear();
+
+	return unknownFlag;
+}
