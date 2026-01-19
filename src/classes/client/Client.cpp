@@ -70,22 +70,6 @@ std::string	Client::getAddress() {
 	return this->address;
 }
 
-bool	Client::isUser() {
-	if (user == nullptr) {
-		return false;
-	} else {
-		return true;
-	}
-}
-
 User	*Client::getUser() {
 	return this->user;
-}
-
-void	Client::createUser() {
-	this->user = new User();
-}
-
-void	Client::deleteUser() {
-	delete this->user;
 }

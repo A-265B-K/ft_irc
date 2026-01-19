@@ -1,5 +1,6 @@
 # include <User.hpp>
 # include <iostream>
+# include <numerics.hpp>
 
 void	User::setNickname(const std::string& nickname) {
 	this->nickname = nickname;
@@ -41,33 +42,28 @@ std::string User::getRealname() {
 	return this->realname;
 }
 
-/* Registers a user and prints a message if succesful */
-bool	User::registerUser() {
-	if (getNickname().empty()   || 
-		getUsername().empty()   ||
-		getHostname().empty()   ||
-		getServername().empty() ||
-		getRealname().empty())
-	{
-		return false;
-	}
-	else
-	{
+bool	User::isRegistered() {
+	if (!this->registered) {
+		if (nickname.empty()   || 
+			username.empty()   ||
+			hostname.empty()   ||
+			servername.empty() ||
+			realname.empty()) {
+			return this->registered = false;
+		} else {
 			// TODO: Put this in a proper print function
 		std::cout << "USER REGISTERED" << std::endl;
-		std::cout << "NICKNAME:   " << getNickname() << std::endl;
-		std::cout << "USERNAME:   " << getUsername() << std::endl;
-		std::cout << "HOSTNAME:   " << getHostname() << std::endl;
-		std::cout << "SERVERNAME: " << getServername() << std::endl;
-		std::cout << "REALNAME:   " << getRealname() << std::endl;
+		std::cout << "NICKNAME:   " << nickname << std::endl;
+		std::cout << "USERNAME:   " << username << std::endl;
+		std::cout << "HOSTNAME:   " << hostname << std::endl;
+		std::cout << "SERVERNAME: " << servername << std::endl;
+		std::cout << "REALNAME:   " << realname << std::endl;
+		client->response(servername, WELCOME, nickname + " :" + "Welcome to the IRC network");
 
 			// TODO: Send message to user
 		this->registered = true;
-		return this->registered;
+		}
 	}
-}
-
-bool	User::isRegistered() {
 	return this->registered;
 }
 

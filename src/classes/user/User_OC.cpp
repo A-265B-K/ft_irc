@@ -1,6 +1,6 @@
 # include <User.hpp>
 
-User::User() : registered(false), modes(0) {
+User::User(Client *client) : registered(false), modes(0), client(client) {
 
 }
 

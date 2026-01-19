@@ -8,10 +8,6 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 		return ;
 	}
 
-	if (client->isUser() == false) {
-		client->createUser();
-	}
-
 	User *user = client->getUser();
 	user->setNickname(p.front());
 

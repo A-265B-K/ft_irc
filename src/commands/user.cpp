@@ -8,12 +8,7 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 		// TODO: send error message
 		return ;
 	}
-	
 
-	/* If no User object exists yet, create one */
-	if (client->isUser() == false) {
-		client->createUser();
-	}
 
 	User *user = client->getUser();
 
@@ -31,7 +26,7 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 	user->setHostname(client->getAddress());
 	it++;
 
-	*it == "=" ? user->setServername("noserv") : user->setServername(*it);
+	user->setServername(server.getName());
 	it++;
 
 	std::string realname = "";
@@ -39,9 +34,5 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 		realname += *it++;
 
 	user->setRealname(realname);
-
-	/* Register user */
-	if (user->registerUser() == true) {
-		client->response(server.getName(), WELCOME, user->getNickname() + " :" + "Welcome to the IRC network");
-	}
+	user->isRegistered();
 }

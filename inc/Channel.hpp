@@ -5,10 +5,8 @@
 # include <map>
 # include <set>
 # include <Client.hpp>
-# include <User.hpp>
 
 class Client;
-class User;
 
 class Channel {
 	private:
@@ -26,6 +24,7 @@ class Channel {
 		void	removeClient(Client *client);
 		void	broadcast(Client *sender, const std::string& command, const std::string& message);
 		std::set<Client *> getClients();
+		bool	isOperator(Client *client);
 
 };
 

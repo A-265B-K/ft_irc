@@ -7,7 +7,7 @@
 # include <sys/socket.h>
 
 # include <Message.hpp>
-# include <static_declarations.hpp>
+# include <function_declarations.hpp>
 # include <User.hpp>
 
 # define response(srvrName, reply, txt) generateResponse((srvrName), reply, #reply, (txt))
@@ -28,6 +28,7 @@ class Client {
 	public:
 		Client() = delete;
 		Client(int server_socket, const std::string& address);
+		~Client();
 
 		int		getSocket();
 		std::string		getAddress();
@@ -38,12 +39,9 @@ class Client {
 		void	handleReadable(const std::string&, std::deque<Message>&);
 		void	handleWritable(const Message&) const;
 		void	printMessage(const std::string&) const;
-		bool	isUser();
-		void	createUser();
-		void	deleteUser();
 		User	*getUser();
 };
 
-# include <function_declarations.hpp>
+
 
 #endif

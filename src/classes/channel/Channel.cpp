@@ -22,12 +22,9 @@ void	Channel::addClient(Client *client) {
 	}
 }
 
-/* Removes a client from a channel, if they were the last person it will be deleted */
+/* Removes a client from a channel */
 void	Channel::removeClient(Client *client) {
 	this->clients.erase(client);
-	if (this->clients.empty()) {
-		delete this;
-	}
 }
 
 std::set<Client *> Channel::getClients() {
@@ -35,10 +32,6 @@ std::set<Client *> Channel::getClients() {
 
 	for (auto const& x : this->clients){
 		Client *c = x.first;
-		if (!c) {
-			std::cerr << RED << "WARNING DANGLING CLIENT POINTER" << RESET << std::endl;
-			continue ;
-		}
 		clients.insert(c);
 	}
 	return clients;
@@ -59,8 +52,22 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 	for (auto it : this->clients) {
 		Client *recipient = it.first;
 		if (recipient != sender) {
-			if (recipient->getUser()->isRegistered())
-			recipient->handleWritable(text.str());
+			if (recipient->getUser()->isRegistered()) {
+				recipient->handleWritable(text.str());
+			}
 		}
 	}
+}
+
+bool	Channel::isOperator(Client *client) {
+	auto it = this->clients.find(client);
+
+	if (it != this->clients.end()) {
+		if (it->second >= 1) {
+			return true;
+		}
+	} else {
+		// ERROR CLIENT NOT FOUND;
+	}
+	return false;
 }

@@ -1,10 +1,12 @@
 #ifndef USER_HPP
 # define USER_HPP
 
+# include <string>
 # include <deque>
-
-# include <Channel.hpp>
 # include <static_declarations.hpp>
+# include <Client.hpp>
+
+class Client;
 
 class User {
 	private:
@@ -17,6 +19,7 @@ class User {
 	/* Other information */
 		std::string					nickname;
 		std::deque<std::string>  	channels;
+		Client						*client;
 //		char		input_buffer[513];
 //		char		output_buffer[OP_BUFF_S];
 		bool						registered;
@@ -25,11 +28,11 @@ class User {
 		static const std::string flags; // "ioOrw"
 
 	public:
-		User();
+		User() = delete;
+		User(Client *client);
 		~User();
 
 		bool		isRegistered();
-		bool		registerUser();
 
 		// 1 mode set, 0 mode unset, -1 mode unrecognized
 		int			isMode(char) const;

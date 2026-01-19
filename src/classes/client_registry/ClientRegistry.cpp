@@ -40,7 +40,7 @@ Client	*ClientRegistry::getRegisteredClientByNick(std::string nickname) {
 		User *user = x.second->getUser();
 		if (user) {
 			if (nickname == user->getNickname() && user->isRegistered()) {
-				return user;
+				return x.second;
 			}
 		}
 	}

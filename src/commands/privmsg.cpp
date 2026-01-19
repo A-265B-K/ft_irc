@@ -5,6 +5,9 @@
 
 void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 {
+	if (!client->getUser()->isRegistered()) {
+		return ;
+	}
 	if (p.empty()) {
 		return ; // TODO SEND ERROR
 	}
