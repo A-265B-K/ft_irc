@@ -16,8 +16,9 @@ const int ChannelRegistry::isValidChannelName(const std::string& channelName) {
 
 /* Allows a client to join a channel, if it does not exist it will be created 
    Return -1 if the supplied channel name isn't valid */
-int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client) {
+int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client, std::string password) {
 	if (!this->isValidChannelName(channelName)) {
+		// TODO send error
 		return -1;
 	}
 
@@ -27,11 +28,14 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	if (it == this->channels.end()) {
 		channel = new Channel(channelName);
 		this->channels[channelName] = channel;
-
 	} else {
 		channel = it->second;
 	}
-	channel->addClient(client);
+	if (channel->getPassword() == password) {
+		channel->addClient(client);
+	} else {
+		// TODO error wrong passowrd
+	}
 	return 0;
 }
 

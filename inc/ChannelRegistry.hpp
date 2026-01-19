@@ -10,7 +10,7 @@ class ChannelRegistry {
 		const int isValidChannelName(const std::string& channelName);
 
 	public:
-		int		joinChannel(const std::string& channelName, Client *client);
+		int		joinChannel(const std::string& channelName, Client *client, std::string password);
 		int		partChannel(const std::string& channelName, Client *client);
 		Channel	*getChannel(const std::string& channelName);
 };

@@ -1,6 +1,6 @@
 # include <Channel.hpp>
 
-Channel::Channel(std::string name) : name(name) {
+Channel::Channel(std::string name) : name(name), _userLimit(-1) {
 
 }
 
@@ -15,10 +15,13 @@ void	Channel::setTopic(const std::string& topic) {
 
 void	Channel::addClient(Client *client) {
 	/* If there is no-one in the channel, make the newest person the owner */
-	if (this->clients.empty()) {
-		this->clients.insert({client, 2});
-	} else {
-		this->clients.insert({client, 0});
+	if (this->clients.size() < _userLimit || _userLimit == -1)
+	{
+		if (this->clients.empty()) {
+			this->clients.insert({client, 2});
+		} else {
+			this->clients.insert({client, 0});
+		}
 	}
 }
 
@@ -70,4 +73,12 @@ bool	Channel::isOperator(Client *client) {
 		// ERROR CLIENT NOT FOUND;
 	}
 	return false;
+}
+
+void	Channel::setUserLimit(int userLimit) {
+	_userLimit = userLimit;
+}
+
+std::string	Channel::getPassword() const {
+	return *_password;
 }

@@ -14,6 +14,8 @@ class Channel {
 		std::map<Client *, int>				clients; // int 0 = users, 1 = operator, 2 = owner
 		std::string							topic;
 		std::map<char, bool>				modes;
+		int									_userLimit;
+		std::string*						_password;
 
 	public:
 		Channel(std::string name);
@@ -25,7 +27,9 @@ class Channel {
 		void	broadcast(Client *sender, const std::string& command, const std::string& message);
 		std::set<Client *> getClients();
 		bool	isOperator(Client *client);
-
+		void	setUserLimit(int userLimit);
+		void	setPassword(const std::string& password);
+		std::string	getPassword() const;
 };
 
 #endif
