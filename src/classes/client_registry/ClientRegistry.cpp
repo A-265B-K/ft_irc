@@ -37,8 +37,11 @@ Client	*ClientRegistry::getClientBySocket(int client_socket) {
 
 Client	*ClientRegistry::getRegisteredClientByNick(std::string nickname) {
 	for (auto const& x : this->clients){
-		if (nickname == x.second->getUser()->getNickname() && x.second->getUser()->isRegistered()) {
-			return x.second;
+		User *user = x.second->getUser();
+		if (user) {
+			if (nickname == user->getNickname() && user->isRegistered()) {
+				return user;
+			}
 		}
 	}
 	return nullptr;
