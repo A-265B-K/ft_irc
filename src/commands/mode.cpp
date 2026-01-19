@@ -39,11 +39,12 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						nick + ' ' + t.str + " :No such channel"
 				);	
 			else if (modestring.empty()) {
+				::printMessage("Channel mode information requested on " + t.str);
+				// TODO
 			//	std::string reply(nick + ' ' + t.str + ' ' + targetChannel->getModestring());
 			//	while (pcit != p.end())
 			//		reply += ' ' + *pcit++;
 
-				::printMessage("MODE information requested on channel " + t.str);
 			//	client->response(
 			//			server.getName(),
 			//			RPL_CHANNELMODEIS,
@@ -51,8 +52,11 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 			//	);
 				// RPL_CREATIONTIME (329) not sent because time functions not allowed by subject
 			}
-			else
-				; // TODO
+			else {
+				::printMessage("Channel mode edition requested on " + t.str);
+
+				// TODO
+			}
 		}
 		else {
 			Client *const targetClient = clientReg.getRegisteredClientByNick(t.str);
@@ -70,7 +74,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						nick + " :Can't " + (modestring.empty() ? "view": "change") + " modes for other users"
 				);
 			else if (modestring.empty()) {
-				::printMessage("MODE information requested by client " + nick);
+				::printMessage("User mode information requested by " + nick);
 
 				client->response(
 						server.getName(),
@@ -79,7 +83,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				);
 			}
 			else {
-				::printMessage("MODE edition requested by client " + nick);
+				::printMessage("User mode edition requested by " + nick);
 
 				std::string changedModes;
 				const int unknownFlags = user->editModes(changedModes, modestring);
