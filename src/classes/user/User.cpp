@@ -56,14 +56,15 @@ bool	User::isRegistered() {
 			hasPassword == false) {
 			return this->registered = false;
 		} else {
-			// TODO: Put this in a proper print function
-			std::cout << "USER REGISTERED" << std::endl;
-			std::cout << "NICKNAME:   " << nickname << std::endl;
-			std::cout << "USERNAME:   " << username << std::endl;
-			std::cout << "HOSTNAME:   " << hostname << std::endl;
-			std::cout << "SERVERNAME: " << servername << std::endl;
-			std::cout << "REALNAME:   " << realname << std::endl;
-			client->response(servername, WELCOME, nickname + " :" + WELCOME_MSG);
+			std::stringstream message;
+			message << "USER REGISTERED" << std::endl
+					<< "NICKNAME:   " << nickname << std::endl
+					<< "USERNAME:   " << username << std::endl
+					<< "HOSTNAME:   " << hostname << std::endl
+					<< "SERVERNAME: " << servername << std::endl
+					<< "REALNAME:   " << realname << std::endl;
+			::printMessage(message.str());
+			client->response(servername, WELCOME, nickname + " :" + WELCOME_MESSAGE);
 			this->registered = true;
 		}
 	}

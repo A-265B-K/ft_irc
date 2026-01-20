@@ -1,6 +1,5 @@
 #include <EventLoop.hpp>
 
-// TODO
 void EventLoop::part(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
