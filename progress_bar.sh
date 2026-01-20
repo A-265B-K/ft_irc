@@ -9,6 +9,6 @@ else
 fi
 
 colour=${colours[$((i % ${#colours[@]}))]}
-printf "\033[${colour}m|\033[0m"
+printf "\033[${colour}m▊\033[0m"
 
 echo $((i + 1)) > "$state_file"

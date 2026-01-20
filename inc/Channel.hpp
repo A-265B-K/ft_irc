@@ -12,7 +12,7 @@ class Channel {
 	private:
 		std::string							name;
 		std::map<Client *, int>				clients; // int 0 = users, 1 = operator, 2 = owner
-		std::string							topic;
+		std::string							_topic;
 		std::map<char, bool>				modes;
 		int									_userLimit; /* -1 means there is no limit */
 		std::string*						_password;
@@ -30,6 +30,7 @@ class Channel {
 		void	setUserLimit(int userLimit);
 		void	setPassword(const std::string& password);
 		std::string	getPassword() const;
+		const std::string& getTopic();
 };
 
 #endif

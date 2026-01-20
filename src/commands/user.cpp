@@ -3,18 +3,15 @@
 // TODO
 void EventLoop::user(Client *client, const std::deque<std::string>& p)
 {
-	/* Check if the correct amount of parameters are present */
-	if (p.size() < 4) {
-		// TODO: send error message
+	User *user = client->getUser();
+	if (!user->isRegistered()) {
+		client->response(server.getName(), ERR_NOTREGISTERED,
+							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-
-
-	User *user = client->getUser();
-
-	/* Send an error message if the user is already registered */
-	if (user->isRegistered() == true) {
-		// TODO: send error message
+	if (p.size() < 4) {
+		client->response(server.getName(), ERR_NEEDMOREPARAMS,
+							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 

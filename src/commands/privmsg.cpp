@@ -5,12 +5,18 @@
 
 void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 {
-	if (!client->getUser()->isRegistered()) {
+	User *user = client->getUser();
+	if (!user->isRegistered()) {
+		client->response(server.getName(), ERR_NOTREGISTERED,
+							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-	if (p.empty()) {
-		return ; // TODO SEND ERROR
+	if (p.size() < 3) {
+		client->response(server.getName(), ERR_NEEDMOREPARAMS,
+							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
+		return ;
 	}
+
 	std::stringstream		sstreamParams(p.front());
 	std::stringstream		sstreamMessage;
 	std::string				tmp;

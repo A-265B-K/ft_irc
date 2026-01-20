@@ -9,6 +9,7 @@
 # include <Message.hpp>
 # include <Server.hpp>
 # include <static_declarations.hpp>
+# include <numerics.hpp>
 
 # include <algorithm>
 # include <deque>

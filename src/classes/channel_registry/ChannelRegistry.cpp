@@ -5,20 +5,24 @@ int ChannelRegistry::isValidChannelName(const std::string& channelName) {
 		return 0;
 	}
 	switch(channelName.front()) {
-		case '#': case '$':
+		case '#': case '&': case '$':
 			break ;
 		default:
 			return 0;			
 	}
-	// TODO: add other channel prefixes and check if no invalid characters
+	if (channelName.find(' ') != std::string::npos ||
+		channelName.find(7)   != std::string::npos ||
+		channelName.find(',') != std::string::npos) {
+		return 0;
+	}
 	return 1;
 }
 
 /* Allows a client to join a channel, if it does not exist it will be created 
-   Return -1 if the supplied channel name isn't valid */
+   Return -1 if the supplied channel name isn't valid, -2 if password is required but not correct  */
 int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client, std::string password) {
 	if (!this->isValidChannelName(channelName)) {
-		// TODO send error
+		std::cout << "TEST" << std::endl;
 		return -1;
 	}
 
@@ -34,7 +38,10 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	if (channel->getPassword() == password) {
 		channel->addClient(client);
 	} else {
-		// TODO error wrong passowrd
+		return -2;
+	}
+	if (!channel->getTopic().empty()) {
+		// TODO send topic
 	}
 	return 0;
 }

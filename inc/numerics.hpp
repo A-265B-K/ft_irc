@@ -1,16 +1,41 @@
 #ifndef NUMERICS_HPP
 # define NUMERICS_HPP
 
-# define WELCOME				001
-# define RPL_UMODEIS			221
-# define RPL_CHANNELMODEIS		324
-# define RPL_PRIVMSG			353
-# define ERR_UNKNOWNERROR		400
-# define ERR_NOSUCHNICK			401
-# define ERR_NOSUCHCHANNEL		403
-# define ERR_INPUTTOOLONG		417
-# define ERR_UNKNOWNCOMMAND		421
-# define ERR_NEEDMOREPARAMS		461
+
+
+
+# define WELCOME					001
+# define WELCOME_MESSAGE			":Welcome to the IRC network"
+
+# define RPL_UMODEIS				221
+
+# define RPL_TOPIC					332
+
+# define RPL_CHANNELMODEIS			324
+
+# define RPL_PRIVMSG				353
+
+# define ERR_UNKNOWNERROR			400
+
+# define ERR_NOSUCHNICK				401
+# define ERR_NOSUCHNICK_MESSAGE 	":Error, no user by that nickname"
+
+# define ERR_NOSUCHCHANNEL			403
+# define ERR_NOSUCHCHANNEL_MESSAGE	":Error, no channel by that name"
+
+# define ERR_INPUTTOOLONG			417
+
+# define ERR_UNKNOWNCOMMAND			421
+
+# define ERR_NOTREGISTERED			451
+# define ERR_NOTREGISTERED_MESSAGE	":You have not registered"
+
+# define ERR_NEEDMOREPARAMS			461
+# define ERR_NEEDMOREPARAMS_MESSAGE	":Not enough parameters"
+
+# define ERR_BADCHANNELKEY			475
+# define ERR_BADCHANNELKEY_MESSAGE	":Error, channel password is wrong"
+
 # define ERR_UMODEUNKNOWNFLAG	501
 # define ERR_USERSDONTMATCH		502
 

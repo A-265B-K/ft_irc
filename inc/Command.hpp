@@ -2,6 +2,7 @@
 # define COMMAND_HPP
 
 # define COMMAND_TABLE	\
+X(CAP, cap)				\
 X(INVITE, invite)		\
 X(JOIN, join)			\
 X(KICK, kick)			\

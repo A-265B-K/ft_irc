@@ -10,7 +10,7 @@ Channel::~Channel() {
 }
 
 void	Channel::setTopic(const std::string& topic) {
-	this->topic = topic;
+	_topic = topic;
 }
 
 void	Channel::addClient(Client *client) {
@@ -50,8 +50,6 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 			 " "  << this->name <<
 			 " :" << message << "\r\n";
 
-	// TODO: Implement check, to ensure that sender has the correct permissions
-
 	for (auto it : this->clients) {
 		Client *recipient = it.first;
 		if (recipient != sender) {
@@ -81,4 +79,8 @@ void	Channel::setUserLimit(int userLimit) {
 
 std::string	Channel::getPassword() const {
 	return *_password;
+}
+
+const std::string& Channel::getTopic() {
+	return _topic;
 }
