@@ -1,6 +1,5 @@
 #include <EventLoop.hpp>
 
-// TODO parse nickname for invalid options
 void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
@@ -11,6 +10,7 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 		return ;
 	}
 
+	// TODO check if nick already exists or if it contains forbidden chars
 	user->setNickname(p.front());
 	user->isRegistered();
 }

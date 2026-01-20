@@ -22,7 +22,8 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 
 	switch (channelReg.joinChannel(channelName, client, password)) {
 		case (1):
-			// TODO send topic
+			client->response(server.getName(), RPL_TOPIC,
+							 user->getNickname() + ' ' + channelName + " :" + channelReg.getChannel(channelName)->getTopic());
 		case (-1):
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
 							 user->getNickname() + ' ' + channelName + ' ' + ERR_NOSUCHCHANNEL_MESSAGE);

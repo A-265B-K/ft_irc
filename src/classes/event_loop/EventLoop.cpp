@@ -70,11 +70,10 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 			const Command comm = m.getCommand();
 
 			if (comm == Command::UNKNOWN)
-// TODO Substitute the "<client>" placeholder with user nickname when User is implemented
 				client->response(
 						server.getName(),
 						ERR_UNKNOWNCOMMAND,
-						std::string("<client>")
+						client->getUser()->getNickname()
 								+ ' ' + m.getParameters().front()
 								+ " :Unknown command"
 				);

@@ -1,6 +1,6 @@
 # include <Channel.hpp>
 
-Channel::Channel(std::string name) : name(name), _userLimit(-1) {
+Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
 
 }
 
@@ -15,25 +15,25 @@ void	Channel::setTopic(const std::string& topic) {
 
 void	Channel::addClient(Client *client) {
 	/* If there is no-one in the channel, make the newest person the owner */
-	if (static_cast<int>(this->clients.size()) < _userLimit || _userLimit == -1)
+	if (static_cast<int>(_clients.size()) < _userLimit || _userLimit == -1)
 	{
-		if (this->clients.empty()) {
-			this->clients.insert({client, 2});
+		if (_clients.empty()) {
+			_clients.insert({client, 2});
 		} else {
-			this->clients.insert({client, 0});
+			_clients.insert({client, 0});
 		}
 	}
 }
 
 /* Removes a client from a channel */
 void	Channel::removeClient(Client *client) {
-	this->clients.erase(client);
+	_clients.erase(client);
 }
 
 std::set<Client *> Channel::getClients() {
 	std::set<Client *> clients;
 
-	for (auto const& x : this->clients){
+	for (auto const& x : _clients){
 		Client *c = x.first;
 		clients.insert(c);
 	}
@@ -47,10 +47,10 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 			 "!~" << user->getUsername() <<
 			 "@"  << user->getHostname() << 
 			 " "  << command <<
-			 " "  << this->name <<
+			 " "  << _name <<
 			 " :" << message << "\r\n";
 
-	for (auto it : this->clients) {
+	for (auto it : _clients) {
 		Client *recipient = it.first;
 		if (recipient != sender) {
 			if (recipient->getUser()->isRegistered()) {
@@ -61,9 +61,9 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 }
 
 bool	Channel::isOperator(Client *client) {
-	auto it = this->clients.find(client);
+	auto it = _clients.find(client);
 
-	if (it != this->clients.end()) {
+	if (it != _clients.end()) {
 		if (it->second >= 1) {
 			return true;
 		}
@@ -83,4 +83,19 @@ std::string	Channel::getPassword() const {
 
 const std::string& Channel::getTopic() {
 	return _topic;
+}
+
+bool Channel::isClientOn(Client *client) {
+	if (client == nullptr) {
+		return false;
+	}
+	if (_clients.find(client) == _clients.end()) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+const std::string& Channel::getName() {
+	return _name;
 }

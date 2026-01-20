@@ -10,8 +10,8 @@ class Client;
 
 class Channel {
 	private:
-		std::string							name;
-		std::map<Client *, int>				clients; // int 0 = users, 1 = operator, 2 = owner
+		std::string							_name;
+		std::map<Client *, int>				_clients; // int 0 = users, 1 = operator, 2 = owner
 		std::string							_topic;
 		std::map<char, bool>				modes;
 		int									_userLimit; /* -1 means there is no limit */
@@ -31,6 +31,8 @@ class Channel {
 		void	setPassword(const std::string& password);
 		std::string	getPassword() const;
 		const std::string& getTopic();
+		bool 	isClientOn(Client *client);
+		const std::string& getName();
 };
 
 #endif

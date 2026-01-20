@@ -29,9 +29,8 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 				const std::string error("Message::BadMessageException: ");
 
 				printMessage(error + e.what());
-// TODO Substitute the "<client>" placeholder with user nickname when User is implemented
 				handleWritable(Message(serverName, e._numeric,
-						std::string("<client>") + " :" + e.what()));
+						this->user->getNickname() + " :" + e.what()));
 			}
 
 		input_buffer.erase(0, pos + 2);

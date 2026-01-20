@@ -41,7 +41,7 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 		return -2;
 	}
 	if (!channel->getTopic().empty()) {
-		// TODO send topic
+		return  1;
 	}
 	return 0;
 }
@@ -55,7 +55,6 @@ int	ChannelRegistry::partChannel(const std::string& channelName, Client *client)
 	} else {
 		it->second->removeClient(client);
 		if (!it->second) {
-			// TODO: delete channel
 			this->channels.erase(channelName);
 		}
 		return 1;
