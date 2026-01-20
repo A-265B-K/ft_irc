@@ -28,7 +28,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 			continue ;
 		}
 		/* If the parameters is a channel, check if it exists, if so request the list of users subscribed to that channel and add it to the users set */
-		if (tmp.front() == '#') {// TODO: add the other channel starting chars 
+		if (channelReg.isValidChannelName(tmp)) {
 			channel = this->channelReg.getChannel(tmp);
 			if (channel) {
 				channel->broadcast(client, "PRIVMSG", sstreamMessage.str());

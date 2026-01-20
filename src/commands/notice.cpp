@@ -1,13 +1,41 @@
 #include <EventLoop.hpp>
 
 // TODO
+
 void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 {
-/*
-  Help can be found (I hope) in `command_help.txt'.
+	if (!client->getUser()->isRegistered()) {
+		return ;
+	}
+	if (p.empty()) {
+		return ; // TODO SEND ERROR
+	}
+	std::stringstream		sstreamParams(p.front());
+	std::stringstream		sstreamMessage;
+	std::string				tmp;
 
-  Ideally, some descriptive account of the server's doings should be logged. As
-  a placeholder...
-*/
-	::printMessage("NOTICE");
+	Channel *channel;
+	Client	*recipient;
+
+	for (size_t i = 0; i < p.size(); ++i) {
+		if (i != 0) sstreamMessage << p[i];
+	}
+
+	/* Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
+	while (std::getline(sstreamParams, tmp, ',')) {
+		if (tmp.empty()) {
+			continue ;
+		}
+		/* If the parameters is a channel, check if it exists, if so request the list of users subscribed to that channel and add it to the users set */
+		if (channelReg.isValidChannelName(tmp)) {
+			channel = this->channelReg.getChannel(tmp);
+			if (channel) {
+				channel->broadcast(client, "NOTICE", sstreamMessage.str());
+			} else {
+				// TODO: send error code, channel does not exist.
+			}
+		} else { /* Check if the user exists and is registered, and then add it to the users set */
+			// TODO: send error code
+			}
+	}
 }
