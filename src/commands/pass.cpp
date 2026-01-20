@@ -1,6 +1,5 @@
 #include <EventLoop.hpp>
 
-// TODO
 void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
@@ -9,9 +8,19 @@ void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 							 user->getNickname() + " KICK " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
-	// TODO add error if already registered
-	if (p.front() == server.getPassword()) {
-		user->setHasPassword();
+
+	if (user->isRegistered()) {
+		client->response(server.getName(), ERR_ALREADYREGISTERED,
+						 user->getNickname() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
+		return ;
 	}
+
+	if (!(p.front() == server.getPassword())) {
+		client->response(server.getName(), ERR_PASSWDMISMATCH,
+						 user->getNickname() + ' ' + ERR_PASSWDMISMATCH_MESSAGE);
+		return ;
+	}
+	
+	user->setHasPassword();
 	user->isRegistered();
 }

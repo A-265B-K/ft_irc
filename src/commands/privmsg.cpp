@@ -39,7 +39,9 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 			if (channel) {
 				channel->broadcast(client, "PRIVMSG", sstreamMessage.str());
 			} else {
-				// TODO: send error code, channel does not exist.
+				client->response(server.getName(), ERR_NOSUCHCHANNEL,
+					user->getNickname() + ' ' + channel->getName()
+						+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 			}
 		} else { /* Check if the user exists and is registered, and then add it to the users set */
 			recipient = this->clientReg.getRegisteredClientByNick(tmp);

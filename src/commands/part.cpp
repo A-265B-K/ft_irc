@@ -31,14 +31,19 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 		}
 		/* If the parameters is a channel, check if it exists, if so request the list of users subscribed to that channel and add it to the users set */
 		channel = this->channelReg.getChannel(tmp);
-		if (channel) {
-			if (this->channelReg.partChannel(tmp, client)) {
-					// TODO: send succesfull part message
-			} else {
-				// TODO SEND ERR_NOTONCHANNEL
-			}
-		} else {
-			// TODO ERR_NOSUCHCHANNEL:
+		if (!channel) {
+			client->response(server.getName(), ERR_NOSUCHCHANNEL,
+							user->getNickname() + ' ' + channel->getName()
+							+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
+			continue ;
 		}
+		if (!channel->isClientOn(client)) {
+			client->response(server.getName(), ERR_NOTONCHANNEL,
+							user->getNickname() + ' ' + channel->getName()
+							+ ' ' + ERR_NOTONCHANNEL_MESSAGE);
+			continue ;
+		}
+		
+		this->channelReg.partChannel(tmp, client);
 	}
 }

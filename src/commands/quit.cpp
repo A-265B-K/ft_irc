@@ -3,16 +3,10 @@
 // TODO
 void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 {
-	if (p.size() > 1) {
-		// send error message
-		return ;
-	}
-	if (p.size() == 1) {
-		// sendm message to clients
-	}
+	// TODO send message to channels member was a part of
+	(void)p;
 
-	// Kick the client
-	// remove client from channels
+	// TODO send ERROR
 	int	clientSocket = client->getSocket();
 	this->removeEvent(clientSocket);
 	this->clientReg.removeClient(clientSocket);

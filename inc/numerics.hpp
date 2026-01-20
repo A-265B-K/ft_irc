@@ -39,6 +39,12 @@
 # define ERR_NEEDMOREPARAMS					461
 # define ERR_NEEDMOREPARAMS_MESSAGE			":Not enough parameters"
 
+# define ERR_ALREADYREGISTERED				462
+# define ERR_ALREADYREGISTERED_MESSAGE		":You may not reregister"
+
+# define ERR_PASSWDMISMATCH					464
+# define ERR_PASSWDMISMATCH_MESSAGE			":Password incorrect"
+
 # define ERR_BADCHANNELKEY						475
 # define ERR_BADCHANNELKEY_MESSAGE			":Error, channel password is wrong"
 
