@@ -38,7 +38,7 @@ $(NAME) :: $(MKFILE)
 	@if [ -f "$@" ]; then $(MAKE) --no-print-directory fclean; fi
 
 $(NAME) :: $(OBJ)
-	@$(CXX) $^ -o $@
+	@$(CXX) $^ -o $@ $(CXXFLAGS)
 	@echo
 	@echo "$(NAME) built!"
 
@@ -61,6 +61,5 @@ re : fclean all
 # build prerequisites ----------------------------------------------------------
 
 $(DIROBJ)/%.o : %.cpp
-	@$(CPP) $(CPPFLAGS) $< -MM -MQ $@ -MF $(DIRDEP)/$(*F).d
-	@$(CXX) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(DIRDEP)/$(*F).d -c $< -o $@
 	@echo "|\c"

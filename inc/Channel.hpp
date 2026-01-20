@@ -14,7 +14,7 @@ class Channel {
 		std::map<Client *, int>				clients; // int 0 = users, 1 = operator, 2 = owner
 		std::string							topic;
 		std::map<char, bool>				modes;
-		int									_userLimit;
+		int									_userLimit; /* -1 means there is no limit */
 		std::string*						_password;
 
 	public:

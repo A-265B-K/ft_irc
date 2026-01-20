@@ -39,7 +39,7 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 }
 
 void	Client::handleWritable(const Message& message) const {
-	ssize_t bytes = send(client_socket, message.build().data(), message.length,
+	size_t bytes = send(client_socket, message.build().data(), message.length,
 			MSG_DONTWAIT | MSG_NOSIGNAL);
 
 	if (bytes == message.length)

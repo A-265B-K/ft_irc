@@ -4,7 +4,7 @@
 void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 {
 	if (p.size() != 1) {
-		// send error message
+		// TODO: send error message
 		return ;
 	}
 

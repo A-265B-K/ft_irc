@@ -15,7 +15,7 @@ void	Channel::setTopic(const std::string& topic) {
 
 void	Channel::addClient(Client *client) {
 	/* If there is no-one in the channel, make the newest person the owner */
-	if (this->clients.size() < _userLimit || _userLimit == -1)
+	if (static_cast<int>(this->clients.size()) < _userLimit || _userLimit == -1)
 	{
 		if (this->clients.empty()) {
 			this->clients.insert({client, 2});

@@ -15,7 +15,6 @@ void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 	std::string				tmp;
 
 	Channel *channel;
-	Client	*recipient;
 
 	for (size_t i = 0; i < p.size(); ++i) {
 		if (i != 0) sstreamMessage << p[i];

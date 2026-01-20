@@ -2,8 +2,6 @@
 # define COMMAND_HPP
 
 # define COMMAND_TABLE	\
-X(CAP, cap)				\
-X(DEBUG, debug)			\
 X(INVITE, invite)		\
 X(JOIN, join)			\
 X(KICK, kick)			\
@@ -13,7 +11,6 @@ X(NOTICE, notice)		\
 X(PART, part)			\
 X(PASS, pass)			\
 X(PING, ping)			\
-X(PONG, pong)			\
 X(PRIVMSG, privmsg)		\
 X(QUIT, quit)			\
 X(TOPIC, topic)			\

@@ -1,6 +1,6 @@
 # include <ChannelRegistry.hpp>
 
-const int ChannelRegistry::isValidChannelName(const std::string& channelName) {
+int ChannelRegistry::isValidChannelName(const std::string& channelName) {
 	if (channelName.empty()) {
 		return 0;
 	}
