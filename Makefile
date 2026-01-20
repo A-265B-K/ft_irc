@@ -1,3 +1,5 @@
+$(shell rm -f .step_state)
+
 # tools & flags ----------------------------------------------------------------
 
 CXX 		:= c++
@@ -29,6 +31,10 @@ SRC			!= cat src.list
 OBJ			= $(addprefix $(DIROBJ)/, $(SRC:.cpp=.o))
 
 MKFILE		= $(lastword $(MAKEFILE_LIST))
+
+# colours
+
+
 
 # primary targets --------------------------------------------------------------
 
@@ -62,4 +68,4 @@ re : fclean all
 
 $(DIROBJ)/%.o : %.cpp
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(DIRDEP)/$(*F).d -c $< -o $@
-	@echo "|\c"
+	@./progress_bar.sh
