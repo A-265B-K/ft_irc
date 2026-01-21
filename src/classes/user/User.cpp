@@ -74,11 +74,9 @@ bool	User::isRegistered() {
 /*
  i: invisible user mode
  o: oper user moder
- O: local oper user mode
  r: registered user mode
- w: WALLOPS user mode
 */
-const std::string User::flags{"ioOrw"};
+const std::string User::flags{"ior"};
 
 // 1 mode set, 0 mode unset, -1 mode unrecognized
 int User::isMode(char c) const
@@ -129,9 +127,9 @@ int User::editModes(std::string& changedModes, const std::string& modestring)
 			switch (isMode(*cit)) {
 			case 0: 
 				setMode(*cit);
-				// NOTE: +o and +O are technically not allowed
-				//	in the MODE command, but the subject does not
-				//	require the appropriate OPER command
+				// NOTE: +o is technically not allowed by
+				//  the MODE command, but the subject does not
+				//  require the appropriate OPER command
 				changedModes += *cit;
 			case 1: break;
 			default: unknownFlag++;
@@ -145,8 +143,8 @@ int User::editModes(std::string& changedModes, const std::string& modestring)
 			switch (isMode(*cit)) {
 			case 1: 
 				unsetMode(*cit);
-				// NOTE: However, a user may -o or -O itself
-				//  through a MODE command
+				// NOTE: However, a user may -o itself through
+				//  a MODE command
 				changedModes += *cit;
 			case 0: break;
 			default: unknownFlag++;
