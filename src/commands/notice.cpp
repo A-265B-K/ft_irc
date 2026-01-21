@@ -1,7 +1,5 @@
 #include <EventLoop.hpp>
 
-// TODO
-
 void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
@@ -39,7 +37,7 @@ void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 			} else {
 				// TODO: send error code, channel does not exist.
 			}
-		} else { /* Check if the user exists and is registered, and then add it to the users set */
+		} else {
 			// TODO: send error code
 			}
 	}

@@ -17,6 +17,7 @@ int	main(int ac, char **av) {
 	ClientRegistry	clientRegistry;
 	EventLoop		eventLoop(server, channelRegistry, clientRegistry);
 
+	// TODO add signals
 	server.setToPassive();
 	eventLoop.run();
 

@@ -34,6 +34,7 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 							 user->getNickname() + ' ' + channelName + ' ' + ERR_BADCHANNELKEY_MESSAGE);
 			break;
 		default:
-			return ;
+			break ;
 	}
+	return ;
 }
