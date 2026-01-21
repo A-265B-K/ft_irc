@@ -19,7 +19,7 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 	if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
 							user->getNickname() + ' ' + 
-							channel->getName() + ' ' +
+							p.front() + ' ' +
 							ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;
 	}
@@ -40,10 +40,7 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 							RPL_NOTOPIC_MESSAGE);
 			return ;
 		} else {
-			client->response(server.getName(), RPL_TOPIC,
-							user->getNickname() + ' ' + 
-							channel->getName() + ' ' +
-							topic);
+			channel->sendTopic(client);
 			return ;
 		}
 	}
@@ -55,9 +52,14 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 		return ;
 	}
 
-	// TODO make to topic is entire string
-	channel->setTopic(client, p.back());
-	::printMessage("Set " + channel->getName() + " topic to " + p.back() );
+	std::deque<std::string>::const_iterator it = p.begin();
+	it++;
+	std::string topic = "";
+	while (it != p.end())
+		topic += *it++;
+
+	channel->setTopic(client, topic);
+	::printMessage("Set " + channel->getName() + " topic to " + topic );
 
 	std::set<Client *> clients = channel->getClients();
 

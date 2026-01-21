@@ -1,4 +1,5 @@
 # include <Channel.hpp>
+# include <ctime>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
 
@@ -10,10 +11,9 @@ Channel::~Channel() {
 }
 
 void	Channel::setTopic(Client *setter, const std::string& topic) {
-//	_topicTime = getTime();
 	_topic = topic;
-// TODO SET TOPIC TIME
 	_topicSetter = setter->getUser()->getNickname();
+	_topicTime = std::to_string(std::time(nullptr));
 }
 
 void	Channel::addClient(Client *client) {
@@ -108,7 +108,7 @@ void	Channel::sendTopic(Client *recipient) {
 
 	recipient->handleWritable(std::to_string(RPL_TOPIC) + ' ' +
 								user->getNickname() + ' ' +
-								_name + ' ' +
+								_name + " :" +
 								_topic + "\r\n");
 	recipient->handleWritable(std::to_string(RPL_TOPICWHOTIME) + ' ' +
 								user->getNickname() + ' ' +
