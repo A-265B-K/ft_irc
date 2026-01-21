@@ -21,8 +21,9 @@ void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 		client->response(server.getName(), ERR_PASSWDMISMATCH,
 						 user->getNickname() + ' ' + ERR_PASSWDMISMATCH_MESSAGE);
 		return ;
+
+		// TODO quit connection
 	}
 	
 	user->setHasPassword();
-	user->isRegistered();
 }

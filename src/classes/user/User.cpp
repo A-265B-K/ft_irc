@@ -172,3 +172,7 @@ bool	User::isNicknameValid(const std::string &nickname) {
 			return true;
 	}
 }
+
+bool	User::getHasPassword() {
+	return hasPassword;
+}

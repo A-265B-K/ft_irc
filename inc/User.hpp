@@ -55,6 +55,7 @@ class User {
 		std::string getHostname();
 		std::string getServername();
 		std::string getRealname();
+		bool		getHasPassword();
 
 };
 
