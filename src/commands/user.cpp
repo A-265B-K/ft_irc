@@ -3,11 +3,14 @@
 void EventLoop::user(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
-	if (!user->isRegistered()) {
-		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+
+	if (!user->getHasPassword()) {
+		client->response(server.getName(), ERR_PASSWDMISMATCH,
+						 user->getNickname() + ' ' + ERR_PASSWDMISMATCH_MESSAGE);
+		this->markClientForRemoval(client);
 		return ;
 	}
+
 	if (p.size() < 4) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		

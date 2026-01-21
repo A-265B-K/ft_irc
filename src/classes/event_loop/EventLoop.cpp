@@ -23,12 +23,16 @@ int EventLoop::run()
 			} else {
 				Client *const client = clientReg.getClientBySocket(event_socket);
 
+				if (!client) {
+					continue ;
+				}
 				if (client->socketIsReadable()) { // for now isreadable always returns 1
 					client->handleReadable(server.getName(), incomingMessages);
 				}
 				processMessages(client, incomingMessages);
 				incomingMessages.clear();
 			}
+			this->removeClients();
 		}
 	}
 
@@ -88,4 +92,22 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 		else
 			client->printMessage("Numeric reply from client silently dropped");
 	});
+
+}
+
+void	EventLoop::removeClients() {
+	for (Client* client : _clientsToRemove) {
+		removeEvent(client->getSocket());
+		channelReg.removeClient(client);
+		clientReg.removeClient(client->getSocket());
+	}
+	_clientsToRemove.clear();
+}
+
+
+void	EventLoop::markClientForRemoval(Client *client) {
+	if (!client->requestedDisconnect()) {
+		client->markForRemoval();
+		_clientsToRemove.push_back(client);
+	}
 }

@@ -11,7 +11,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-	if (p.size() < 3) {
+	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
@@ -43,9 +43,9 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 					user->getNickname() + ' ' + channel->getName()
 						+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 			}
-		} else { /* Check if the user exists and is registered, and then add it to the users set */
-			recipient = this->clientReg.getRegisteredClientByNick(tmp);
-			if (recipient) {
+		} else {
+			recipient = this->clientReg.getClientByNick(tmp);
+			if (recipient && recipient->getUser()->isRegistered()) {
 				// TODO: send private message
 			} else {
 				// TODO: send error code, user does not exist.

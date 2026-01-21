@@ -27,13 +27,16 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	}
 
 	Channel *channel;
-	auto it = this->channels.find(channelName);
+	auto it = _channels.find(channelName);
 
-	if (it == this->channels.end()) {
+	if (it == _channels.end()) {
 		channel = new Channel(channelName);
-		this->channels[channelName] = channel;
+		_channels[channelName] = channel;
 	} else {
 		channel = it->second;
+	}
+	if (channel->isClientOn(client)) {
+		return 0;
 	}
 	if (channel->getPassword() == password) {
 		channel->addClient(client);
@@ -48,14 +51,14 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 
 /* Removes a cient from a channel */
 int	ChannelRegistry::partChannel(const std::string& channelName, Client *client) {
-	auto it = this->channels.find(channelName);
+	auto it = _channels.find(channelName);
 
-	if (it != this->channels.end()) {
+	if (it != _channels.end()) {
 		return 0;
 	} else {
 		it->second->removeClient(client);
 		if (!it->second) {
-			this->channels.erase(channelName);
+			_channels.erase(channelName);
 		}
 		return 1;
 	}
@@ -63,6 +66,12 @@ int	ChannelRegistry::partChannel(const std::string& channelName, Client *client)
 
 /* Returns a pointer to a channel if it exists in the registry, else it returns nullptr */
 Channel	*ChannelRegistry::getChannel(const std::string& channelName) {
-	auto it = this->channels.find(channelName);
-	return (it != this->channels.end()) ? it->second : nullptr;
+	auto it = _channels.find(channelName);
+	return (it != _channels.end()) ? it->second : nullptr;
+}
+
+void	ChannelRegistry::removeClient(Client *client) {
+	for (auto const& channel : _channels) {
+		partChannel(channel.first, client);
+	}
 }

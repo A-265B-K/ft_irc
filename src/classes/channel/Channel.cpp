@@ -1,4 +1,5 @@
 # include <Channel.hpp>
+# include <ctime>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
 
@@ -9,8 +10,10 @@ Channel::~Channel() {
 
 }
 
-void	Channel::setTopic(const std::string& topic) {
+void	Channel::setTopic(Client *setter, const std::string& topic) {
 	_topic = topic;
+	_topicSetter = setter->getUser()->getNickname();
+	_topicTime = std::to_string(std::time(nullptr));
 }
 
 void	Channel::addClient(Client *client) {
@@ -78,7 +81,7 @@ void	Channel::setUserLimit(int userLimit) {
 }
 
 std::string	Channel::getPassword() const {
-	return *_password;
+	return _password;
 }
 
 const std::string& Channel::getTopic() {
@@ -98,4 +101,22 @@ bool Channel::isClientOn(Client *client) {
 
 const std::string& Channel::getName() {
 	return _name;
+}
+
+void	Channel::sendTopic(Client *recipient) {
+	User *user = recipient->getUser();
+
+	recipient->handleWritable(std::to_string(RPL_TOPIC) + ' ' +
+								user->getNickname() + ' ' +
+								_name + " :" +
+								_topic + "\r\n");
+	recipient->handleWritable(std::to_string(RPL_TOPICWHOTIME) + ' ' +
+								user->getNickname() + ' ' +
+								_name + ' ' +
+								_topicSetter + ' ' +
+								_topicTime + "\r\n");
+}
+
+bool	Channel::topicRequiresOperator() {
+	return true; // TODO fix this logic
 }

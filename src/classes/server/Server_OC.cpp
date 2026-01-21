@@ -10,7 +10,7 @@ Server::Server(uint16_t port, const std::string& password): port(port), password
 {
 	this->name = "ft_irc";
 	this->version = 0;
-	this->server_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0); // check if this can fail and set to nonblock
+	this->server_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP); // TODO THIS CAN FAIL!! MOVE OUT OF HERE (note to self, roger if u read this image the tone of voice is calmer :) 
 
 	std::ostringstream output;
 
@@ -22,6 +22,12 @@ void Server::setToPassive()
 {
 	std::ostringstream output;
 	std::ostringstream addresses;
+
+	int opt = 1;
+	if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+		std::cerr << RED << "Setting socket options failed: " << std::strerror(errno) << RESET << std::endl;
+		exit(1);
+	}
 
 	/* Creating a variable for the addresses to be printed later */
 	char hostname[256];
@@ -44,7 +50,7 @@ void Server::setToPassive()
 	output << BLUE << "Binding to addresses:" << std::endl << addresses.str();
 	::printMessage(output.str());
 	if (bind(server_socket, (struct sockaddr*)&address, sizeof(address)) < 0) {
-		std::cerr << "Bind failed: " << std::strerror(errno) << std::endl;
+		std::cerr << RED << "Bind failed: " << std::strerror(errno) << RESET << std::endl;
 		exit(1);
 	}
 	output.str("");

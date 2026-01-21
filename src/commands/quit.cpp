@@ -7,9 +7,7 @@ void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 	(void)p;
 
 	// TODO send ERROR
-	int	clientSocket = client->getSocket();
-	this->removeEvent(clientSocket);
-	this->clientReg.removeClient(clientSocket);
+	this->markClientForRemoval(client);
 /*
   Help can be found (I hope) in `command_help.txt'.
 

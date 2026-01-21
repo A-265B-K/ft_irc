@@ -1,4 +1,4 @@
-#include "Message.hpp"
+#include <Message.hpp>
 
 typedef std::array<std::string, COMMANDS> arrayS_t;
 typedef std::array<Command, COMMANDS> arrayC_t;

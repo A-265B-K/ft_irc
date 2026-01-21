@@ -34,6 +34,7 @@ class User {
 		~User();
 
 		bool		isRegistered();
+		bool		isNicknameValid(const std::string &nickname);
 
 		// 1 mode set, 0 mode unset, -1 mode unrecognized
 		int			isMode(char) const;
@@ -54,6 +55,7 @@ class User {
 		std::string getHostname();
 		std::string getServername();
 		std::string getRealname();
+		bool		getHasPassword();
 
 };
 

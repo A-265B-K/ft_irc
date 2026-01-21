@@ -10,7 +10,6 @@
 # define RESET "\033[0m"
 
 
-# define WELCOME_MSG "Welcome to the IRC network"
 # define RUNNING 1		// boolean TRUE
 # define MAX_EVENTS 5	// maximum events returned by epoll_wait
 # define TIMEOUT 300000	// wait timeout in milliseconds

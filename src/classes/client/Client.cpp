@@ -11,15 +11,15 @@ int	Client::socketIsWritable() const {
 void	Client::handleReadable(const std::string& serverName, std::deque<Message>& messages)
 {
 	char	data[IBUFFER];
-	ssize_t	bytes = recv(client_socket, data, IBUFFER, 0); // replace with diff fucntion
+	ssize_t	bytes = recv(_clientSocket, data, IBUFFER, 0); // replace with diff fucntion
 
 	if (bytes <= 0) { return ; }
 	// if data EOF disconnect client
-	input_buffer.append(data, bytes);
+	_inputBuffer.append(data, bytes);
 
 	std::string::size_type pos;
-	while ((pos = input_buffer.find(CRLF)) != std::string::npos) {
-		const std::string line(input_buffer.substr(0, pos + 2));
+	while ((pos = _inputBuffer.find(CRLF)) != std::string::npos) {
+		const std::string line(_inputBuffer.substr(0, pos + 2));
 
 		if (line.length() != 2) // empty commands ("\r\n") are silently dropped
 			try {
@@ -30,15 +30,15 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 
 				printMessage(error + e.what());
 				handleWritable(Message(serverName, e._numeric,
-						this->user->getNickname() + " :" + e.what()));
+						_user->getNickname() + " :" + e.what()));
 			}
 
-		input_buffer.erase(0, pos + 2);
+		_inputBuffer.erase(0, pos + 2);
 	}
 }
 
 void	Client::handleWritable(const Message& message) const {
-	size_t bytes = send(client_socket, message.build().data(), message.length,
+	size_t bytes = send(_clientSocket, message.build().data(), message.length,
 			MSG_DONTWAIT | MSG_NOSIGNAL);
 
 	if (bytes == message.length)
@@ -57,18 +57,26 @@ void Client::printMessage(const std::string& text) const
 {
 	std::ostringstream output;
 
-	output << '[' << address << "] " << text;
+	output << GREEN << '[' << _address << "] " << RESET << text;
 	::printMessage(output.str());
 }
 
 int	Client::getSocket() {
-	return this->client_socket;
+	return _clientSocket;
 }
 
 std::string	Client::getAddress() {
-	return this->address;
+	return _address;
 }
 
 User	*Client::getUser() {
-	return this->user;
+	return _user;
+}
+
+void	Client::markForRemoval() {
+	_requestedDisconnect = true;
+}
+
+bool	Client::requestedDisconnect() {
+	return _requestedDisconnect;
 }

@@ -64,7 +64,7 @@ bool	User::isRegistered() {
 					<< "SERVERNAME: " << servername << std::endl
 					<< "REALNAME:   " << realname << std::endl;
 			::printMessage(message.str());
-			client->response(servername, WELCOME, nickname + " :" + WELCOME_MESSAGE);
+			client->response(servername, WELCOME, nickname + " " + WELCOME_MESSAGE);
 			this->registered = true;
 		}
 	}
@@ -160,4 +160,17 @@ int User::editModes(std::string& changedModes, const std::string& modestring)
 		changedModes.clear();
 
 	return unknownFlag;
+}
+
+bool	User::isNicknameValid(const std::string &nickname) {
+	switch(nickname.front()) {
+		case '#': case '&': case '$': case ':': case ' ':
+			return false;
+		default:
+			return true;
+	}
+}
+
+bool	User::getHasPassword() {
+	return hasPassword;
 }

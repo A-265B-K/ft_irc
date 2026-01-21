@@ -9,7 +9,12 @@
 
 # define RPL_UMODEIS						221
 
+# define RPL_NOTOPIC						331
+# define RPL_NOTOPIC_MESSAGE				":No topic is set"
+
 # define RPL_TOPIC							332
+
+# define RPL_TOPICWHOTIME					333
 
 # define RPL_CHANNELMODEIS					324
 
@@ -26,6 +31,12 @@
 # define ERR_INPUTTOOLONG					417
 
 # define ERR_UNKNOWNCOMMAND					421
+
+# define ERR_ERRONEUSNICKNAME				432
+# define ERR_ERRONEUSNICKNAME_MESSAGE		":Nickname already in use"
+
+# define ERR_NICKNAMEINUSE					433
+# define ERR_NICKNAMEINUSE_MESSAGE			":Nickname is already in use"
 
 # define ERR_USERNOTINCHANNEL				441
 # define ERR_USERNOTINCHANNEL_MESSAGE		":They're not on that channel"

@@ -18,22 +18,22 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 	std::string channelName = p.front();
 	std::string password;
 
-	p.size() == 2 ? password = p.back() : nullptr;
+	p.size() == 2 ? password = p.back() : "";
 
 	switch (channelReg.joinChannel(channelName, client, password)) {
 		case (1):
-			client->response(server.getName(), RPL_TOPIC,
-							 user->getNickname() + ' ' + channelName + " :" + channelReg.getChannel(channelName)->getTopic());
-			break;
+			channelReg.getChannel(channelName)->sendTopic(client);
+			break ;
 		case (-1):
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
 							 user->getNickname() + ' ' + channelName + ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
-			break;
+			break ;
 		case (-2):
 			client->response(server.getName(), ERR_BADCHANNELKEY,
 							 user->getNickname() + ' ' + channelName + ' ' + ERR_BADCHANNELKEY_MESSAGE);
-			break;
+			break ;
 		default:
-			return ;
+			break ;
 	}
+	return ;
 }
