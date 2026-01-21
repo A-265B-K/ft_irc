@@ -13,7 +13,7 @@ class ClientRegistry {
 		int		addClient(int serverSocket);
 		Client	*getClientBySocket(int clientSocket);
 		void	removeClient(int clientSocket);
-		Client	*getRegisteredClientByNick(std::string nickname);
+		Client	*getClientByNick(std::string nickname);
 };
 
 #endif

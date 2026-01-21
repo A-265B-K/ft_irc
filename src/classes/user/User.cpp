@@ -163,3 +163,12 @@ int User::editModes(std::string& changedModes, const std::string& modestring)
 
 	return unknownFlag;
 }
+
+bool	User::isNicknameValid(const std::string &nickname) {
+	switch(nickname.front()) {
+		case '#': case '&': case '$': case ':': case ' ':
+			return false;
+		default:
+			return true;
+	}
+}

@@ -59,7 +59,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 			}
 		}
 		else {
-			Client *const targetClient = clientReg.getRegisteredClientByNick(t.str);
+			Client *const targetClient = clientReg.getClientByNick(t.str);
 
 			if (!targetClient)
 				client->response(
