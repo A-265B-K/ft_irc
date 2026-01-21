@@ -18,6 +18,7 @@
 # include <sys/epoll.h>
 # include <sys/socket.h>
 # include <unistd.h>
+# include <vector>
 
 class EventLoop {
 	Server				server;
@@ -25,6 +26,7 @@ class EventLoop {
 	ClientRegistry		clientReg;
 	struct epoll_event	events[MAX_EVENTS];
 	int					epoll_fd;
+	std::vector<Client*> _clientsToRemove;
 
 	typedef	void (EventLoop::*command_t)(Client*, const std::deque<std::string>&);
 # define X(A, B) &EventLoop::B,
@@ -36,6 +38,8 @@ class EventLoop {
 	void	processMessages(Client*, const std::deque<Message>&);
 	int		waitForEvents();
 	void 	sendMessageToClientList(Client *sender, std::set<Client *> recipients, std::string message);
+	void	removeClients();
+	void	markClientForRemoval(Client *client);
 
 # define X(A, B) void B(Client*, const std::deque<std::string>&);
 	COMMAND_TABLE

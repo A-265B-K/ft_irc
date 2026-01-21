@@ -64,7 +64,7 @@ bool	User::isRegistered() {
 					<< "SERVERNAME: " << servername << std::endl
 					<< "REALNAME:   " << realname << std::endl;
 			::printMessage(message.str());
-			client->response(servername, WELCOME, nickname + " :" + WELCOME_MESSAGE);
+			client->response(servername, WELCOME, nickname + " " + WELCOME_MESSAGE);
 			this->registered = true;
 		}
 	}

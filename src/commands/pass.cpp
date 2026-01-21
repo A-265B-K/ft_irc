@@ -10,7 +10,6 @@ void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 		return ;
 	}
 
-
 	if (p.size() < 1) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							 user->getNickname() + " KICK " + ERR_NEEDMOREPARAMS_MESSAGE);		
@@ -20,9 +19,8 @@ void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 	if (!(p.front() == server.getPassword())) {
 		client->response(server.getName(), ERR_PASSWDMISMATCH,
 						 user->getNickname() + ' ' + ERR_PASSWDMISMATCH_MESSAGE);
+		client->markForRemoval();
 		return ;
-
-		// TODO quit connection
 	}
 	
 	user->setHasPassword();

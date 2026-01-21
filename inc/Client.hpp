@@ -5,6 +5,7 @@
 # include <sstream>
 # include <string>
 # include <sys/socket.h>
+# include <unistd.h>
 
 # include <Message.hpp>
 # include <function_declarations.hpp>
@@ -19,11 +20,12 @@ class User;
 
 class Client {
 	private:
-		std::string		netwide_id; // see if this can be set to be more CPP, as well as the requirements
-		int				client_socket;
-		std::string		address;
-		std::string		input_buffer;
-		User			*user;
+		std::string		_netwideID; // see if this can be set to be more CPP, as well as the requirements
+		int				_clientSocket;
+		std::string		_address;
+		std::string		_inputBuffer;
+		User			*_user;
+		bool			_requestedDisconnect;
 
 	public:
 		Client() = delete;
@@ -40,6 +42,8 @@ class Client {
 		void	handleWritable(const Message&) const;
 		void	printMessage(const std::string&) const;
 		User	*getUser();
+		void	markForRemoval();
+		bool	requestedDisconnect();
 };
 
 

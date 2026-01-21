@@ -7,7 +7,7 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 	if (!user->getHasPassword()) {
 		client->response(server.getName(), ERR_PASSWDMISMATCH,
 						 user->getNickname() + ' ' + ERR_PASSWDMISMATCH_MESSAGE);
-		// todo quit conneciton
+		this->markClientForRemoval(client);
 		return ;
 	}
 
