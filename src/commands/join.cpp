@@ -18,7 +18,7 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 	std::string channelName = p.front();
 	std::string password;
 
-	p.size() == 2 ? password = p.back() : nullptr;
+	p.size() == 2 ? password = p.back() : "";
 
 	switch (channelReg.joinChannel(channelName, client, password)) {
 		case (1):

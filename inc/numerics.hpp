@@ -9,7 +9,12 @@
 
 # define RPL_UMODEIS						221
 
+# define RPL_NOTOPIC						331
+# define RPL_NOTOPIC_MESSAGE				":No topic is set"
+
 # define RPL_TOPIC							332
+
+# define RPL_TOPICWHOTIME					333
 
 # define RPL_CHANNELMODEIS					324
 

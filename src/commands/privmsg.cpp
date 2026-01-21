@@ -11,7 +11,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-	if (p.size() < 3) {
+	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
