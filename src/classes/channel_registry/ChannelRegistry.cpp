@@ -35,6 +35,9 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	} else {
 		channel = it->second;
 	}
+	if (channel->isClientOn(client)) {
+		return 0;
+	}
 	if (channel->getPassword() == password) {
 		channel->addClient(client);
 	} else {

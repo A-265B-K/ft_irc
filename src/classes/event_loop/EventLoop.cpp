@@ -32,8 +32,8 @@ int EventLoop::run()
 				processMessages(client, incomingMessages);
 				incomingMessages.clear();
 			}
+			this->removeClients();
 		}
-		this->removeClients();
 	}
 
 	return 0;

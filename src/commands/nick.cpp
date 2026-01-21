@@ -4,16 +4,16 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
 
+	if (user->isRegistered()) {
+		client->response(server.getName(), ERR_ALREADYREGISTERED,
+						 user->getNickname() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
+		return ;
+	}
+
 	if (!user->getHasPassword()) {
 		client->response(server.getName(), ERR_PASSWDMISMATCH,
 						 user->getNickname() + ' ' + ERR_PASSWDMISMATCH_MESSAGE);
 		this->markClientForRemoval(client);
-		return ;
-	}
-
-	if (user->isRegistered()) {
-		client->response(server.getName(), ERR_ALREADYREGISTERED,
-						 user->getNickname() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
 		return ;
 	}
 
@@ -27,7 +27,14 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 
 
 	if (!user->isNicknameValid(nickname)) {
-		// TODO SEND ERROR
+		client->response(server.getName(), ERR_ERRONEUSNICKNAME,
+							 user->getNickname() + user->getNickname() + ERR_ERRONEUSNICKNAME_MESSAGE);	
+		return ;
+	}
+
+	if (clientReg.getClientByNick(nickname)) {
+		client->response(server.getName(), ERR_ERRONEUSNICKNAME,
+							 user->getNickname() + user->getNickname() + ERR_ERRONEUSNICKNAME_MESSAGE);	
 		return ;
 	}
 
