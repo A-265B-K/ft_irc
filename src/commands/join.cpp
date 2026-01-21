@@ -24,12 +24,15 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 		case (1):
 			client->response(server.getName(), RPL_TOPIC,
 							 user->getNickname() + ' ' + channelName + " :" + channelReg.getChannel(channelName)->getTopic());
+			break;
 		case (-1):
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
 							 user->getNickname() + ' ' + channelName + ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
+			break;
 		case (-2):
 			client->response(server.getName(), ERR_BADCHANNELKEY,
 							 user->getNickname() + ' ' + channelName + ' ' + ERR_BADCHANNELKEY_MESSAGE);
+			break;
 		default:
 			return ;
 	}
