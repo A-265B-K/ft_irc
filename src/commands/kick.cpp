@@ -16,7 +16,7 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 
 	std::string	channelName = p.front();
 	Channel 	*channel = channelReg.getChannel(p.front());
-	Client		*kickedClient = clientReg.getClientByNick(p.back());
+	Client		*kickedClient = clientReg.getClientByNick(p[1]);
 
 	if (!channel) {
 		client->response(server.getName(), ERR_NOSUCHCHANNEL,

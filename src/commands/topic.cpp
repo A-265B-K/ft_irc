@@ -59,10 +59,9 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 		topic += *it++;
 
 	channel->setTopic(client, topic);
-	::printMessage("Set " + channel->getName() + " topic to " + topic );
+	std::cout << BLUE << "SET " << channel->getName() << " TOPIC TO " << topic << RESET;
 
 	std::set<Client *> clients = channel->getClients();
-
 	for (auto it : clients) {
 		Client *recipient = it;
 		channel->sendTopic(recipient);

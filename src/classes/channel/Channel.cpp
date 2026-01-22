@@ -3,12 +3,12 @@
 #include <stdexcept>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
-
+	std::cout << BLUE << "CHANNEL CREATED: " << _name << RESET << std::endl;
 }
 
 
 Channel::~Channel() {
-
+	std::cout << BLUE << "CHANNEL DELETED: " << _name << RESET << std::endl;
 }
 
 void	Channel::setTopic(Client *setter, const std::string& topic) {
@@ -103,7 +103,6 @@ const std::string& Channel::getName() {
 
 void	Channel::sendTopic(Client *recipient) {
 	User *user = recipient->getUser();
-
 	recipient->handleWritable(std::to_string(RPL_TOPIC) + ' ' +
 								user->getNickname() + ' ' +
 								_name + " :" +

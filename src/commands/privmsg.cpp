@@ -46,9 +46,11 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 		} else {
 			recipient = this->clientReg.getClientByNick(tmp);
 			if (recipient && recipient->getUser()->isRegistered()) {
-				// TODO: send private message
+				recipient->handleWritable(user->getNickname() + " PRIVMSG " +
+											recipient->getUser()->getNickname() + ' ' + sstreamMessage.str() + "\r\n");
 			} else {
-				// TODO: send error code, user does not exist.
+				client->response(server.getName(), ERR_NOSUCHNICK,
+					client->getName() + ' ' + channel->getName());
 			}
 		}
 	}

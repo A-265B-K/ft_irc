@@ -57,14 +57,9 @@ bool	User::isRegistered() {
 			return this->registered = false;
 		} else {
 			std::stringstream message;
-			message << "USER REGISTERED" << std::endl
-					<< "NICKNAME:   " << nickname << std::endl
-					<< "USERNAME:   " << username << std::endl
-					<< "HOSTNAME:   " << hostname << std::endl
-					<< "SERVERNAME: " << servername << std::endl
-					<< "REALNAME:   " << realname << std::endl;
+			message << BLUE << "USER REGISTERED: " << nickname << RESET << std::endl;
 			::printMessage(message.str());
-			client->response(servername, RPL_WELCOME, client->getName() + " " + RPL_WELCOME_MESSAGE);
+			client->response(servername, RPL_WELCOME, nickname + " " + RPL_WELCOME_MESSAGE);
 			this->registered = true;
 		}
 	}
