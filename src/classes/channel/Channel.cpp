@@ -45,11 +45,8 @@ std::set<Client *> Channel::getClients() {
 }
 
 void	Channel::broadcast(Client *sender, const std::string& command, const std::string& message) {
-	User 				*user = sender->getUser();
 	std::stringstream	text;
-	text  << ":"  << user->getNickname() <<
-			 "!~" << user->getUsername() <<
-			 "@"  << user->getHostname() << 
+	text  << sender->getName() <<
 			 " "  << command <<
 			 " "  << _name <<
 			 " :" << message << "\r\n";

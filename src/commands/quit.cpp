@@ -3,7 +3,7 @@
 // TODO
 void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 {
-	std::string msg = client->getUser()->getNickname() + " QUIT :Quit: ";
+	std::string msg = client->getName() + " QUIT :Quit: ";
 
 	if (p.size() > 0) {
 		std::deque<std::string>::const_iterator it = p.begin();

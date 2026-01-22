@@ -5,13 +5,13 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + 
-							 ERR_NOTREGISTERED_MESSAGE);
+							client->getName() + ' ' + 
+							ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 user->getNickname() + 
+							client->getName() + 
 							 " INVITE " + 
 							 ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
@@ -27,43 +27,43 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 	}
 	if (!channel) {
 		client->response(server.getName(), ERR_NOSUCHCHANNEL,
-							 user->getNickname() + ' ' + 
-							 channelName + ' ' + 
-							 ERR_NOSUCHCHANNEL_MESSAGE);
+							client->getName() + ' ' + 
+							channelName + ' ' + 
+							ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;		
 	}
 	if (!channel->hasClient(client)) {
 		client->response(server.getName(), ERR_NOTONCHANNEL,
-							 user->getNickname() + ' ' + 
-							 channelName + ' ' + 
-							 ERR_NOTONCHANNEL_MESSAGE);
+							client->getName() + ' ' + 
+							channelName + ' ' + 
+							ERR_NOTONCHANNEL_MESSAGE);
 		return ;		
 	}
 	if (!channel->isOperator(client)) {
 		client->response(server.getName(), ERR_CHANOPRIVSNEEDED,
-							 user->getNickname() + ' ' + 
-							 channelName + ' ' + 
-							 ERR_CHANOPRIVSNEEDED_MESSAGE);
+							client->getName() + ' ' + 
+							channelName + ' ' + 
+							ERR_CHANOPRIVSNEEDED_MESSAGE);
 		return ;
 	}
 	if (channel->hasClient(invitee)) {
 		client->response(server.getName(), ERR_USERONCHANNEL,
-							 user->getNickname() + ' ' + 
-							 channelName + ' ' + 
-							 invitee->getUser()->getNickname() + ' ' + 
-							 ERR_USERONCHANNEL_MESSAGE);
+							client->getName() + ' ' + 
+							channelName + ' ' + 
+							invitee->getUser()->getNickname() + ' ' + 
+							ERR_USERONCHANNEL_MESSAGE);
 		return ;		
 	}
 
 	/* Sending confirmation to the requester */
 	client->response(server.getName(), RPL_INVITING,
-					user->getNickname() + ' ' +
+					client->getName() + ' ' +
 					invitee->getUser()->getNickname() + ' ' +
 					channelName);
 
 	/* Sending invite to invitee */
 	std::deque<std::string>::const_iterator it = p.begin();
-	std::string msg = user->getNickname() + " INVITE ";
+	std::string msg = client->getName() + " INVITE ";
 	while (it != p.end()) msg += *it++; msg += "\r\n";
 	client->handleWritable(Message(msg));
 }

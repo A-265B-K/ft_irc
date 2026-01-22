@@ -5,12 +5,12 @@ void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 3) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 user->getNickname() + " NOTICE " + ERR_NEEDMOREPARAMS_MESSAGE);		
+							client->getName() + " NOTICE " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 

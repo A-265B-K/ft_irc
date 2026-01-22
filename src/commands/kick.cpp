@@ -5,12 +5,12 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 user->getNickname() + " KICK " + ERR_NEEDMOREPARAMS_MESSAGE);		
+							client->getName() + " KICK " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
@@ -20,25 +20,25 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 
 	if (!channel) {
 		client->response(server.getName(), ERR_NOSUCHCHANNEL,
-						user->getNickname() + ' ' + channel->getName()
+						client->getName() + ' ' + channel->getName()
 						+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;
 	}
 	if (!channel->hasClient(client)) {
 		client->response(server.getName(), ERR_NOTONCHANNEL,
-						user->getNickname() + ' ' + channel->getName()
+						client->getName() + ' ' + channel->getName()
 						+ ' ' + ERR_NOTONCHANNEL_MESSAGE);
 		return ;
 	}
 	if (!channel->isOperator(client)) {
 		client->response(server.getName(), ERR_CHANOPRIVSNEEDED,
-				user->getNickname() + ' ' + channel->getName()
+				client->getName() + ' ' + channel->getName()
 				+ ' ' + ERR_CHANOPRIVSNEEDED_MESSAGE);
 		return ;
 	}
 	if (!channel->hasClient(kickedClient)) {
 		client->response(server.getName(), ERR_USERNOTINCHANNEL,
-						user->getNickname() + ' ' + 
+						client->getName() + ' ' + 
 						p.back() + ' ' + channel->getName()
 						+ ' ' + ERR_USERNOTINCHANNEL_MESSAGE);
 		return ;
@@ -46,6 +46,6 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 
 	channelReg.partChannel(p.front(), kickedClient);
 	std::ostringstream message;
-	message << kickedClient->getUser()->getUsername() << " was kicked by " << client->getUser()->getUsername();
+	message << kickedClient->getUser()->getNickname() << " was kicked by " << client->getUser()->getNickname();
 	::printMessage(message.str());
 }

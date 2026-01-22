@@ -1,8 +1,8 @@
 #ifndef NUMERICS_HPP
 # define NUMERICS_HPP
 
-# define WELCOME							001
-# define WELCOME_MESSAGE					":Welcome to the IRC network"
+# define RPL_WELCOME						001
+# define RPL_WELCOME_MESSAGE				":Welcome to the IRC network"
 
 # define RPL_UMODEIS						221
 

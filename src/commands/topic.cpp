@@ -6,26 +6,26 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							 client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 1) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							user->getNickname() + ' ' + ERR_NEEDMOREPARAMS_MESSAGE);
+							client->getName() + ' ' + ERR_NEEDMOREPARAMS_MESSAGE);
 		return ;
 	}
 
 	Channel *channel = channelReg.getChannel(p.front());
 	if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
-							user->getNickname() + ' ' + 
+							client->getName() + ' ' + 
 							p.front() + ' ' +
 							ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;
 	}
 	if (!channel->hasClient(client)) {
 			client->response(server.getName(), ERR_NOTONCHANNEL,
-							user->getNickname() + ' ' + 
+							client->getName() + ' ' + 
 							channel->getName() + ' ' +
 							ERR_NOTONCHANNEL_MESSAGE);
 		return ;
@@ -35,7 +35,7 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 		std::string topic = channel->getTopic();
 		if (topic.empty()) {
 			client->response(server.getName(), RPL_NOTOPIC,
-							user->getNickname() + ' ' + 
+							client->getName() + ' ' + 
 							channel->getName() + ' ' + 
 							RPL_NOTOPIC_MESSAGE);
 			return ;
@@ -46,7 +46,7 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 	}
 	if (channel->topicRequiresOperator() && !channel->isOperator(client)) {
 		client->response(server.getName(), ERR_CHANOPRIVSNEEDED,
-						user->getNickname() + ' ' + 
+						client->getName() + ' ' + 
 						channel->getName() + ' ' +
 						ERR_CHANOPRIVSNEEDED_MESSAGE);
 		return ;

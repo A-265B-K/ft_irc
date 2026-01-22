@@ -5,12 +5,12 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							 client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 user->getNickname() + " PART " + ERR_NEEDMOREPARAMS_MESSAGE);		
+							 client->getName() + " PART " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
@@ -31,13 +31,13 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 		channel = this->channelReg.getChannel(tmp);
 		if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
-							user->getNickname() + ' ' + channel->getName()
+							client->getName() + ' ' + channel->getName()
 							+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 			continue ;
 		}
 		if (!channel->hasClient(client)) {
 			client->response(server.getName(), ERR_NOTONCHANNEL,
-							user->getNickname() + ' ' + channel->getName()
+							client->getName() + ' ' + channel->getName()
 							+ ' ' + ERR_NOTONCHANNEL_MESSAGE);
 			continue ;
 		}

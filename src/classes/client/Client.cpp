@@ -80,3 +80,11 @@ void	Client::markForRemoval() {
 bool	Client::requestedDisconnect() {
 	return _requestedDisconnect;
 }
+
+const std::string Client::getName() {
+	std::string clientName = 
+				":"  + _user->getNickname() +
+			 	"!~" + _user->getUsername() +
+				"@"  + _user->getHostname();
+	return clientName;
+}

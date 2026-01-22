@@ -8,12 +8,12 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							 client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
+							 client->getName() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
@@ -40,7 +40,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 				channel->broadcast(client, "PRIVMSG", sstreamMessage.str());
 			} else {
 				client->response(server.getName(), ERR_NOSUCHCHANNEL,
-					user->getNickname() + ' ' + channel->getName()
+					client->getName() + ' ' + channel->getName()
 						+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 			}
 		} else {
