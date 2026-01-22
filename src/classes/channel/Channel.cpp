@@ -1,5 +1,6 @@
-# include <Channel.hpp>
-# include <ctime>
+#include <Channel.hpp>
+#include <ctime>
+#include <stdexcept>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
 
@@ -63,7 +64,7 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 	}
 }
 
-bool	Channel::isOperator(Client *client) {
+bool	Channel::isOperator(Client *client) const {
 	auto it = _clients.find(client);
 
 	if (it != _clients.end()) {
@@ -88,7 +89,7 @@ const std::string& Channel::getTopic() {
 	return _topic;
 }
 
-bool Channel::isClientOn(Client *client) {
+bool Channel::isClientOn(Client *client) const {
 	if (client == nullptr) {
 		return false;
 	}
@@ -119,4 +120,155 @@ void	Channel::sendTopic(Client *recipient) {
 
 bool	Channel::topicRequiresOperator() {
 	return true; // TODO fix this logic
+}
+
+/*
+ i: invite-only channel mode
+ k: key channel mode
+ l: client limit channel mode
+ o: operator prefix
+ t: protected topic mode
+*/
+const std::string Channel::flags{"iklot"};
+
+// 1 mode set, 0 mode unset, -1 mode unrecognized
+int Channel::isMode(char c) const
+{
+	const std::string::size_type idx = flags.find(c);
+
+	if (idx != std::string::npos)
+		return (modes & 1 << idx) > 0;
+	return -1;
+}
+
+void Channel::setMode(char c)
+{
+	const std::string::size_type idx = flags.find(c);
+
+	if (idx != std::string::npos)
+		modes |= 1 << idx;
+}
+
+void Channel::unsetMode(char c)
+{
+	const std::string::size_type idx = flags.find(c);
+
+	if (idx != std::string::npos)
+		modes &= ~(1 << idx);
+}
+
+std::string Channel::getChannelModes(Client *client) const
+{
+	std::string modestring(modes ? "+" : "");
+	std::string modeArguments;
+
+	for (const char c : flags)
+		if (isMode(c)) {
+			modestring += c;
+			switch(c) {
+			case 'k':
+				if (isClientOn(client))
+					modeArguments += ' ' + _password;
+				break;
+			case 'l':
+				modeArguments += ' ' + _userLimit;
+			default: // 'i', 't' ('o' never set)
+				;
+			}
+		}
+
+	return modestring + modeArguments;
+}
+
+int Channel::editModes(std::string& changedModes, const std::string& modestring,
+		std::deque<std::string>::const_iterator& modeArguments,
+		const std::deque<std::string>::const_iterator& modeArgumentsEnd)
+{
+	std::string setFlags;
+	std::string unsetFlags;
+	int unknownFlag = 0;
+	std::string::const_iterator cit = modestring.begin();
+
+	// parse modestring
+	while(cit != modestring.end())
+top:	switch (*cit) {
+		case '+':
+			while (++cit != modestring.end())
+				switch (isMode(*cit)) {
+				case 0: 
+					switch (*cit) {
+					case 'k':
+						if (modeArguments == modeArgumentsEnd)
+							continue; // ignore 'k' mode without key
+						_password = *modeArguments++;
+						break;
+					case 'l':
+						if (modeArguments == modeArgumentsEnd
+								|| modeArguments->find_first_not_of("0123456789")
+										!= std::string::npos)
+							continue; // ignore 'l' mode without non-negative integer limit
+						int l;
+						try {
+							l = std::stoi(*modeArguments);
+							if (l < 0)
+								throw std::invalid_argument("");
+						} catch (const std::exception&) { continue; }
+						_userLimit = l;
+						++modeArguments;
+					default: // 'i', 't'
+						;
+					}
+					if (*cit != 'o') {
+						setMode(*cit);
+						setFlags += *cit;
+					}
+				case 1: break;
+				default:
+					if (*cit == '+' || *cit == '-')
+						goto top;
+					unknownFlag++;
+				}
+			break;
+		case '-':
+			while (++cit != modestring.end())
+				switch (isMode(*cit)) {
+				case 1: 
+					unsetMode(*cit);
+					unsetFlags += *cit;
+				case 0: break;
+				default:
+					if (*cit == '+' || *cit == '-')
+						goto top;
+					unknownFlag++;
+			}
+			break;
+		default:
+			if (isMode(*cit++) == -1)
+				unknownFlag++;
+		}
+
+	// remove cancellations
+	std::string::size_type idx;
+	while((idx = setFlags.find_first_of(unsetFlags)) != std::string::npos) {
+		unsetFlags.erase(unsetFlags.find(setFlags[idx]), 1);
+		setFlags.erase(idx, 1);
+	}
+
+	if (!setFlags.empty())
+		changedModes += '+' + setFlags;
+	if (!unsetFlags.empty())
+		changedModes += '-' + unsetFlags;
+
+	for (const char c : setFlags)
+		switch (c) {
+		case 'k':
+			changedModes += ' ' + _password;
+			break;
+		case 'l':
+			changedModes += ' ' + _userLimit;
+		default: // 'i', 't'
+			;
+		}
+
+	return unknownFlag;
 }

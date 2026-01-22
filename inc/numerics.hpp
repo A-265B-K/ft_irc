@@ -1,9 +1,6 @@
 #ifndef NUMERICS_HPP
 # define NUMERICS_HPP
 
-
-
-
 # define WELCOME							001
 # define WELCOME_MESSAGE					":Welcome to the IRC network"
 
@@ -56,7 +53,7 @@
 # define ERR_PASSWDMISMATCH					464
 # define ERR_PASSWDMISMATCH_MESSAGE			":Password incorrect"
 
-# define ERR_BADCHANNELKEY						475
+# define ERR_BADCHANNELKEY					475
 # define ERR_BADCHANNELKEY_MESSAGE			":Error, channel password is wrong"
 
 # define ERR_CHANOPRIVSNEEDED				482
@@ -64,6 +61,5 @@
 
 # define ERR_UMODEUNKNOWNFLAG				501
 # define ERR_USERSDONTMATCH					502
-
 
 #endif
