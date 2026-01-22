@@ -40,8 +40,9 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 				channel->broadcast(client, "PRIVMSG", sstreamMessage.str());
 			} else {
 				client->response(server.getName(), ERR_NOSUCHCHANNEL,
-					client->getName() + ' ' + channel->getName()
-						+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
+					client->getName() + ' ' + 
+					tmp + ' ' + 
+					ERR_NOSUCHCHANNEL_MESSAGE);
 			}
 		} else {
 			recipient = this->clientReg.getClientByNick(tmp);

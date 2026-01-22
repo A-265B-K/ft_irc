@@ -53,7 +53,7 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 int	ChannelRegistry::partChannel(const std::string& channelName, Client *client) {
 	auto it = _channels.find(channelName);
 
-	if (it != _channels.end()) {
+	if (it == _channels.end()) {
 		return 0;
 	} else {
 		it->second->removeClient(client);

@@ -8,7 +8,7 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 							 client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-	if (p.size() < 2) {
+	if (p.size() < 1) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							 client->getName() + " PART " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
@@ -19,8 +19,10 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 	std::string				tmp;
 	Channel					*channel;
 
-	for (size_t i = 0; i < p.size(); ++i) {
-		if (i != 0) sstreamMessage << p[i];
+	if (p.size() > 1) {
+		for (size_t i = 1; i < p.size(); ++i) {
+			if (i != 0) sstreamMessage << p[i];
+		}
 	}
 
 	/* TODO Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
@@ -31,8 +33,9 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 		channel = this->channelReg.getChannel(tmp);
 		if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
-							client->getName() + ' ' + channel->getName()
-							+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
+							client->getName() + ' ' + 
+							p[0] + ' ' + 
+							ERR_NOSUCHCHANNEL_MESSAGE);
 			continue ;
 		}
 		if (!channel->hasClient(client)) {

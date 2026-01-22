@@ -2,7 +2,7 @@
 
 SERVER="127.0.0.1"
 PORT=1111
-DELAY=0.1
+DELAY=0.5
 USER1=test1
 USER2=test2
 
@@ -19,44 +19,32 @@ login() {
 	s "USER $nick $nick 0 * :$nick"
 }
 
-user_behaviour() {
+behaviour() {
 	local nick="$1"
 
-	s "JOIN #cat"
-	s "PRIVMSG #cat :hello from $nick"
-	s "JOIN #cat2"
-	s "PRIVMSG #cat2 :hello from $nick"
-	s "JOIN #c t"
-	s "JOIN #cat3"
-	s "PART #cat3"
-	sleep 1
-}
-
-oper_behaviour() {
-	local nick="$1"
-	
-	s "JOIN #cat"
-	s "MODE #cat +o $nick"
-	s "TOPIC #cat :operator set topic"
-	s "KICK #cat user2 :testing kick"
-}
-
-listener_behaviour() {
-	s "JOIN #cat"
-	sleep 2
-}
-
-topic_tester() {
-	s "JOIN #cat"
+	s "JOIN #channel"
+	s "PRIVMSG #channel :hello from $nick"
+	s "JOIN #channel2"
+	s "PRIVMSG #channel2 :hello from $nick"
+	s "PRIVMSG #channel3 :hello from $nick"
+	s "PART #channel2"
+	s "PART #channel3"
+	s "TOPIC #channel :Setting channel topic"
+	s "TOPIC #channel"
 	s "TOPIC"
-	s "TOPIC #cat"
-	s "TOPIC #cat :meowing channel"
-	s "TOPIC #cat"
-	s "TOPIC #cat :"
-	s "JOIN #privcat"
-	s "TOPIC #privcat :my meowing channel"
-	s "TOPIC #privcat"
-	s "TOPIC #nonexistent"
+	s "TOPIC #channel :"
+	s "TOPIC #channel"
+	s "TOPIC #channel3"
+	s "NICK"
+	s "NICK test2"
+	s "PASS password"
+	s "PASS"
+	s "PING ft_irc"
+	s "PRIVMSG #channel3"
+	s "PRIVMSG #channel3 :test message"
+	s "USER"
+	s "USER test * * :test"
+	s "QUIT"
 }
 
 inc() {
@@ -75,22 +63,6 @@ irc_client() {
   } | inc
 }
 
-irc_client user1 listener_behaviour &
-# irc_client oper1 oper_behaviour &
-irc_client user2 user_behaviour &
-irc_client user3 topic_tester &
-# irc_client user2 user_behaviour &
-
+irc_client user1 behaviour &
 
 wait
-
-# {
-# 	s "PASS 42irc"
-# 	s "NICK $USER1"
-# 	s "USER $USER1 $USER1 $USER1 $USER1 :*"
-# 	s "JOIN #cat"
-# 	s "TOPIC #cat"
-# 	s "TOPIC #cat :cat"
-# 	s "TOPIC #cat :"
-# 	s "TOPIC #cat"
-# } | inc

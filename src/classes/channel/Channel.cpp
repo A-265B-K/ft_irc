@@ -3,12 +3,12 @@
 #include <stdexcept>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
-	std::cout << BLUE << "CHANNEL CREATED: " << _name << RESET << std::endl;
+	std::cout << BLUE << "CHANNEL CREATED: " << YELLOW << _name << RESET << std::endl;
 }
 
 
 Channel::~Channel() {
-	std::cout << BLUE << "CHANNEL DELETED: " << _name << RESET << std::endl;
+	std::cout << BLUE << "CHANNEL DELETED: " << YELLOW << _name << RESET << std::endl;
 }
 
 void	Channel::setTopic(Client *setter, const std::string& topic) {
@@ -53,7 +53,7 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 
 	for (auto it : _clients) {
 		Client *recipient = it.first;
-		if (recipient != sender) {
+		if (recipient && recipient != sender) {
 			if (recipient->getUser()->isRegistered()) {
 				recipient->handleWritable(text.str());
 			}

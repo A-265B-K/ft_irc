@@ -35,8 +35,12 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 	it++;
 
 	std::string realname = "";
-	while (it != p.end())
-		realname += *it++;
+	while (it != p.end()) {
+		if (*it != "=") {
+			realname += *it;
+		}
+		it++;
+	}
 
 	user->setRealname(realname);
 	user->isRegistered();
