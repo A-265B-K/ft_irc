@@ -1,6 +1,6 @@
-# include <User.hpp>
-# include <iostream>
-# include <numerics.hpp>
+#include <User.hpp>
+#include <iostream>
+#include <numerics.hpp>
 
 void	User::setHasPassword() {
 	this->hasPassword = true;
@@ -117,47 +117,62 @@ std::string User::getModestring() const
 
 int User::editModes(std::string& changedModes, const std::string& modestring)
 {
+	std::string setFlags;
+	std::string unsetFlags;
 	int unknownFlag = 0;
 	std::string::const_iterator cit = modestring.begin();
 
-	switch (*cit++) {
-	case '+':
-		changedModes += '+';
-		while (cit != modestring.end()) {
-			switch (isMode(*cit)) {
-			case 0: 
-				setMode(*cit);
-				// NOTE: +o is technically not allowed by
-				//  the MODE command, but the subject does not
-				//  require the appropriate OPER command
-				changedModes += *cit;
-			case 1: break;
-			default: unknownFlag++;
+	// parse modestring
+	while(cit != modestring.end())
+top:	switch (*cit) {
+		case '+':
+			while (++cit != modestring.end())
+				switch (isMode(*cit)) {
+				case 0: 
+					if (*cit != 'o') {
+						setMode(*cit);
+						setFlags += *cit;
+					}
+					// NOTE: +o is not allowed by the MODE command,
+					//  and requires the appropriate OPER command
+				case 1: break;
+				default:
+					if (*cit == '+' || *cit == '-')
+						goto top;
+					unknownFlag++;
+				}
+			break;
+		case '-':
+			while (++cit != modestring.end())
+				switch (isMode(*cit)) {
+				case 1: 
+					unsetMode(*cit);
+					unsetFlags += *cit;
+					// NOTE: However, a user may -o itself through
+					//  a MODE command
+				case 0: break;
+				default:
+					if (*cit == '+' || *cit == '-')
+						goto top;
+					unknownFlag++;
 			}
-			cit++;
+			break;
+		default:
+			if (isMode(*cit++) == -1)
+				unknownFlag++;
 		}
-		break;
-	case '-':
-		changedModes += '-';
-		while (cit != modestring.end()) {
-			switch (isMode(*cit)) {
-			case 1: 
-				unsetMode(*cit);
-				// NOTE: However, a user may -o itself through
-				//  a MODE command
-				changedModes += *cit;
-			case 0: break;
-			default: unknownFlag++;
-			}
-			cit++;
-		}
-		break;
-	default:
-		;
+
+	// remove cancellations
+	std::string::size_type idx;
+	while((idx = setFlags.find_first_of(unsetFlags)) != std::string::npos) {
+		unsetFlags.erase(unsetFlags.find(setFlags[idx]), 1);
+		setFlags.erase(idx, 1);
 	}
 
-	if (changedModes.size() == 1)
-		changedModes.clear();
+	if (!setFlags.empty())
+		changedModes += '+' + setFlags;
+	if (!unsetFlags.empty())
+		changedModes += '-' + unsetFlags;
 
 	return unknownFlag;
 }
