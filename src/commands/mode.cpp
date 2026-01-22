@@ -40,22 +40,38 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				);	
 			else if (modestring.empty()) {
 				::printMessage("Channel mode information requested on " + t.str);
-				// TODO
-			//	std::string reply(nick + ' ' + t.str + ' ' + targetChannel->getModestring());
-			//	while (pcit != p.end())
-			//		reply += ' ' + *pcit++;
 
-			//	client->response(
-			//			server.getName(),
-			//			RPL_CHANNELMODEIS,
-			//			reply
-			//	);
+				client->response(
+						server.getName(),
+						RPL_CHANNELMODEIS,
+						nick + ' ' + t.str + ' ' + targetChannel->getChannelModes(client)
+				);
 				// RPL_CREATIONTIME (329) not sent because time functions not allowed by subject
 			}
 			else {
 				::printMessage("Channel mode edition requested on " + t.str);
 
-				// TODO
+				if (!targetChannel->isOperator(client)) {
+					client->response(
+						server.getName(),
+						ERR_CHANOPRIVSNEEDED,
+						nick + ' ' + t.str + " " ERR_CHANOPRIVSNEEDED_MESSAGE
+					);
+					continue;
+				}
+
+				std::string changedModes;
+				const int unknownFlags = targetChannel->editModes(
+						changedModes, modestring, pcit, p.end());
+
+				if (!changedModes.empty())
+					targetChannel->broadcast(client, "MODE", changedModes);
+				if (unknownFlags)
+					client->response(
+							server.getName(),
+							ERR_UMODEUNKNOWNFLAG,
+							nick + " :Unknown MODE flag"
+					);
 			}
 		}
 		else {
@@ -71,7 +87,8 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				client->response(
 						server.getName(),
 						ERR_USERSDONTMATCH,
-						nick + " :Can't " + (modestring.empty() ? "view": "change") + " modes for other users"
+						nick + " :Can't " + (modestring.empty() ? "view": "change")
+								+ " modes for other users"
 				);
 			else if (modestring.empty()) {
 				::printMessage("User mode information requested by " + nick);
@@ -88,10 +105,11 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				std::string changedModes;
 				const int unknownFlags = user->editModes(changedModes, modestring);
 
-				client->replyTo(
-					server.getName(),
-					std::string("MODE ") + t.str + (changedModes.empty() ? "" : " ") + changedModes
-				);
+				if (!changedModes.empty())
+					client->replyTo(
+						server.getName(),
+						std::string("MODE ") + t.str + ' ' + changedModes
+					);
 				if (unknownFlags)
 					client->response(
 							server.getName(),

@@ -26,7 +26,7 @@ class User {
 		bool						registered;
 		unsigned char				modes;
 
-		static const std::string flags; // "ioOrw"
+		static const std::string flags; // "ior"
 
 	public:
 		User() = delete;
