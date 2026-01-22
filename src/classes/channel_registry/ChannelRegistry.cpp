@@ -35,7 +35,7 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	} else {
 		channel = it->second;
 	}
-	if (channel->isClientOn(client)) {
+	if (channel->hasClient(client)) {
 		return 0;
 	}
 	if (channel->getPassword() == password) {
@@ -74,4 +74,15 @@ void	ChannelRegistry::removeClient(Client *client) {
 	for (auto const& channel : _channels) {
 		partChannel(channel.first, client);
 	}
+}
+
+std::deque<Channel *> ChannelRegistry::getClientChannels(Client *client) {
+	std::deque<Channel *> clientChannels;
+
+	for (auto const& channel : _channels) {
+		if (channel.second->hasClient(client)) {
+			clientChannels.push_front(channel.second);
+		}
+	}
+	return clientChannels;
 }

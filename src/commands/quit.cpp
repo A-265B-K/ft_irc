@@ -3,16 +3,14 @@
 // TODO
 void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 {
-	// TODO send message to channels member was a part of
-	(void)p;
+	std::string msg = client->getUser()->getNickname() + " QUIT :Quit: ";
 
-	// TODO send ERROR
+	if (p.size() > 0) {
+		std::deque<std::string>::const_iterator it = p.begin();
+		while (it != p.end()) msg += *it++; msg += "\r\n";
+	}
+	
+	// TODO send ERROR ti client
 	this->markClientForRemoval(client);
-/*
-  Help can be found (I hope) in `command_help.txt'.
-
-  Ideally, some descriptive account of the server's doings should be logged. As
-  a placeholder...
-*/
 	::printMessage("QUIT");
 }

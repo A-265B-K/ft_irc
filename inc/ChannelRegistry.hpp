@@ -15,6 +15,7 @@ class ChannelRegistry {
 		int		partChannel(const std::string& channelName, Client *client);
 		Channel	*getChannel(const std::string& channelName);
 		void	removeClient(Client *client);
+		std::deque<Channel *> getClientChannels(Client *client);
 };
 
 #endif

@@ -24,7 +24,7 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 						+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;
 	}
-	if (!channel->isClientOn(client)) {
+	if (!channel->hasClient(client)) {
 		client->response(server.getName(), ERR_NOTONCHANNEL,
 						user->getNickname() + ' ' + channel->getName()
 						+ ' ' + ERR_NOTONCHANNEL_MESSAGE);
@@ -36,7 +36,7 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 				+ ' ' + ERR_CHANOPRIVSNEEDED_MESSAGE);
 		return ;
 	}
-	if (!channel->isClientOn(kickedClient)) {
+	if (!channel->hasClient(kickedClient)) {
 		client->response(server.getName(), ERR_USERNOTINCHANNEL,
 						user->getNickname() + ' ' + 
 						p.back() + ' ' + channel->getName()

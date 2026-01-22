@@ -89,7 +89,7 @@ const std::string& Channel::getTopic() {
 	return _topic;
 }
 
-bool Channel::isClientOn(Client *client) const {
+bool Channel::hasClient(Client *client) const {
 	if (client == nullptr) {
 		return false;
 	}
@@ -167,7 +167,7 @@ std::string Channel::getChannelModes(Client *client) const
 			modestring += c;
 			switch(c) {
 			case 'k':
-				if (isClientOn(client))
+				if (hasClient(client))
 					modeArguments += ' ' + _password;
 				break;
 			case 'l':

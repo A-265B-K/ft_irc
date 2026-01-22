@@ -32,7 +32,7 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 							 ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;		
 	}
-	if (!channel->isClientOn(client)) {
+	if (!channel->hasClient(client)) {
 		client->response(server.getName(), ERR_NOTONCHANNEL,
 							 user->getNickname() + ' ' + 
 							 channelName + ' ' + 
@@ -46,7 +46,7 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 							 ERR_CHANOPRIVSNEEDED_MESSAGE);
 		return ;
 	}
-	if (channel->isClientOn(invitee)) {
+	if (channel->hasClient(invitee)) {
 		client->response(server.getName(), ERR_USERONCHANNEL,
 							 user->getNickname() + ' ' + 
 							 channelName + ' ' + 

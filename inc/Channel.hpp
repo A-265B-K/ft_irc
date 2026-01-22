@@ -35,7 +35,7 @@ class Channel {
 		void	setPassword(const std::string& password);
 		std::string	getPassword() const;
 		const std::string& getTopic();
-		bool 	isClientOn(Client *client) const;
+		bool 	hasClient(Client *client) const;
 		const std::string& getName();
 		void	sendTopic(Client *recipient);
 		bool	topicRequiresOperator();

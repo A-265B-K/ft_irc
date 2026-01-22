@@ -23,7 +23,7 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 							ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;
 	}
-	if (!channel->isClientOn(client)) {
+	if (!channel->hasClient(client)) {
 			client->response(server.getName(), ERR_NOTONCHANNEL,
 							user->getNickname() + ' ' + 
 							channel->getName() + ' ' +

@@ -23,12 +23,11 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 		if (i != 0) sstreamMessage << p[i];
 	}
 
-	/* Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
+	/* TODO Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
 	while (std::getline(sstreamParams, tmp, ',')) {
 		if (tmp.empty()) {
 			continue ;
 		}
-		/* If the parameters is a channel, check if it exists, if so request the list of users subscribed to that channel and add it to the users set */
 		channel = this->channelReg.getChannel(tmp);
 		if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
@@ -36,7 +35,7 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 							+ ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
 			continue ;
 		}
-		if (!channel->isClientOn(client)) {
+		if (!channel->hasClient(client)) {
 			client->response(server.getName(), ERR_NOTONCHANNEL,
 							user->getNickname() + ' ' + channel->getName()
 							+ ' ' + ERR_NOTONCHANNEL_MESSAGE);
