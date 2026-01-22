@@ -39,13 +39,15 @@ void EventLoop::kick(Client *client, const std::deque<std::string>& p)
 	if (!channel->hasClient(kickedClient)) {
 		client->response(server.getName(), ERR_USERNOTINCHANNEL,
 						client->getName() + ' ' + 
-						p.back() + ' ' + channel->getName()
+						p[1] + ' ' + channel->getName()
 						+ ' ' + ERR_USERNOTINCHANNEL_MESSAGE);
 		return ;
 	}
 
+	std::string kickMessage = client->getName() + " KICK " + p[0] + ' ' + p[1] + "\r\n";
+	kickedClient->handleWritable(Message(kickMessage));
 	channelReg.partChannel(p.front(), kickedClient);
 	std::ostringstream message;
-	message << kickedClient->getUser()->getNickname() << " was kicked by " << client->getUser()->getNickname();
+	message << BLUE << client->getUser()->getNickname() << " KICKED " << kickedClient->getUser()->getNickname() ;
 	::printMessage(message.str());
 }
