@@ -15,10 +15,11 @@ int	main(int ac, char **av) {
 	Server 			server(htons(port), password);
 	ChannelRegistry channelRegistry;
 	ClientRegistry	clientRegistry;
-	EventLoop		eventLoop(server, channelRegistry, clientRegistry);
 
 	// TODO add signals
-	server.setToPassive();
+	server.start();
+
+	EventLoop		eventLoop(server, channelRegistry, clientRegistry);
 	eventLoop.run();
 
 	return 0;

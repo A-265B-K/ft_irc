@@ -29,7 +29,7 @@ public:
 
 	const std::string& getName() const;
 	int getServerSocket() const;
-	void setToPassive();
+	void start();
 	const std::string&	getPassword() const;
 };
 

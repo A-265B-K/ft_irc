@@ -6,23 +6,25 @@
 # include <arpa/inet.h>
 # include <static_declarations.hpp>
 
-Server::Server(uint16_t port, const std::string& password): port(port), password(password)
+Server::Server(uint16_t port, const std::string& password): name("ft_irc"), version(0), port(port), password(password)
 {
-	this->name = "ft_irc";
-	this->version = 0;
-	this->server_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP); // TODO THIS CAN FAIL!! MOVE OUT OF HERE (note to self, roger if u read this image the tone of voice is calmer :) 
-
-	std::ostringstream output;
-
-	output << BLUE << "Starting server" << std::endl << "NAME: " << RESET << this->name << BLUE << " | VERSION: " << RESET << this->version;
-	::printMessage(output.str());
 }
 
-void Server::setToPassive()
+void Server::start()
 {
 	std::ostringstream output;
+	output << BLUE << "Starting server" << std::endl << "NAME: " << RESET << this->name << BLUE << " | VERSION: " << RESET << this->version;
+	::printMessage(output.str());
+
+	this->server_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+	if (this->server_socket == -1) {
+		std::cerr << RED << "Opening socket failed: " << std::strerror(errno) << RESET << std::endl;
+		exit(1);
+	}
+
 	std::ostringstream addresses;
 
+	output.clear();
 	int opt = 1;
 	if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
 		std::cerr << RED << "Setting socket options failed: " << std::strerror(errno) << RESET << std::endl;
