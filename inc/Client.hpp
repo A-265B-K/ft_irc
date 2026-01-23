@@ -13,8 +13,12 @@
 
 # define response(srvrName, reply, txt) generateResponse((srvrName), reply, #reply, (txt))
 
-# define replyTo(srvrName, text) \
-		handleWritable(Message(std::string(":") + (srvrName) + ' ' +  (text) + CRLF))
+# define replyTo(source, command, parameters)	\
+		handleWritable(Message(					\
+				std::string(":") + (source)		\
+				+ ' ' +  (command)				\
+				+ ' ' + (parameters)			\
+				+ CRLF))
 
 class User;
 
