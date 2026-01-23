@@ -108,7 +108,8 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				if (!changedModes.empty())
 					client->replyTo(
 						server.getName(),
-						std::string("MODE ") + t.str + ' ' + changedModes
+						"MODE",
+						t.str + ' ' + changedModes
 					);
 				if (unknownFlags)
 					client->response(

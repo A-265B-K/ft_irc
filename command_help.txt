@@ -34,18 +34,20 @@ the command:
 To slightly reduce the workload required, a message to any client (c) can also
 be handled through the macro
 
-	replyTo(srvrName, txt)
+	replyTo(source, command, parameters)
 
-	srvrName <- prefix. In our case, server.getName()
-	txt <- the rest of the message, excluding CRLF
+	source <- prefix. Usually, server.getName() or client->getName()
+	command <- Something like "MODE" or "PRIVMSG"
+	parameters <- the rest of the message as a string, excluding CRLF
 
-Of course, :<srvrName> <text>\r\n should still be a valid IRC message.
+Of course, :<source> <command> <parameters>\r\n should still be a valid IRC message.
 
 A working example from command MODE:
 
 	client->replyTo(
 			server.getName(),
-			std::string("MODE ") + t.str + ' ' + flagsTouched
+			"MODE",
+			t.str + ' ' + changedModes
 	);
 
 Numeric responses from the server can make use of the macro interface found in
