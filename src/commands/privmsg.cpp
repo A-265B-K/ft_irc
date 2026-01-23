@@ -18,16 +18,13 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 	}
 
 	std::stringstream		sstreamParams(p.front());
-	std::stringstream		sstreamMessage;
+	std::string				message{":"};
 	std::string				tmp;
 
 	Channel *channel;
 	Client	*recipient;
 
-	for (size_t i = 0; i < p.size(); ++i) {
-		if (i != 0) sstreamMessage << p[i];
-	}
-
+	message += p[1];
 	/* Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
 	while (std::getline(sstreamParams, tmp, ',')) {
 		if (tmp.empty()) {
@@ -37,7 +34,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 		if (channelReg.isValidChannelName(tmp)) {
 			channel = this->channelReg.getChannel(tmp);
 			if (channel) {
-				channel->broadcast(client, "PRIVMSG", sstreamMessage.str());
+				channel->broadcast(client, "PRIVMSG", message);
 			} else {
 				client->response(server.getName(), ERR_NOSUCHCHANNEL,
 					client->getName() + ' ' + 
@@ -48,7 +45,7 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 			recipient = this->clientReg.getClientByNick(tmp);
 			if (recipient && recipient->getUser()->isRegistered()) {
 				recipient->handleWritable(user->getNickname() + " PRIVMSG " +
-											recipient->getUser()->getNickname() + ' ' + sstreamMessage.str() + "\r\n");
+											recipient->getUser()->getNickname() + ' ' + message + CRLF);
 			} else {
 				client->response(server.getName(), ERR_NOSUCHNICK,
 					client->getName() + ' ' + channel->getName());

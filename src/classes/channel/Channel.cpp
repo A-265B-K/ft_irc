@@ -2,10 +2,9 @@
 #include <ctime>
 #include <stdexcept>
 
-Channel::Channel(std::string name) : _name(name), _userLimit(-1) {
+Channel::Channel(std::string name) : _name(name), _userLimit(-1), modes(0) {
 	std::cout << BLUE << "CHANNEL CREATED: " << YELLOW << _name << RESET << std::endl;
 }
-
 
 Channel::~Channel() {
 	std::cout << BLUE << "CHANNEL DELETED: " << YELLOW << _name << RESET << std::endl;
@@ -46,17 +45,15 @@ std::set<Client *> Channel::getClients() {
 
 void	Channel::broadcast(Client *sender, const std::string& command, const std::string& message) {
 	std::stringstream	text;
-	text  << sender->getName() <<
-			 " "  << command <<
-			 " "  << _name <<
-			 " :" << message << "\r\n";
+	text  << ':' + sender->getName() <<
+			 ' '  << command <<
+			 ' '  << _name <<
+			 ' '  << message << CRLF;
 
 	for (auto it : _clients) {
 		Client *recipient = it.first;
-		if (recipient && recipient != sender) {
-			if (recipient->getUser()->isRegistered()) {
-				recipient->handleWritable(text.str());
-			}
+		if (recipient && recipient->getUser()->isRegistered()) {
+			recipient->handleWritable(text.str());
 		}
 	}
 }
@@ -167,7 +164,7 @@ std::string Channel::getChannelModes(Client *client) const
 					modeArguments += ' ' + _password;
 				break;
 			case 'l':
-				modeArguments += ' ' + _userLimit;
+				modeArguments += ' ' + std::to_string(_userLimit);
 			default: // 'i', 't' ('o' never set)
 				;
 			}
@@ -189,41 +186,43 @@ int Channel::editModes(std::string& changedModes, const std::string& modestring,
 	while(cit != modestring.end())
 top:	switch (*cit) {
 		case '+':
-			while (++cit != modestring.end())
+			while (++cit != modestring.end()) {
+				switch (*cit) {
+				case 'k':
+					if (modeArguments == modeArgumentsEnd)
+						continue; // ignore 'k' mode without key
+					_password = *modeArguments++;
+					break;
+				case 'l':
+					if (modeArguments == modeArgumentsEnd
+							|| modeArguments->find_first_not_of("0123456789")
+									!= std::string::npos)
+						continue; // ignore 'l' mode without non-negative integer limit
+					int l;
+					try {
+						l = std::stoi(*modeArguments);
+						if (l < 0)
+							throw std::invalid_argument("");
+					} catch (const std::exception&) { continue; }
+					_userLimit = l;
+					++modeArguments;
+					break;
+				case '+': case '-':
+					goto top;
+				default:
+					;
+				}
 				switch (isMode(*cit)) {
 				case 0: 
-					switch (*cit) {
-					case 'k':
-						if (modeArguments == modeArgumentsEnd)
-							continue; // ignore 'k' mode without key
-						_password = *modeArguments++;
-						break;
-					case 'l':
-						if (modeArguments == modeArgumentsEnd
-								|| modeArguments->find_first_not_of("0123456789")
-										!= std::string::npos)
-							continue; // ignore 'l' mode without non-negative integer limit
-						int l;
-						try {
-							l = std::stoi(*modeArguments);
-							if (l < 0)
-								throw std::invalid_argument("");
-						} catch (const std::exception&) { continue; }
-						_userLimit = l;
-						++modeArguments;
-					default: // 'i', 't'
-						;
-					}
 					if (*cit != 'o') {
 						setMode(*cit);
 						setFlags += *cit;
 					}
 				case 1: break;
 				default:
-					if (*cit == '+' || *cit == '-')
-						goto top;
 					unknownFlag++;
 				}
+			}
 			break;
 		case '-':
 			while (++cit != modestring.end())
@@ -261,7 +260,7 @@ top:	switch (*cit) {
 			changedModes += ' ' + _password;
 			break;
 		case 'l':
-			changedModes += ' ' + _userLimit;
+			changedModes += ' ' + std::to_string(_userLimit);
 		default: // 'i', 't'
 			;
 		}
