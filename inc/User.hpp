@@ -42,6 +42,7 @@ class User {
 		void		unsetMode(char);
 		std::string	getModestring() const;
 		int 		editModes(std::string&, const std::string&);
+		void		registerUser(const time_t &serverCreationTime, const int& serverVersion);
 
 		void		setNickname(const std::string& nickname);
 		void		setUsername(const std::string& username);

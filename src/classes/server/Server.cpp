@@ -11,3 +11,11 @@ int		Server::getServerSocket() const {
 const std::string&	Server::getPassword() const  {
 	return this->password;
 }
+
+const time_t& Server::getCreationTime() const {
+	return this->creationTime;
+}
+
+const int& Server::getVersion() const {
+	return this->version;
+}

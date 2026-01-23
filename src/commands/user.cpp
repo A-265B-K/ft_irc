@@ -43,5 +43,5 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 	}
 
 	user->setRealname(realname);
-	user->isRegistered();
+	user->registerUser(server.getCreationTime(), server.getVersion());
 }

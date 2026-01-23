@@ -12,6 +12,8 @@ Server::Server(uint16_t port, const std::string& password): name("ft_irc"), vers
 
 void Server::start()
 {
+	time(&creationTime);
+
 	std::ostringstream output;
 	output << BLUE << "Starting server" << std::endl << "NAME: " << RESET << this->name << BLUE << " | VERSION: " << RESET << this->version;
 	::printMessage(output.str());

@@ -1,6 +1,8 @@
 #include <User.hpp>
 #include <iostream>
 #include <numerics.hpp>
+# include <ctime>
+# include <algorithm>
 
 void	User::setHasPassword() {
 	this->hasPassword = true;
@@ -47,23 +49,35 @@ std::string User::getRealname() {
 }
 
 bool	User::isRegistered() {
-	if (!this->registered) {
-		if (nickname.empty()   || 
-			username.empty()   ||
-			hostname.empty()   ||
-			servername.empty() ||
-			realname.empty()   ||
-			hasPassword == false) {
-			return this->registered = false;
-		} else {
-			std::stringstream message;
-			message << BLUE << "USER REGISTERED: " << nickname << RESET << std::endl;
-			::printMessage(message.str());
-			client->response(servername, RPL_WELCOME, nickname + " " + RPL_WELCOME_MESSAGE);
-			this->registered = true;
-		}
-	}
 	return this->registered;
+}
+
+// TODO add user modes
+void	User::registerUser(const time_t &serverCreationTime, const int& serverVersion) {
+	std::string version = std::to_string(serverVersion);
+	if (nickname.empty()   || 
+		username.empty()   ||
+		hostname.empty()   ||
+		servername.empty() ||
+		realname.empty()   ||
+		hasPassword == false) {
+		return ;
+	} else {
+		(void)serverCreationTime;
+		// std::string t = ctime(&serverCreationTime);
+		// std::replace(t.begin(), t.end(), ':', ' ');
+		client->response(servername, RPL_WELCOME, nickname + " " + RPL_WELCOME_MESSAGE);
+		client->response(servername, RPL_YOURHOST, nickname + " :You host is " + servername + ", running version " + version);
+		client->response(servername, RPL_CREATED, nickname + " " + RPL_CREATED_MESSAGE);
+		client->response(servername, RPL_MYINFO, nickname + " " + servername + " " + version /*+ userModes */);
+		client->response(servername, RPL_ISUPPORT, nickname + " CASEMAPPING=ascii");
+		this->registered = true;
+
+		std::stringstream message;
+		message << BLUE << "USER REGISTERED: " << nickname << RESET;
+		::printMessage(message.str());
+		return ;
+	}
 }
 
 /*

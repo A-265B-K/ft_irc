@@ -4,6 +4,16 @@
 # define RPL_WELCOME						001
 # define RPL_WELCOME_MESSAGE				":Welcome to the IRC network"
 
+# define RPL_YOURHOST						002
+# define RPL_YOURHOST_MESSAGE				":"
+
+# define RPL_CREATED						003
+# define RPL_CREATED_MESSAGE				":Server was created at "
+
+# define RPL_MYINFO							004
+
+# define RPL_ISUPPORT						005
+
 # define RPL_UMODEIS						221
 
 # define RPL_NOTOPIC						331

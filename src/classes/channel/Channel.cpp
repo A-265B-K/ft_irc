@@ -52,7 +52,7 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 
 	for (auto it : _clients) {
 		Client *recipient = it.first;
-		if (recipient && recipient->getUser()->isRegistered()) {
+		if (recipient && recipient->getUser()->isRegistered() && sender != recipient) {
 			recipient->handleWritable(text.str());
 		}
 	}

@@ -42,5 +42,5 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 
 	user->setNickname(p.front());
 
-	user->isRegistered();
+	user->registerUser(server.getCreationTime(), server.getVersion());
 }

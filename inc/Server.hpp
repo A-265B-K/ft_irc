@@ -8,6 +8,7 @@
 # include <string>
 # include <sys/socket.h>
 # include <unistd.h>
+# include <ctime>
 
 // INADDR_ANY : IPv4 wildcard address, typically 0.0.0.0
 # define HOST_IP_ADDRESS INADDR_ANY
@@ -20,7 +21,7 @@ private:
 	std::string		password;
 	int				server_socket;
 	sockaddr_in		address;
-	//t_time		creation_time; // I don't think we are allowed to use a function for this
+	time_t			creationTime;
 
 public:
 	Server(uint16_t port, const std::string& password);
@@ -31,6 +32,8 @@ public:
 	int getServerSocket() const;
 	void start();
 	const std::string&	getPassword() const;
+	const time_t&		getCreationTime() const;
+	const int&			getVersion() const;
 };
 
 #endif
