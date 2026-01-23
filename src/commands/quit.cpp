@@ -7,7 +7,8 @@ void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 
 	if (p.size() > 0) {
 		std::deque<std::string>::const_iterator it = p.begin();
-		while (it != p.end()) msg += *it++; msg += "\r\n";
+		while (it != p.end()) msg += *it++;
+		msg += CRLF;
 	}
 	
 	// TODO send ERROR ti client
