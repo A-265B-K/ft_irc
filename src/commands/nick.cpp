@@ -28,13 +28,15 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 
 	if (!user->isNicknameValid(nickname)) {
 		client->response(server.getName(), ERR_ERRONEUSNICKNAME,
-							client->getName() + user->getNickname() + ERR_ERRONEUSNICKNAME_MESSAGE);	
+							client->getName() + ' ' + user->getNickname()
+							+ " " ERR_ERRONEUSNICKNAME_MESSAGE);	
 		return ;
 	}
 
 	if (clientReg.getClientByNick(nickname)) {
 		client->response(server.getName(), ERR_NICKNAMEINUSE,
-							client->getName() + user->getNickname() + ERR_NICKNAMEINUSE_MESSAGE);	
+							client->getName() + ' ' + user->getNickname()
+							+ " " ERR_NICKNAMEINUSE_MESSAGE);	
 		return ;
 	}
 

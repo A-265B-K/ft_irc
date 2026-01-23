@@ -8,22 +8,19 @@ void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 							client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-	if (p.size() < 3) {
+	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							client->getName() + " NOTICE " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
 	std::stringstream		sstreamParams(p.front());
-	std::stringstream		sstreamMessage;
+	std::string				message{":"};
 	std::string				tmp;
 
 	Channel *channel;
 
-	for (size_t i = 0; i < p.size(); ++i) {
-		if (i != 0) sstreamMessage << p[i];
-	}
-
+	message += p[1];
 	/* Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
 	while (std::getline(sstreamParams, tmp, ',')) {
 		if (tmp.empty()) {
@@ -33,7 +30,7 @@ void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 		if (channelReg.isValidChannelName(tmp)) {
 			channel = this->channelReg.getChannel(tmp);
 			if (channel) {
-				channel->broadcast(client, "NOTICE", sstreamMessage.str());
+				channel->broadcast(client, "NOTICE", message);
 			} else {
 				// TODO: send error code, channel does not exist.
 			}
