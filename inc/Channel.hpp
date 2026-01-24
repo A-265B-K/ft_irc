@@ -12,12 +12,12 @@ class Channel {
 	private:
 		std::string							_name;
 		std::map<Client *, int>				_clients; // int 0 = users, 1 = operator, 2 = owner
+		std::string							_key;
+		int									_userLimit;
 		std::string							_topic;
-		int									_userLimit; /* -1 means there is no limit */
-		std::string							_password;
 		std::string							_topicSetter;
 		std::string							_topicTime;
-        unsigned char	               		modes;
+        unsigned char	               		_modes;
 
 		static const std::string			flags; // "iklot"
 
@@ -25,20 +25,22 @@ class Channel {
 		Channel(std::string name);
 		~Channel();
 
-		void	setTopic(Client* setter, const std::string& topic);
 		void	addClient(Client *client);
 		void	removeClient(Client *client);
 		void	broadcast(Client *sender, const std::string& command, const std::string& message);
 		std::set<Client *> getClients();
-		bool	isOperator(Client *client) const;
-		void	setUserLimit(int userLimit);
-		void	setPassword(const std::string& password);
-		std::string	getPassword() const;
-		const std::string& getTopic();
-		bool 	hasClient(Client *client) const;
 		const std::string& getName();
-		void	sendTopic(Client *recipient);
+
+		bool	verifyKey(const std::string&) const;
+		bool	isInviteOnly() const;
+
+		bool	isOperator(Client *client) const;
+		bool 	hasClient(Client *client) const;
+
 		bool	topicRequiresOperator();
+		const std::string& getTopic();
+		void	sendTopic(Client *recipient);
+		void	setTopic(Client* setter, const std::string& topic);
 
         // 1 mode set, 0 mode unset, -1 mode unrecognized
         int         isMode(char) const;

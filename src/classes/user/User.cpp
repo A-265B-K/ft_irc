@@ -1,8 +1,7 @@
 #include <User.hpp>
-#include <iostream>
 #include <numerics.hpp>
-# include <ctime>
-# include <algorithm>
+#include <ctime>
+#include <algorithm>
 
 void	User::setHasPassword() {
 	this->hasPassword = true;
@@ -49,7 +48,7 @@ std::string User::getRealname() {
 }
 
 bool	User::isRegistered() {
-	return this->registered;
+	return this->isMode('r');
 }
 
 // TODO add user modes
@@ -71,7 +70,7 @@ void	User::registerUser(const time_t &serverCreationTime, const int& serverVersi
 		client->response(servername, RPL_CREATED, nickname + " " + RPL_CREATED_MESSAGE);
 		client->response(servername, RPL_MYINFO, nickname + " " + servername + " " + version /*+ userModes */);
 		client->response(servername, RPL_ISUPPORT, nickname + " CASEMAPPING=ascii");
-		this->registered = true;
+		this->setMode('r');
 
 		std::stringstream message;
 		message << BLUE << "USER REGISTERED: " << nickname << RESET;
