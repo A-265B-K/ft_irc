@@ -19,8 +19,11 @@ int ChannelRegistry::isValidChannelName(const std::string& channelName) {
 }
 
 /* Allows a client to join a channel, if it does not exist it will be created 
-   Return -1 if the supplied channel name isn't valid, -2 if password is required but not correct  */
-int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client, std::string password) {
+   Return
+		-1 if the supplied channel name isn't valid
+		-2 if key is required but not correct
+		-3 if the channel is invite-only */
+int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client, std::string key) {
 	if (!this->isValidChannelName(channelName)) {
 		std::cout << "TEST" << std::endl;
 		return -1;
@@ -35,10 +38,13 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	} else {
 		channel = it->second;
 	}
+
 	if (channel->hasClient(client)) {
 		return 0;
 	}
-	if (channel->getPassword() == password) {
+	if (channel->isInviteOnly())
+		return -3;
+	if (channel->verifyKey(key)) {
 		channel->addClient(client);
 	} else {
 		return -2;
@@ -49,7 +55,7 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	return 0;
 }
 
-/* Removes a cient from a channel */
+/* Removes a client from a channel */
 int	ChannelRegistry::partChannel(const std::string& channelName, Client *client) {
 	auto it = _channels.find(channelName);
 

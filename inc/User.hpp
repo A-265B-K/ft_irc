@@ -21,9 +21,6 @@ class User {
 		std::deque<std::string>  	channels;
 		Client						*client;
 		bool						hasPassword;
-//		char		input_buffer[513];
-//		char		output_buffer[OP_BUFF_S];
-		bool						registered;
 		unsigned char				modes;
 
 		static const std::string flags; // "ior"
@@ -57,7 +54,6 @@ class User {
 		std::string getServername();
 		std::string getRealname();
 		bool		getHasPassword();
-
 };
 
 #endif

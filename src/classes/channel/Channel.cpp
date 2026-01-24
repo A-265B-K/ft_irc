@@ -2,7 +2,7 @@
 #include <ctime>
 #include <stdexcept>
 
-Channel::Channel(std::string name) : _name(name), _userLimit(-1), modes(0) {
+Channel::Channel(std::string name) : _name(name), _userLimit(-1), _modes(0) {
 	std::cout << BLUE << "CHANNEL CREATED: " << YELLOW << _name << RESET << std::endl;
 }
 
@@ -18,7 +18,7 @@ void	Channel::setTopic(Client *setter, const std::string& topic) {
 
 void	Channel::addClient(Client *client) {
 	/* If there is no-one in the channel, make the newest person the owner */
-	if (static_cast<int>(_clients.size()) < _userLimit || _userLimit == -1)
+	if (!isMode('l') || static_cast<int>(_clients.size()) < _userLimit)
 	{
 		if (_clients.empty()) {
 			_clients.insert({client, 2});
@@ -52,7 +52,7 @@ void	Channel::broadcast(Client *sender, const std::string& command, const std::s
 
 	for (auto it : _clients) {
 		Client *recipient = it.first;
-		if (recipient && recipient->getUser()->isRegistered() && sender != recipient) {
+		if (recipient && recipient->getUser()->isRegistered()) {
 			recipient->handleWritable(text.str());
 		}
 	}
@@ -69,14 +69,6 @@ bool	Channel::isOperator(Client *client) const {
 		// ERROR CLIENT NOT FOUND;
 	}
 	return false;
-}
-
-void	Channel::setUserLimit(int userLimit) {
-	_userLimit = userLimit;
-}
-
-std::string	Channel::getPassword() const {
-	return _password;
 }
 
 const std::string& Channel::getTopic() {
@@ -111,8 +103,19 @@ void	Channel::sendTopic(Client *recipient) {
 								_topicTime + "\r\n");
 }
 
-bool	Channel::topicRequiresOperator() {
-	return true; // TODO fix this logic
+bool Channel::topicRequiresOperator()
+{
+	return isMode('t');
+}
+
+bool Channel::verifyKey(const std::string& userKey) const
+{
+	return !isMode('k') || userKey == _key;
+}
+
+bool Channel::isInviteOnly() const
+{
+	return isMode('i');
 }
 
 /*
@@ -130,7 +133,7 @@ int Channel::isMode(char c) const
 	const std::string::size_type idx = flags.find(c);
 
 	if (idx != std::string::npos)
-		return (modes & 1 << idx) > 0;
+		return (_modes & 1 << idx) > 0;
 	return -1;
 }
 
@@ -139,7 +142,7 @@ void Channel::setMode(char c)
 	const std::string::size_type idx = flags.find(c);
 
 	if (idx != std::string::npos)
-		modes |= 1 << idx;
+		_modes |= 1 << idx;
 }
 
 void Channel::unsetMode(char c)
@@ -147,12 +150,12 @@ void Channel::unsetMode(char c)
 	const std::string::size_type idx = flags.find(c);
 
 	if (idx != std::string::npos)
-		modes &= ~(1 << idx);
+		_modes &= ~(1 << idx);
 }
 
 std::string Channel::getChannelModes(Client *client) const
 {
-	std::string modestring(modes ? "+" : "");
+	std::string modestring(_modes ? "+" : "");
 	std::string modeArguments;
 
 	for (const char c : flags)
@@ -161,7 +164,7 @@ std::string Channel::getChannelModes(Client *client) const
 			switch(c) {
 			case 'k':
 				if (hasClient(client))
-					modeArguments += ' ' + _password;
+					modeArguments += ' ' + _key;
 				break;
 			case 'l':
 				modeArguments += ' ' + std::to_string(_userLimit);
@@ -191,7 +194,7 @@ top:	switch (*cit) {
 				case 'k':
 					if (modeArguments == modeArgumentsEnd)
 						continue; // ignore 'k' mode without key
-					_password = *modeArguments++;
+					_key = *modeArguments++;
 					break;
 				case 'l':
 					if (modeArguments == modeArgumentsEnd
@@ -257,7 +260,7 @@ top:	switch (*cit) {
 	for (const char c : setFlags)
 		switch (c) {
 		case 'k':
-			changedModes += ' ' + _password;
+			changedModes += ' ' + _key;
 			break;
 		case 'l':
 			changedModes += ' ' + std::to_string(_userLimit);
