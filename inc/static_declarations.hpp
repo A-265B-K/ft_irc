@@ -9,7 +9,6 @@
 # define BLUE "\033[94m"
 # define RESET "\033[0m"
 
-
 # define RUNNING 1		// boolean TRUE
 # define MAX_EVENTS 5	// maximum events returned by epoll_wait
 # define TIMEOUT 300000	// wait timeout in milliseconds
@@ -23,5 +22,7 @@
 # define ERR_SYNTAX 1	// error: improper argument count
 # define ERR_PORT 2		// error: invalid port
 # define ERR_PASS 3		// error: invalid password
+# define UNKNOWNFLAG 01	// error flag for MODE command
+# define INVALIDKEY  02 // error flag for MODE command (only channel mode)
 
 #endif

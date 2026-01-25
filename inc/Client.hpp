@@ -48,7 +48,7 @@ class Client {
 		User	*getUser();
 		void	markForRemoval();
 		bool	requestedDisconnect();
-		const std::string getName();
+		std::string		getName() const;
 };
 
 

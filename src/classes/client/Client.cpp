@@ -81,7 +81,7 @@ bool	Client::requestedDisconnect() {
 	return _requestedDisconnect;
 }
 
-const std::string Client::getName() {
+std::string Client::getName() const {
 	std::string clientName = 
 				_user->getNickname() +
 			 	"!~" + _user->getUsername() +

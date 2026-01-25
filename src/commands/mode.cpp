@@ -1,5 +1,6 @@
 #include <Channel.hpp>
 #include <EventLoop.hpp>
+#include <static_declarations.hpp>
 #include <Target.hpp>
 #include <User.hpp>
 
@@ -8,16 +9,20 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 	User *const user = client->getUser();
 
 	if (!user || !user->isRegistered()) {
-			::printMessage("MODE requested from unregistered client");
+		client->response(
+				server.getName(),
+				ERR_NOTREGISTERED,
+				ERR_NOTREGISTERED_MESSAGE
+		);
 
-			return;
+		return;
 	}
 
 	if (p.empty()) {
 		client->response(
 				server.getName(),
 				ERR_NEEDMOREPARAMS,
-				"MODE :Not enough parameters"
+				"MODE " ERR_NEEDMOREPARAMS_MESSAGE
 		);
 
 		return;
@@ -36,7 +41,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				client->response(
 						server.getName(),
 						ERR_NOSUCHCHANNEL,
-						nick + ' ' + t.str + " :No such channel"
+						nick + ' ' + t.str + " " ERR_NOSUCHCHANNEL_MESSAGE
 				);	
 			else if (modestring.empty()) {
 				::printMessage("Channel mode information requested on " + t.str);
@@ -51,6 +56,14 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 			else {
 				::printMessage("Channel mode edition requested on " + t.str);
 
+				if (!targetChannel->hasClient(client)) {
+					client->response(
+						server.getName(),
+						ERR_NOTONCHANNEL,
+						nick + ' ' + t.str + " " ERR_NOTONCHANNEL_MESSAGE
+					);
+					continue;
+				}
 				if (!targetChannel->isOperator(client)) {
 					client->response(
 						server.getName(),
@@ -61,34 +74,58 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				}
 
 				std::string changedModes;
-				const int unknownFlags = targetChannel->editModes(
-						changedModes, modestring, pcit, p.end());
+				std::set<std::pair<char, std::string> > invalidParam;
+				std::set<std::string> notInChannel;
+				const unsigned result = targetChannel->editModes(
+						changedModes, invalidParam, notInChannel, modestring, pcit, p.end());
 
 				if (!changedModes.empty())
 					targetChannel->broadcast(client, "MODE", changedModes);
-				if (unknownFlags)
+
+				for (const std::string& badParam : invalidParam)
+					client->response(
+						server.getName(),
+						ERR_INVALIDMODEPARAM,
+						nick + ' ' + t.str + ' ' + badParam.first + ' ' + badParam.second
+						+ (badParam.first == 'l' ? " " ERR_INVALIDMODEPARAM_MESSAGE_L :
+								" " ERR_INVALIDMODEPARAM_MESSAGE_O)
+					);
+				for (const std::string& badNick : notInChannel)
+					client->response(
+						server.getName(),
+						ERR_USERNOTINCHANNEL,
+						nick + ' ' + badNick + ' ' + t.str + " " ERR_USERNOTINCHANNEL_MESSAGE
+					);
+				if (result & UNKNOWNFLAG)
 					client->response(
 							server.getName(),
 							ERR_UMODEUNKNOWNFLAG,
-							nick + " :Unknown MODE flag"
+							nick + " " ERR_UMODEUNKNOWNFLAG_MESSAGE
+					);
+				if (result & INVALIDKEY)
+					client->response(
+							server.getName(),
+							ERR_INVALIDKEY,
+							nick + ' ' + t.str + " " ERR_INVALIDKEY_MESSAGE
 					);
 			}
 		}
-		else {
+		else { // User mode
 			Client *const targetClient = clientReg.getClientByNick(t.str);
 
 			if (!targetClient)
 				client->response(
 						server.getName(),
 						ERR_NOSUCHNICK,
-						nick + ' ' + t.str + " :No such nick"
+						nick + ' ' + t.str + " " ERR_NOSUCHNICK_MESSAGE
 				);
 			else if (t.str != nick)
 				client->response(
 						server.getName(),
 						ERR_USERSDONTMATCH,
-						nick + " :Can't " + (modestring.empty() ? "view": "change")
-								+ " modes for other users"
+						nick + (modestring.empty() ?
+								" " ERR_USERSDONTMATCH_MESSAGE_VAR :
+								" " ERR_USERSDONTMATCH_MESSAGE)
 				);
 			else if (modestring.empty()) {
 				::printMessage("User mode information requested by " + nick);
@@ -103,7 +140,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				::printMessage("User mode edition requested by " + nick);
 
 				std::string changedModes;
-				const int unknownFlags = user->editModes(changedModes, modestring);
+				const unsigned result = user->editModes(changedModes, modestring);
 
 				if (!changedModes.empty())
 					client->replyTo(
@@ -111,11 +148,12 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						"MODE",
 						t.str + ' ' + changedModes
 					);
-				if (unknownFlags)
+
+				if (result & UNKNOWNFLAG)
 					client->response(
 							server.getName(),
 							ERR_UMODEUNKNOWNFLAG,
-							nick + " :Unknown MODE flag"
+							nick + " " ERR_UMODEUNKNOWNFLAG_MESSAGE
 					);
 			}
 		}
