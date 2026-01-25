@@ -1,6 +1,9 @@
 #ifndef NUMERICS_HPP
 # define NUMERICS_HPP
 
+# include <climits>
+# include <function_declarations.hpp>
+
 # define RPL_WELCOME						001
 # define RPL_WELCOME_MESSAGE				":Welcome to the IRC network"
 
@@ -85,7 +88,7 @@
 # define ERR_INVALIDKEY_MESSAGE				":Key is not well-formed"
 
 # define ERR_INVALIDMODEPARAM				696
-# define ERR_INVALIDMODEPARAM_MESSAGE_L		":Non-negative integer expected"
-# define ERR_INVALIDMODEPARAM_MESSAGE_O		":Founders may not downgrade"
+# define ERR_INVALIDMODEPARAM_MESSAGE_L		":Integer in the range [0, " XSTR(INT_MAX) "] expected"
+# define ERR_INVALIDMODEPARAM_MESSAGE_O		":Owners may not downgrade"
 
 #endif

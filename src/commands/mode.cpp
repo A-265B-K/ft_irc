@@ -4,6 +4,8 @@
 #include <Target.hpp>
 #include <User.hpp>
 
+#include <utility>
+
 void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 {
 	User *const user = client->getUser();
@@ -82,7 +84,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 				if (!changedModes.empty())
 					targetChannel->broadcast(client, "MODE", changedModes);
 
-				for (const std::string& badParam : invalidParam)
+				for (const std::pair<char, std::string>& badParam : invalidParam)
 					client->response(
 						server.getName(),
 						ERR_INVALIDMODEPARAM,

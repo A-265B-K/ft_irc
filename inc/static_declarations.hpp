@@ -22,7 +22,7 @@
 # define ERR_SYNTAX 1	// error: improper argument count
 # define ERR_PORT 2		// error: invalid port
 # define ERR_PASS 3		// error: invalid password
-# define UNKNOWNFLAG 01	// error flag for MODE command
-# define INVALIDKEY  02 // error flag for MODE command (only channel mode)
+# define UNKNOWNFLAG 01	// error flag for MODE command (channel mode)
+# define INVALIDKEY  02 // error flag for MODE command (channel mode)
 
 #endif

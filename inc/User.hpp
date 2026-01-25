@@ -25,6 +25,11 @@ class User {
 
 		static const std::string flags; // "ior"
 
+		// 1 mode set, 0 mode unset, -1 mode unrecognized
+		int			isMode(char) const;
+		void		setMode(char);
+		void		unsetMode(char);
+
 	public:
 		User() = delete;
 		User(Client *client);
@@ -33,10 +38,6 @@ class User {
 		bool		isRegistered();
 		bool		isNicknameValid(const std::string &nickname);
 
-		// 1 mode set, 0 mode unset, -1 mode unrecognized
-		int			isMode(char) const;
-		void		setMode(char);
-		void		unsetMode(char);
 		std::string	getModestring() const;
 		int 		editModes(std::string&, const std::string&);
 		void		registerUser(const time_t &serverCreationTime, const int& serverVersion);
