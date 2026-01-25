@@ -41,6 +41,7 @@
 # define ERR_NOSUCHCHANNEL_MESSAGE			":No channel by that name"
 
 # define ERR_INPUTTOOLONG					417
+# define ERR_INPUTTOOLONG_MESSAGE			":Input line was too long"
 
 # define ERR_UNKNOWNCOMMAND					421
 
