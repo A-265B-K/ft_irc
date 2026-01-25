@@ -1,6 +1,6 @@
 #include <Channel.hpp>
-#include <ctime>
-#include <stdexcept>
+
+#include <sstream>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1), _modes(0) {
 	std::cout << BLUE << "CHANNEL CREATED: " << YELLOW << _name << RESET << std::endl;
@@ -18,8 +18,7 @@ void	Channel::setTopic(Client *setter, const std::string& topic) {
 
 void	Channel::addClient(Client *client) {
 	/* If there is no-one in the channel, make the newest person the owner */
-	if (!isMode('l') || static_cast<int>(_clients.size()) < _userLimit)
-	{
+	if (!isMode('l') || static_cast<int>(_clients.size()) < _userLimit) {
 		if (_clients.empty()) {
 			_clients.insert({client, 2});
 		} else {
@@ -33,6 +32,19 @@ void	Channel::removeClient(Client *client) {
 	_clients.erase(client);
 }
 
+std::map<Client *,int>::const_iterator Channel::getClientByNick(const std::string& nickname) const
+{
+	std::map<Client *,int>::const_iterator cit = _clients.begin();
+
+	while (cit != _clients.end()) {
+		if (cit->first->getUser()->getNickname() == nickname)
+			break;
+		++cit;
+	}
+
+	return cit;
+}
+
 std::set<Client *> Channel::getClients() {
 	std::set<Client *> clients;
 
@@ -43,7 +55,9 @@ std::set<Client *> Channel::getClients() {
 	return clients;
 }
 
-void	Channel::broadcast(Client *sender, const std::string& command, const std::string& message) {
+void	Channel::broadcast(const Client *sender, const std::string& command,
+		const std::string& message) const
+{
 	std::stringstream	text;
 	text  << ':' + sender->getName() <<
 			 ' '  << command <<
@@ -71,7 +85,7 @@ bool	Channel::isOperator(Client *client) const {
 	return false;
 }
 
-const std::string& Channel::getTopic() {
+const std::string& Channel::getTopic() const {
 	return _topic;
 }
 
@@ -86,11 +100,11 @@ bool Channel::hasClient(Client *client) const {
 	}
 }
 
-const std::string& Channel::getName() {
+const std::string& Channel::getName() const {
 	return _name;
 }
 
-void	Channel::sendTopic(Client *recipient) {
+void	Channel::sendTopic(Client *recipient) const {
 	User *user = recipient->getUser();
 	recipient->handleWritable(std::to_string(RPL_TOPIC) + ' ' +
 								user->getNickname() + ' ' +
@@ -103,9 +117,15 @@ void	Channel::sendTopic(Client *recipient) {
 								_topicTime + "\r\n");
 }
 
-bool Channel::topicRequiresOperator()
+bool Channel::topicRequiresOperator() const
 {
 	return isMode('t');
+}
+
+
+bool Channel::isValidKey(const std::string& userKey)
+{
+	return userKey.find_first_of(" :\r\n") == std::string::npos;
 }
 
 bool Channel::verifyKey(const std::string& userKey) const
@@ -116,157 +136,4 @@ bool Channel::verifyKey(const std::string& userKey) const
 bool Channel::isInviteOnly() const
 {
 	return isMode('i');
-}
-
-/*
- i: invite-only channel mode
- k: key channel mode
- l: client limit channel mode
- o: operator prefix
- t: protected topic mode
-*/
-const std::string Channel::flags{"iklot"};
-
-// 1 mode set, 0 mode unset, -1 mode unrecognized
-int Channel::isMode(char c) const
-{
-	const std::string::size_type idx = flags.find(c);
-
-	if (idx != std::string::npos)
-		return (_modes & 1 << idx) > 0;
-	return -1;
-}
-
-void Channel::setMode(char c)
-{
-	const std::string::size_type idx = flags.find(c);
-
-	if (idx != std::string::npos)
-		_modes |= 1 << idx;
-}
-
-void Channel::unsetMode(char c)
-{
-	const std::string::size_type idx = flags.find(c);
-
-	if (idx != std::string::npos)
-		_modes &= ~(1 << idx);
-}
-
-std::string Channel::getChannelModes(Client *client) const
-{
-	std::string modestring(_modes ? "+" : "");
-	std::string modeArguments;
-
-	for (const char c : flags)
-		if (isMode(c)) {
-			modestring += c;
-			switch(c) {
-			case 'k':
-				if (hasClient(client))
-					modeArguments += ' ' + _key;
-				break;
-			case 'l':
-				modeArguments += ' ' + std::to_string(_userLimit);
-			default: // 'i', 't' ('o' never set)
-				;
-			}
-		}
-
-	return modestring + modeArguments;
-}
-
-int Channel::editModes(std::string& changedModes, const std::string& modestring,
-		std::deque<std::string>::const_iterator& modeArguments,
-		const std::deque<std::string>::const_iterator& modeArgumentsEnd)
-{
-	std::string setFlags;
-	std::string unsetFlags;
-	int unknownFlag = 0;
-	std::string::const_iterator cit = modestring.begin();
-
-	// parse modestring
-	while(cit != modestring.end())
-top:	switch (*cit) {
-		case '+':
-			while (++cit != modestring.end()) {
-				switch (*cit) {
-				case 'k':
-					if (modeArguments == modeArgumentsEnd)
-						continue; // ignore 'k' mode without key
-					_key = *modeArguments++;
-					break;
-				case 'l':
-					if (modeArguments == modeArgumentsEnd
-							|| modeArguments->find_first_not_of("0123456789")
-									!= std::string::npos)
-						continue; // ignore 'l' mode without non-negative integer limit
-					int l;
-					try {
-						l = std::stoi(*modeArguments);
-						if (l < 0)
-							throw std::invalid_argument("");
-					} catch (const std::exception&) { continue; }
-					_userLimit = l;
-					++modeArguments;
-					break;
-				case '+': case '-':
-					goto top;
-				default:
-					;
-				}
-				switch (isMode(*cit)) {
-				case 0: 
-					if (*cit != 'o') {
-						setMode(*cit);
-						setFlags += *cit;
-					}
-				case 1: break;
-				default:
-					unknownFlag++;
-				}
-			}
-			break;
-		case '-':
-			while (++cit != modestring.end())
-				switch (isMode(*cit)) {
-				case 1: 
-					unsetMode(*cit);
-					unsetFlags += *cit;
-				case 0: break;
-				default:
-					if (*cit == '+' || *cit == '-')
-						goto top;
-					unknownFlag++;
-			}
-			break;
-		default:
-			if (isMode(*cit++) == -1)
-				unknownFlag++;
-		}
-
-	// remove cancellations
-	std::string::size_type idx;
-	while((idx = setFlags.find_first_of(unsetFlags)) != std::string::npos) {
-		unsetFlags.erase(unsetFlags.find(setFlags[idx]), 1);
-		setFlags.erase(idx, 1);
-	}
-
-	if (!setFlags.empty())
-		changedModes += '+' + setFlags;
-	if (!unsetFlags.empty())
-		changedModes += '-' + unsetFlags;
-
-	for (const char c : setFlags)
-		switch (c) {
-		case 'k':
-			changedModes += ' ' + _key;
-			break;
-		case 'l':
-			changedModes += ' ' + std::to_string(_userLimit);
-		default: // 'i', 't'
-			;
-		}
-
-	return unknownFlag;
 }

@@ -1,6 +1,9 @@
 #ifndef NUMERICS_HPP
 # define NUMERICS_HPP
 
+# include <climits>
+# include <function_declarations.hpp>
+
 # define RPL_WELCOME						001
 # define RPL_WELCOME_MESSAGE				":Welcome to the IRC network"
 
@@ -32,10 +35,10 @@
 # define ERR_UNKNOWNERROR					400
 
 # define ERR_NOSUCHNICK						401
-# define ERR_NOSUCHNICK_MESSAGE 			":Error, no user by that nickname"
+# define ERR_NOSUCHNICK_MESSAGE 			":No user by that nickname"
 
 # define ERR_NOSUCHCHANNEL					403
-# define ERR_NOSUCHCHANNEL_MESSAGE			":Error, no channel by that name"
+# define ERR_NOSUCHCHANNEL_MESSAGE			":No channel by that name"
 
 # define ERR_INPUTTOOLONG					417
 
@@ -75,6 +78,17 @@
 # define ERR_CHANOPRIVSNEEDED_MESSAGE		":You're not a channel operator"
 
 # define ERR_UMODEUNKNOWNFLAG				501
+# define ERR_UMODEUNKNOWNFLAG_MESSAGE		":Unknown MODE flag"
+
 # define ERR_USERSDONTMATCH					502
+# define ERR_USERSDONTMATCH_MESSAGE			":Can't change mode for other users"
+# define ERR_USERSDONTMATCH_MESSAGE_VAR		":Can't change view for other users"
+
+# define ERR_INVALIDKEY						525
+# define ERR_INVALIDKEY_MESSAGE				":Key is not well-formed"
+
+# define ERR_INVALIDMODEPARAM				696
+# define ERR_INVALIDMODEPARAM_MESSAGE_L		":Integer in the range [0, " XSTR(INT_MAX) "] expected"
+# define ERR_INVALIDMODEPARAM_MESSAGE_O		":Owners may not downgrade"
 
 #endif
