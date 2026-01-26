@@ -1,9 +1,11 @@
 #include <Channel.hpp>
 #include <EventLoop.hpp>
+#include <function_declarations.hpp>
 #include <static_declarations.hpp>
 #include <Target.hpp>
 #include <User.hpp>
 
+#include <climits>
 #include <utility>
 
 void EventLoop::mode(Client *client, const std::deque<std::string>& p)
@@ -89,8 +91,9 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						server.getName(),
 						ERR_INVALIDMODEPARAM,
 						nick + ' ' + t.str + ' ' + badParam.first + ' ' + badParam.second
-						+ (badParam.first == 'l' ? " " ERR_INVALIDMODEPARAM_MESSAGE_L :
-								" " ERR_INVALIDMODEPARAM_MESSAGE_O)
+						+ (badParam.first == 'l' ?
+								" :Integer in the range [0, " XSTR(INT_MAX) "] expected" :
+								" :Owners may not downgrade")
 					);
 				for (const std::string& badNick : notInChannel)
 					client->response(

@@ -1,9 +1,6 @@
 #ifndef NUMERICS_HPP
 # define NUMERICS_HPP
 
-# include <climits>
-# include <function_declarations.hpp>
-
 # define RPL_WELCOME						001
 # define RPL_WELCOME_MESSAGE				":Welcome to the IRC network"
 
@@ -44,9 +41,10 @@
 # define ERR_INPUTTOOLONG_MESSAGE			":Input line was too long"
 
 # define ERR_UNKNOWNCOMMAND					421
+# define ERR_UNKNOWNCOMMAND_MESSAGE			":Unknown command"
 
 # define ERR_ERRONEUSNICKNAME				432
-# define ERR_ERRONEUSNICKNAME_MESSAGE		":Nickname already in use"
+# define ERR_ERRONEUSNICKNAME_MESSAGE		":Disallowed characters in nickname"
 
 # define ERR_NICKNAMEINUSE					433
 # define ERR_NICKNAMEINUSE_MESSAGE			":Nickname is already in use"
@@ -58,7 +56,7 @@
 # define ERR_NOTONCHANNEL_MESSAGE			":You're not on that channel"
 
 # define ERR_USERONCHANNEL					443
-# define ERR_USERONCHANNEL_MESSAGE			":is already on channel"
+# define ERR_USERONCHANNEL_MESSAGE			":Is already on channel"
 
 # define ERR_NOTREGISTERED					451
 # define ERR_NOTREGISTERED_MESSAGE			":You have not registered"
@@ -73,7 +71,7 @@
 # define ERR_PASSWDMISMATCH_MESSAGE			":Password incorrect"
 
 # define ERR_BADCHANNELKEY					475
-# define ERR_BADCHANNELKEY_MESSAGE			":Error, channel password is wrong"
+# define ERR_BADCHANNELKEY_MESSAGE			":Channel key is incorrect"
 
 # define ERR_CHANOPRIVSNEEDED				482
 # define ERR_CHANOPRIVSNEEDED_MESSAGE		":You're not a channel operator"
@@ -89,7 +87,5 @@
 # define ERR_INVALIDKEY_MESSAGE				":Key is not well-formed"
 
 # define ERR_INVALIDMODEPARAM				696
-# define ERR_INVALIDMODEPARAM_MESSAGE_L		":Integer in the range [0, " XSTR(INT_MAX) "] expected"
-# define ERR_INVALIDMODEPARAM_MESSAGE_O		":Owners may not downgrade"
 
 #endif

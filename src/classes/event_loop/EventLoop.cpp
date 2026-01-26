@@ -79,7 +79,7 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 						ERR_UNKNOWNCOMMAND,
 						client->getUser()->getNickname()
 								+ ' ' + m.getParameters().front()
-								+ " :Unknown command"
+								+ " " ERR_UNKNOWNCOMMAND_MESSAGE
 				);
 			else try {
 				(this->*commands[static_cast<size_t>(comm)])(client, m.getParameters());
@@ -103,7 +103,6 @@ void	EventLoop::removeClients() {
 	}
 	_clientsToRemove.clear();
 }
-
 
 void	EventLoop::markClientForRemoval(Client *client) {
 	if (!client->requestedDisconnect()) {
