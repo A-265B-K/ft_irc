@@ -70,7 +70,11 @@ int		EventLoop::waitForEvents() {
 void EventLoop::processMessages(Client *client, const std::deque<Message>& messages)
 {
 	for_each(messages.begin(), messages.end(), [this, client](const Message& m) {
-		if (!m.isResponse()) {
+		if (!m.getPrefix().empty() && m.getPrefix() != client->getName())
+			client->printMessage("Wrongly prefixed message from client silently dropped");
+		else if (m.isResponse())
+			client->printMessage("Numeric reply from client silently dropped");
+		else {
 			const Command comm = m.getCommand();
 
 			if (comm == Command::UNKNOWN)
@@ -89,10 +93,7 @@ void EventLoop::processMessages(Client *client, const std::deque<Message>& messa
 				::printMessage(error + e.what());
 			}
 		}
-		else
-			client->printMessage("Numeric reply from client silently dropped");
 	});
-
 }
 
 void	EventLoop::removeClients() {

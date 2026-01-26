@@ -21,7 +21,7 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 	while ((pos = _inputBuffer.find(CRLF)) != std::string::npos) {
 		const std::string line(_inputBuffer.substr(0, pos + 2));
 
-		if (line.length() > LIMIT)
+		if (line.length() > LIMIT) // beyond the 512-limit
 			response(
 					serverName,
 					ERR_INPUTTOOLONG,
