@@ -21,7 +21,13 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 	while ((pos = _inputBuffer.find(CRLF)) != std::string::npos) {
 		const std::string line(_inputBuffer.substr(0, pos + 2));
 
-		if (line.length() != 2) // empty commands ("\r\n") are silently dropped
+		if (line.length() > LIMIT) // beyond the 512-limit
+			response(
+					serverName,
+					ERR_INPUTTOOLONG,
+					getUser()->getNickname() + " " ERR_INPUTTOOLONG_MESSAGE
+			);
+		else if (line.length() != 2) // empty commands ("\r\n") are silently dropped
 			try {
 				messages.emplace_back(line);
 				printMessage(std::string("recv `") + messages.back().build(false) + '\'');
