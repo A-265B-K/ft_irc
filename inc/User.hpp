@@ -18,7 +18,6 @@ class User {
 
 	/* Other information */
 		std::string					nickname;
-		std::deque<std::string>  	channels;
 		Client						*client;
 		bool						hasPassword;
 		unsigned char				modes;

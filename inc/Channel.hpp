@@ -34,6 +34,7 @@ class Channel {
         void	unsetMode(unsigned char &, char);
         void	unsetMode(char);
 		std::string	printModes(const unsigned char&) const;
+		
 
 	public:
 		Channel(std::string name);
@@ -44,6 +45,7 @@ class Channel {
 		void	broadcast(const Client *sender, const std::string& command,
 					const std::string& message) const;
 		std::set<Client *> getClients();
+		int		memberCount();
 
 		const std::string& getName() const;
 

@@ -27,10 +27,22 @@ void	Channel::addClient(Client *client) {
 	}
 }
 
+int		Channel::memberCount() {
+	return _clients.size();
+}
+
 /* Removes a client from a channel */
 void	Channel::removeClient(Client *client) {
 	_clients.erase(client);
 }
+
+// bool	Channel::isEmpty() {
+// 	if (_clients.size() == 0) {
+// 		return true;
+// 	} else {
+// 		return false;
+// 	}
+// }
 
 std::map<Client *,int>::const_iterator Channel::getClientByNick(const std::string& nickname) const
 {

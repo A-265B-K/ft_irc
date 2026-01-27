@@ -10,7 +10,7 @@ SPACE		:=
 SPACE		+=
 VPATH		= $(subst $(SPACE),:,$(shell find $(DIRSRC) -type d))
 
-CXXFLAGS	:= -Wall -Wextra -Wpedantic -Wunused -Werror -std=c++11 -g -fsanitize=address,undefined -fno-omit-frame-pointer
+CXXFLAGS	:= -Wall -Wextra -Wpedantic -Wunused -Werror -std=c++11 # -g -fsanitize=address,undefined -fno-omit-frame-pointer
 
 NAME 		:= ircserv
 

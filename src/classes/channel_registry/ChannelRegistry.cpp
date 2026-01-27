@@ -62,9 +62,11 @@ int	ChannelRegistry::partChannel(const std::string& channelName, Client *client)
 	if (it == _channels.end()) {
 		return 0;
 	} else {
-		it->second->removeClient(client);
-		if (!it->second) {
+		Channel *channel = it->second;
+		channel->removeClient(client);
+		if (channel->memberCount() == 0) {
 			_channels.erase(channelName);
+			delete channel;
 		}
 		return 1;
 	}
@@ -77,8 +79,9 @@ Channel	*ChannelRegistry::getChannel(const std::string& channelName) {
 }
 
 void	ChannelRegistry::removeClient(Client *client) {
-	for (auto const& channel : _channels) {
-		partChannel(channel.first, client);
+	for (auto it = _channels.begin(); it != _channels.end(); ) {
+		auto current = it++;
+		partChannel(current->first, client);
 	}
 }
 
