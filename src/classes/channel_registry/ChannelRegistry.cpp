@@ -1,4 +1,6 @@
-# include <ChannelRegistry.hpp>
+#include <ChannelRegistry.hpp>
+
+#include <algorithm>
 
 int ChannelRegistry::isValidChannelName(const std::string& channelName) {
 	if (channelName.empty()) {
@@ -94,4 +96,10 @@ std::deque<Channel *> ChannelRegistry::getClientChannels(Client *client) {
 		}
 	}
 	return clientChannels;
+}
+
+void ChannelRegistry::forEachChannel(const std::function
+		<void (std::pair<std::string, Channel *>)>& f) const
+{
+	std::for_each(_channels.begin(), _channels.end(), f);
 }

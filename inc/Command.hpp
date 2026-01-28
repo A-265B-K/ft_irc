@@ -7,6 +7,7 @@ X(INVITE, invite)		\
 X(JOIN, join)			\
 X(KICK, kick)			\
 X(MODE, mode)			\
+X(NAMES, names)			\
 X(NICK, nick)			\
 X(NOTICE, notice)		\
 X(PART, part)			\
