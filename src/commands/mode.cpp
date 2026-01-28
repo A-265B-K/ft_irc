@@ -3,7 +3,6 @@
 #include <function_declarations.hpp>
 #include <static_declarations.hpp>
 #include <Target.hpp>
-#include <User.hpp>
 
 #include <climits>
 #include <utility>
@@ -16,7 +15,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 		client->response(
 				server.getName(),
 				ERR_NOTREGISTERED,
-				ERR_NOTREGISTERED_MESSAGE
+				user->getNickname() + " " ERR_NOTREGISTERED_MESSAGE
 		);
 
 		return;
@@ -26,7 +25,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 		client->response(
 				server.getName(),
 				ERR_NEEDMOREPARAMS,
-				"MODE " ERR_NEEDMOREPARAMS_MESSAGE
+				user->getNickname() + " MODE " ERR_NEEDMOREPARAMS_MESSAGE
 		);
 
 		return;

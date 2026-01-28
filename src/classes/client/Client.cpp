@@ -25,7 +25,7 @@ void	Client::handleReadable(const std::string& serverName, std::deque<Message>& 
 			response(
 					serverName,
 					ERR_INPUTTOOLONG,
-					getUser()->getNickname() + " " ERR_INPUTTOOLONG_MESSAGE
+					_user->getNickname() + " " ERR_INPUTTOOLONG_MESSAGE
 			);
 		else if (line.length() != 2) // empty commands ("\r\n") are silently dropped
 			try {

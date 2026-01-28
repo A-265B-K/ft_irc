@@ -56,7 +56,7 @@ the Client.hpp header:
 	response(srvrName, reply, txt)
 
 	srvrName <- prefix. In our case, server.getName()
-	reply <- named response. Please add them at the bottom of the Message header
+	reply <- named response. Please add them at the bottom of the numerics header
 	txt <- all of the parameters that form the message
 
 ONLY with these macros, the ending sequence "\r\n" is automatically affixed. A
