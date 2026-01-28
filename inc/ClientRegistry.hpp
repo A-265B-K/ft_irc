@@ -1,6 +1,7 @@
 #ifndef CLIENTREGISTRY_HPP
 # define CLIENTREGISTRY_HPP
 
+# include <functional>
 # include <map>
 # include <string>
 # include <Client.hpp>
@@ -14,6 +15,7 @@ class ClientRegistry {
 		Client	*getClientBySocket(int clientSocket);
 		void	removeClient(int clientSocket);
 		Client	*getClientByNick(std::string nickname);
+		void    forEachClient(const std::function <void (Client *)>&) const;
 };
 
 #endif

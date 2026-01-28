@@ -1,8 +1,9 @@
-# include <ClientRegistry.hpp>
+#include <ClientRegistry.hpp>
 
-# include <arpa/inet.h>
-# include <sys/socket.h>
-# include <string>
+#include <algorithm>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <utility>
 
 int		ClientRegistry::addClient(int server_socket) {
 	char buffer[256];
@@ -46,4 +47,11 @@ Client	*ClientRegistry::getClientByNick(std::string nickname) {
 		}
 	}
 	return nullptr;
+}
+
+void ClientRegistry::forEachClient(const std::function <void (Client *)>& f) const
+{
+	std::for_each(clients.begin(), clients.end(),
+			[&](const std::pair<int, Client *>& p){ f(p.second); }
+	);
 }

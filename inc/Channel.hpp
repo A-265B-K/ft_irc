@@ -36,7 +36,6 @@ class Channel {
         void	unsetMode(unsigned char &, char);
         void	unsetMode(char);
 		std::string	printModes(const unsigned char&) const;
-		
 
 	public:
 		Channel(std::string name);
@@ -57,7 +56,8 @@ class Channel {
 		bool	isOperator(Client *client) const;
 		bool 	hasClient(Client *client) const;
 
-		void	forEachClient(const std::function <void (std::pair<Client *, int>)>&) const;	
+		void	forEachClient(const std::function
+						<void (std::pair<Client *, int>)>&) const;	
 
 		bool	topicRequiresOperator() const;
 		const std::string& getTopic() const;

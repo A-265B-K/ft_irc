@@ -1,6 +1,7 @@
 #include <EventLoop.hpp>
 #include <Target.hpp>
 
+#include <list>
 #include <utility>
 
 static void printMembers(const Client *client, const std::string& serverName,
@@ -43,13 +44,45 @@ void EventLoop::names(Client *client, const std::deque<std::string>& p)
 
 	// No target list given
 	if (p.empty()) {
-// TODO
+		::printMessage(nick + " requested membership information from all channels");
+
+		// print info from all (public) channels
+		channelReg.forEachChannel([&](const std::pair<std::string, Channel *>& p) {
+				printMembers(client, server.getName(), nick, p.second);
+		});
+
+		// allocate all clients with no channel membership into a spurious `*' channel
+		std::list<Client *> noChannelClients;
+
+		clientReg.forEachClient([&](Client *const client) {
+				if (channelReg.getClientChannels(client).empty())
+					noChannelClients.push_front(client);
+		});
+		if (!noChannelClients.empty()) {
+			std::string namesList;
+
+			for (Client *const c : noChannelClients)
+				namesList += (namesList.empty() ? ':' : ' ')
+						+ c->getUser()->getNickname();
+
+			client->response(
+					server.getName(),
+					RPL_NAMREPLY,
+					nick + " = * " + namesList
+			);
+			client->response(
+					server.getName(),
+					RPL_ENDOFNAMES,
+					nick + " * " RPL_ENDOFNAMES_MESSAGE
+			);
+		}
 	}
 
 	// Specific target channels
 	else {
-		::printMessage(nick + " requested membership information of channel(s) " + p[0]);
-		const std::list<Target> listOfTargets{Target::markTargets(p[0])};
+		::printMessage(nick + " requested membership information from channel(s) "
+				+ p.front());
+		const std::list<Target> listOfTargets{Target::markTargets(p.front())};
 
 		for (const Target& t : listOfTargets) {
 			const Channel *const targetChannel = channelReg.getChannel(t.str);
