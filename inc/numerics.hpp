@@ -16,6 +16,8 @@
 
 # define RPL_UMODEIS						221
 
+# define RPL_CHANNELMODEIS					324
+
 # define RPL_NOTOPIC						331
 # define RPL_NOTOPIC_MESSAGE				":No topic is set"
 
@@ -23,11 +25,12 @@
 
 # define RPL_TOPICWHOTIME					333
 
-# define RPL_CHANNELMODEIS					324
-
 # define RPL_INVITING						341
 
-# define RPL_PRIVMSG						353
+# define RPL_NAMREPLY						353
+
+# define RPL_ENDOFNAMES						366
+# define RPL_ENDOFNAMES_MESSAGE				":End of /NAMES list"
 
 # define ERR_UNKNOWNERROR					400
 

@@ -31,7 +31,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 		return;
 	}
 
-	const std::string nick = user->getNickname();
+	const std::string& nick = user->getNickname();
 	std::deque<std::string>::const_iterator pcit = p.begin();
 	const std::list<Target> listOfTargets{Target::markTargets(*pcit++)};
 	const std::string modestring{pcit == p.end() ? "" : *pcit++};

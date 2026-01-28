@@ -2,9 +2,11 @@
 # define CHANNEL_HPP
 
 # include <deque>
+# include <functional>
 # include <map>
 # include <set>
 # include <string>
+# include <utility>
 
 # include <Client.hpp>
 # include <static_declarations.hpp>
@@ -54,6 +56,8 @@ class Channel {
 
 		bool	isOperator(Client *client) const;
 		bool 	hasClient(Client *client) const;
+
+		void	forEachClient(const std::function <void (std::pair<Client *, int>)>&) const;	
 
 		bool	topicRequiresOperator() const;
 		const std::string& getTopic() const;

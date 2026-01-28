@@ -1,5 +1,6 @@
 #include <Channel.hpp>
 
+#include <algorithm>
 #include <sstream>
 
 Channel::Channel(std::string name) : _name(name), _userLimit(-1), _modes(0) {
@@ -55,6 +56,11 @@ std::map<Client *,int>::const_iterator Channel::getClientByNick(const std::strin
 	}
 
 	return cit;
+}
+
+void Channel::forEachClient(const std::function <void (std::pair<Client *, int>)>& f) const
+{
+	std::for_each(_clients.begin(), _clients.end(), f);
 }
 
 std::set<Client *> Channel::getClients() {
