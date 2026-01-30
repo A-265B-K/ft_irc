@@ -14,5 +14,6 @@
 
 void	check_input(uint16_t&, std::string&, int, char**);
 void	printMessage(const std::string&);
+std::string	timestamp();
 
 #endif

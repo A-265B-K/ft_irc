@@ -9,6 +9,7 @@
 # include <utility>
 
 # include <Client.hpp>
+# include <function_declarations.hpp>
 # include <static_declarations.hpp>
 
 class Client;
@@ -19,6 +20,7 @@ class Channel {
 		std::map<Client *, int>		_clients; // int 0 = users, 1 = operator, 2 = owner
 		std::string					_key;
 		int							_userLimit; /* -1 means there is no limit */
+		std::string					_timestamp;
 		std::string					_topic;
 		std::string					_topicSetter;
 		std::string					_topicTime;
@@ -49,6 +51,7 @@ class Channel {
 		int		memberCount();
 
 		const std::string& getName() const;
+		const std::string& getTimestamp() const;
 
 		bool	verifyKey(const std::string&) const;
 		bool	isInviteOnly() const;
