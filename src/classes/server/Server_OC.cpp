@@ -26,7 +26,7 @@ void Server::start()
 
 	std::ostringstream addresses;
 
-	output.clear();
+	output.str("");
 	int opt = 1;
 	if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
 		std::cerr << RED << "Setting socket options failed: " << std::strerror(errno) << RESET << std::endl;
