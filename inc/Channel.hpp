@@ -25,6 +25,7 @@ class Channel {
 		std::string					_topicSetter;
 		std::string					_topicTime;
         unsigned char	           	_modes;
+		std::set<std::string>		_invitations;
 
 		static const std::string	flags; // "iklot"
 
@@ -54,7 +55,8 @@ class Channel {
 		const std::string& getTimestamp() const;
 
 		bool	verifyKey(const std::string&) const;
-		bool	isInviteOnly() const;
+		void	addInvitee(Client *);
+		bool	isInvited(Client *) const;
 		bool	isFull() const;
 
 		bool	isOperator(Client *client) const;

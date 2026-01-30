@@ -26,6 +26,7 @@ void	Channel::addClient(Client *client) {
 	} else {
 		_clients.insert({client, 0});
 	}
+	_invitations.erase(client->getUser()->getNickname());
 }
 
 int		Channel::memberCount() {
@@ -153,9 +154,15 @@ bool Channel::verifyKey(const std::string& userKey) const
 	return !isMode('k') || userKey == _key;
 }
 
-bool Channel::isInviteOnly() const
+void Channel::addInvitee(Client *client)
 {
-	return isMode('i');
+	_invitations.emplace(client->getUser()->getNickname());
+}
+
+bool Channel::isInvited(Client *client) const
+{
+	return !isMode('i') ||
+			(client ?_invitations.count(client->getUser()->getNickname()) : false);
 }
 
 bool Channel::isFull() const

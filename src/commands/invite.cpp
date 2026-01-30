@@ -66,4 +66,7 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 	for (const std::string& p1 : p)
 		msg += ' ' + p1;
 	invitee->replyTo(client->getName(), "INVITE", msg);	
+
+	/* Adding invitee to the invitations set */
+	channel->addInvitee(invitee);
 }
