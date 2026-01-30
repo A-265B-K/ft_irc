@@ -62,9 +62,8 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 					channelName);
 
 	/* Sending invite to invitee */
-	std::deque<std::string>::const_iterator it = p.begin();
-	std::string msg = client->getName() + " INVITE ";
-	while (it != p.end()) msg += *it++;
-	msg += CRLF;
-	client->handleWritable(Message(msg));
+	std::string msg;
+	for (const std::string& p1 : p)
+		msg += ' ' + p1;
+	invitee->replyTo(client->getName(), "INVITE", msg);	
 }
