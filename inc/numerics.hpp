@@ -18,6 +18,8 @@
 
 # define RPL_CHANNELMODEIS					324
 
+# define RPL_CREATIONTIME					329
+
 # define RPL_NOTOPIC						331
 # define RPL_NOTOPIC_MESSAGE				":No topic is set"
 

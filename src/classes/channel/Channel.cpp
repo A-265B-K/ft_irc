@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <sstream>
 
-Channel::Channel(std::string name) : _name(name), _userLimit(-1), _modes(0) {
+Channel::Channel(std::string name) : _name(name), _userLimit(-1), _timestamp(::timestamp()), _modes(0) {
 	std::cout << BLUE << "CHANNEL CREATED: " << YELLOW << _name << RESET << std::endl;
 }
 
@@ -121,6 +121,8 @@ bool Channel::hasClient(Client *client) const {
 const std::string& Channel::getName() const {
 	return _name;
 }
+
+const std::string& Channel::getTimestamp() const { return _timestamp; }
 
 void	Channel::sendTopic(Client *recipient) const {
 	User *user = recipient->getUser();

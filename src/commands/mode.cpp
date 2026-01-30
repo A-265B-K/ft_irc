@@ -54,7 +54,11 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						RPL_CHANNELMODEIS,
 						nick + ' ' + t.str + ' ' + targetChannel->getChannelModes(client)
 				);
-				// RPL_CREATIONTIME (329) not sent because time functions not allowed by subject
+				client->response(
+						server.getName(),
+						RPL_CREATIONTIME,
+						nick + ' ' + t.str + ' ' + targetChannel->getTimestamp()
+				);
 			}
 			else {
 				::printMessage("Channel mode edition requested on " + t.str);
