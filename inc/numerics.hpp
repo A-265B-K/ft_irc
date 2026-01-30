@@ -75,8 +75,14 @@
 # define ERR_PASSWDMISMATCH					464
 # define ERR_PASSWDMISMATCH_MESSAGE			":Password incorrect"
 
+# define ERR_CHANNELISFULL					471
+# define ERR_CHANNELISFULL_MESSAGE			":Cannot join channel (+l)"
+
+# define ERR_INVITEONLYCHAN					473
+# define ERR_INVITEONLYCHAN_MESSAGE			":Cannot join channel (+i)"
+
 # define ERR_BADCHANNELKEY					475
-# define ERR_BADCHANNELKEY_MESSAGE			":Channel key is incorrect"
+# define ERR_BADCHANNELKEY_MESSAGE			":Cannot join channel (+k)"
 
 # define ERR_CHANOPRIVSNEEDED				482
 # define ERR_CHANOPRIVSNEEDED_MESSAGE		":You're not a channel operator"

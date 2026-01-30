@@ -40,7 +40,7 @@ class Channel {
 		std::string	printModes(const unsigned char&) const;
 
 	public:
-		Channel(std::string name);
+		Channel(std::string name, std::string key);
 		~Channel();
 
 		void	addClient(Client *client);
@@ -55,6 +55,7 @@ class Channel {
 
 		bool	verifyKey(const std::string&) const;
 		bool	isInviteOnly() const;
+		bool	isFull() const;
 
 		bool	isOperator(Client *client) const;
 		bool 	hasClient(Client *client) const;

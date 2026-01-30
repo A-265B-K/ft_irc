@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <sstream>
 
-Channel::Channel(std::string name) : _name(name), _userLimit(-1), _timestamp(::timestamp()), _modes(0) {
+Channel::Channel(std::string name, std::string key) : _name(name), _key(key),_userLimit(-1), _timestamp(::timestamp()), _modes(0) {
+	if (!key.empty())
+		setMode('k');
 	std::cout << BLUE << "CHANNEL CREATED: " << YELLOW << _name << RESET << std::endl;
 }
 
@@ -19,12 +21,10 @@ void	Channel::setTopic(Client *setter, const std::string& topic) {
 
 void	Channel::addClient(Client *client) {
 	/* If there is no-one in the channel, make the newest person the owner */
-	if (!isMode('l') || static_cast<int>(_clients.size()) < _userLimit) {
-		if (_clients.empty()) {
-			_clients.insert({client, 2});
-		} else {
-			_clients.insert({client, 0});
-		}
+	if (_clients.empty()) {
+		_clients.insert({client, 2});
+	} else {
+		_clients.insert({client, 0});
 	}
 }
 
@@ -156,4 +156,9 @@ bool Channel::verifyKey(const std::string& userKey) const
 bool Channel::isInviteOnly() const
 {
 	return isMode('i');
+}
+
+bool Channel::isFull() const
+{
+	return isMode('l') && static_cast<int>(_clients.size()) >= _userLimit;
 }
