@@ -1,8 +1,8 @@
 #include <EventLoop.hpp>
+#include <Target.hpp>
 
 void EventLoop::join(Client *client, const std::deque<std::string>& p)
 {
-	// TODO SPLIT CHANNEL AND PASSWORDS
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
@@ -15,25 +15,35 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 		return ;
 	}
 
-	std::string channelName = p.front();
-	std::string password;
+	const std::list<Target> listOfTargets{Target::markTargets(p.front())};
+	std::istringstream passwords{p.size() == 2 ? p.back() : ""};
 
-	p.size() == 2 ? password = p.back() : "";
+	for (const Target& t : listOfTargets) {
+		std::string key;
+		std::getline(passwords, key, ',');
 
-	switch (channelReg.joinChannel(channelName, client, password)) {
-		case (1):
-			channelReg.getChannel(channelName)->sendTopic(client);
-			break ;
-		case (-1):
-			client->response(server.getName(), ERR_NOSUCHCHANNEL,
-							 user->getNickname() + ' ' + channelName + ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
-			break ;
-		case (-2):
-			client->response(server.getName(), ERR_BADCHANNELKEY,
-							 user->getNickname() + ' ' + channelName + ' ' + ERR_BADCHANNELKEY_MESSAGE);
-			break ;
-		default:
-			break ;
+		switch (channelReg.joinChannel(t.str, client, key)) {
+			case (1):
+				channelReg.getChannel(t.str)->sendTopic(client);
+				break ;
+			case (-1):
+				client->response(server.getName(), ERR_NOSUCHCHANNEL,
+						user->getNickname() + ' ' + t.str + ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
+				break ;
+			case (-2):
+				client->response(server.getName(), ERR_BADCHANNELKEY,
+						user->getNickname() + ' ' + t.str + ' ' + ERR_BADCHANNELKEY_MESSAGE);
+				break ;
+			case (-3):
+				client->response(server.getName(), ERR_INVITEONLYCHAN,
+						user->getNickname() + ' ' + t.str + " " ERR_INVITEONLYCHAN_MESSAGE);
+				break;
+			case (-4):
+				client->response(server.getName(), ERR_CHANNELISFULL,
+						user->getNickname() + ' ' + t.str + " " ERR_CHANNELISFULL_MESSAGE);
+				break;
+			default:
+				break ;
+		}
 	}
-	return ;
 }
