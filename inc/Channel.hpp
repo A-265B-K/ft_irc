@@ -56,6 +56,7 @@ class Channel {
 
 		bool	verifyKey(const std::string&) const;
 		void	addInvitee(Client *);
+		bool	isInviteOnly() const;
 		bool	isInvited(Client *) const;
 		bool	isFull() const;
 

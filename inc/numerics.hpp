@@ -27,6 +27,11 @@
 
 # define RPL_TOPICWHOTIME					333
 
+# define RPL_INVITELIST						336
+
+# define RPL_ENDOFINVITELIST				337
+# define RPL_ENDOFINVITELIST_MESSAGE		":End of /INVITE list"
+
 # define RPL_INVITING						341
 
 # define RPL_NAMREPLY						353

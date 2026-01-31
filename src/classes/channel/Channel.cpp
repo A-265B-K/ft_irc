@@ -154,6 +154,11 @@ bool Channel::verifyKey(const std::string& userKey) const
 	return !isMode('k') || userKey == _key;
 }
 
+bool Channel::isInviteOnly() const
+{
+	return isMode('i');
+}
+
 void Channel::addInvitee(Client *client)
 {
 	_invitations.emplace(client->getUser()->getNickname());
@@ -161,8 +166,7 @@ void Channel::addInvitee(Client *client)
 
 bool Channel::isInvited(Client *client) const
 {
-	return !isMode('i') ||
-			(client ?_invitations.count(client->getUser()->getNickname()) : false);
+	return client ? _invitations.count(client->getUser()->getNickname()) : false;
 }
 
 bool Channel::isFull() const

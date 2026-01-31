@@ -45,7 +45,7 @@ int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client
 	if (channel->hasClient(client)) {
 		return 0;
 	}
-	if (!channel->isInvited(client))
+	if (channel->isInviteOnly() && !channel->isInvited(client))
 		return -3;
 	if (channel->isFull())
 		return -4;
