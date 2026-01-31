@@ -16,9 +16,20 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 	}
 
 	const std::list<Target> listOfTargets{Target::markTargets(p.front())};
-	std::istringstream passwords{p.size() == 2 ? p.back() : ""};
+	std::istringstream passwords{p.size() >= 2 ? p[1] : ""};
 
 	for (const Target& t : listOfTargets) {
+		if ((t.type != TargetType::REGULAR_CHANNEL && t.type != TargetType::LOCAL_CHANNEL)
+				|| t.str.find(0x07) != std::string::npos) {
+			client->response(
+					server.getName(),
+					ERR_BADCHANMASK,
+					user->getNickname() + ' ' + t.str + " " ERR_BADCHANMASK_MESSAGE
+			);
+
+			continue;
+			}
+
 		std::string key;
 		std::getline(passwords, key, ',');
 

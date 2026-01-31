@@ -49,7 +49,11 @@ void EventLoop::invite(Client *client, const std::deque<std::string>& p)
 		Channel	*channel = channelReg.getChannel(channelName);
 
 		if (!invitee) {
-			return ; /* For some reason no error response is provided in the IRC documentation */
+			client->response(server.getName(), ERR_NOSUCHNICK,
+						nick + ' ' + 
+						p.front() + ' ' + 
+						ERR_NOSUCHNICK_MESSAGE);
+			return ;
 		}
 		if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
