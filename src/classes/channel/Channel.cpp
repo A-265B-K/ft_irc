@@ -75,19 +75,19 @@ std::set<Client *> Channel::getClients() {
 }
 
 void	Channel::broadcast(const Client *sender, const std::string& command,
-		const std::string& message) const
+		const std::string& message, bool toAll) const
 {
-	std::stringstream	text;
-	text  << ':' + sender->getName() <<
-			 ' '  << command <<
-			 ' '  << _name <<
-			 ' '  << message << CRLF;
+	for (auto cl : _clients) {
+		Client *const recipient = cl.first;
 
-	for (auto it : _clients) {
-		Client *recipient = it.first;
-		if (recipient && recipient->getUser()->isRegistered()) {
-			recipient->handleWritable(text.str());
-		}
+		if (!toAll && recipient == sender)
+			continue;
+		if (recipient && recipient->getUser()->isRegistered())
+			recipient->replyTo(
+					sender->getName(),
+					command, 
+					_name + ' ' + message
+			);
 	}
 }
 
