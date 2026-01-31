@@ -8,14 +8,14 @@ void EventLoop::part(Client *client, const std::deque<std::string>& p)
 							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
-	if (p.size() < 1) {
+	if (!p.size()) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
 							 user->getNickname() + " PART " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
 	std::stringstream		sstreamParams(p.front());
-	std::string				reason{p.size() > 1 ? p[1] : ""};
+	const std::string		reason{p.size() > 1 ? p[1] : ""};
 	std::string				tmp;
 	Channel					*channel;
 
