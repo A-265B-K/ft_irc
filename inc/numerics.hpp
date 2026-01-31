@@ -89,6 +89,9 @@
 # define ERR_BADCHANNELKEY					475
 # define ERR_BADCHANNELKEY_MESSAGE			":Cannot join channel (+k)"
 
+# define ERR_BADCHANMASK					476
+# define ERR_BADCHANMASK_MESSAGE			":Bad Channel Mask"
+
 # define ERR_CHANOPRIVSNEEDED				482
 # define ERR_CHANOPRIVSNEEDED_MESSAGE		":You're not a channel operator"
 
