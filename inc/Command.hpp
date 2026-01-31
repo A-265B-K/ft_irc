@@ -6,6 +6,7 @@ X(CAP, cap)				\
 X(INVITE, invite)		\
 X(JOIN, join)			\
 X(KICK, kick)			\
+X(LIST, list)			\
 X(MODE, mode)			\
 X(NAMES, names)			\
 X(NICK, nick)			\

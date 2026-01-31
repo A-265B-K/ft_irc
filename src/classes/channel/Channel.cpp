@@ -29,7 +29,7 @@ void	Channel::addClient(Client *client) {
 	_invitations.erase(client->getUser()->getNickname());
 }
 
-int		Channel::memberCount() {
+int		Channel::memberCount() const {
 	return _clients.size();
 }
 
