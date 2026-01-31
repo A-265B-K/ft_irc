@@ -26,35 +26,34 @@ int ChannelRegistry::isValidChannelName(const std::string& channelName) {
 		-2 if key is required but not correct
 		-3 if the channel is invite-only
 		-4 if the channel is full */
-int		ChannelRegistry::joinChannel(const std::string& channelName, Client *client, std::string key) {
+int		ChannelRegistry::joinChannel(Channel **channel, const std::string& channelName, Client *client, std::string key) {
 	if (!this->isValidChannelName(channelName)) {
 		std::cout << "TEST" << std::endl;
 		return -1;
 	}
 
-	Channel *channel;
 	auto it = _channels.find(channelName);
 
 	if (it == _channels.end()) {
-		channel = new Channel(channelName, key);
-		_channels[channelName] = channel;
+		*channel = new Channel(channelName, key);
+		_channels[channelName] = *channel;
 	} else {
-		channel = it->second;
+		*channel = it->second;
 	}
 
-	if (channel->hasClient(client)) {
+	if ((*channel)->hasClient(client)) {
 		return 0;
 	}
-	if (channel->isInviteOnly() && !channel->isInvited(client))
+	if ((*channel)->isInviteOnly() && !(*channel)->isInvited(client))
 		return -3;
-	if (channel->isFull())
+	if ((*channel)->isFull())
 		return -4;
-	if (channel->verifyKey(key)) {
-		channel->addClient(client);
+	if ((*channel)->verifyKey(key)) {
+		(*channel)->addClient(client);
 	} else {
 		return -2;
 	}
-	if (!channel->getTopic().empty()) {
+	if (!(*channel)->getTopic().empty()) {
 		return  1;
 	}
 	return 0;
