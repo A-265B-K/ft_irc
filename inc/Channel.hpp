@@ -46,10 +46,11 @@ class Channel {
 
 		void	addClient(Client *client);
 		void	removeClient(Client *client);
-		void	broadcast(const Client *sender, const std::string& command,
-					const std::string& message) const;
 		std::set<Client *> getClients();
 		int		memberCount();
+
+		void	broadcast(const Client *sender, const std::string& command,
+					const std::string& message, bool toAll = false) const;
 
 		const std::string& getName() const;
 		const std::string& getTimestamp() const;
