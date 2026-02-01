@@ -29,7 +29,7 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 	if (!user->isNicknameValid(nickname)) {
 		client->response(server.getName(), ERR_ERRONEUSNICKNAME,
 							client->getName() + ' ' + user->getNickname()
-							+ " " ERR_ERRONEUSNICKNAME_MESSAGE);	
+							+ " " ERR_ERRONEUSNICKNAME_MESSAGE);
 		return ;
 	}
 
