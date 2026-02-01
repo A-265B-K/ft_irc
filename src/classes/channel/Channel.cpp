@@ -64,16 +64,6 @@ void Channel::forEachClient(const std::function <void (std::pair<Client *, int>)
 	std::for_each(_clients.begin(), _clients.end(), f);
 }
 
-std::set<Client *> Channel::getClients() {
-	std::set<Client *> clients;
-
-	for (auto const& x : _clients){
-		Client *c = x.first;
-		clients.insert(c);
-	}
-	return clients;
-}
-
 void	Channel::broadcast(const Client *sender, const std::string& command,
 		const std::string& message, bool toAll) const
 {
@@ -108,6 +98,14 @@ const std::string& Channel::getTopic() const {
 	return _topic;
 }
 
+const std::string& Channel::getTopicSetter() const {
+	return _topicSetter;
+}
+
+const std::string& Channel::getTopicTime() const {
+	return _topicTime;
+}
+
 bool Channel::hasClient(Client *client) const {
 	if (client == nullptr) {
 		return false;
@@ -124,19 +122,6 @@ const std::string& Channel::getName() const {
 }
 
 const std::string& Channel::getTimestamp() const { return _timestamp; }
-
-void	Channel::sendTopic(Client *recipient) const {
-	User *user = recipient->getUser();
-	recipient->handleWritable(std::to_string(RPL_TOPIC) + ' ' +
-								user->getNickname() + ' ' +
-								_name + " :" +
-								_topic + "\r\n");
-	recipient->handleWritable(std::to_string(RPL_TOPICWHOTIME) + ' ' +
-								user->getNickname() + ' ' +
-								_name + ' ' +
-								_topicSetter + ' ' +
-								_topicTime + "\r\n");
-}
 
 bool Channel::topicRequiresOperator() const
 {
