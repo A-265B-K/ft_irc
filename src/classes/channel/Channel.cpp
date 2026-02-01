@@ -26,9 +26,10 @@ void	Channel::addClient(Client *client) {
 	} else {
 		_clients.insert({client, 0});
 	}
+	_invitations.erase(client->getUser()->getNickname());
 }
 
-int		Channel::memberCount() {
+int		Channel::memberCount() const {
 	return _clients.size();
 }
 
@@ -63,30 +64,20 @@ void Channel::forEachClient(const std::function <void (std::pair<Client *, int>)
 	std::for_each(_clients.begin(), _clients.end(), f);
 }
 
-std::set<Client *> Channel::getClients() {
-	std::set<Client *> clients;
-
-	for (auto const& x : _clients){
-		Client *c = x.first;
-		clients.insert(c);
-	}
-	return clients;
-}
-
 void	Channel::broadcast(const Client *sender, const std::string& command,
-		const std::string& message) const
+		const std::string& message, bool toAll) const
 {
-	std::stringstream	text;
-	text  << ':' + sender->getName() <<
-			 ' '  << command <<
-			 ' '  << _name <<
-			 ' '  << message << CRLF;
+	for (auto cl : _clients) {
+		Client *const recipient = cl.first;
 
-	for (auto it : _clients) {
-		Client *recipient = it.first;
-		if (recipient && recipient->getUser()->isRegistered()) {
-			recipient->handleWritable(text.str());
-		}
+		if (!toAll && recipient == sender)
+			continue;
+		if (recipient && recipient->getUser()->isRegistered())
+			recipient->replyTo(
+					sender->getName(),
+					command, 
+					_name + ' ' + message
+			);
 	}
 }
 
@@ -107,6 +98,14 @@ const std::string& Channel::getTopic() const {
 	return _topic;
 }
 
+const std::string& Channel::getTopicSetter() const {
+	return _topicSetter;
+}
+
+const std::string& Channel::getTopicTime() const {
+	return _topicTime;
+}
+
 bool Channel::hasClient(Client *client) const {
 	if (client == nullptr) {
 		return false;
@@ -123,19 +122,6 @@ const std::string& Channel::getName() const {
 }
 
 const std::string& Channel::getTimestamp() const { return _timestamp; }
-
-void	Channel::sendTopic(Client *recipient) const {
-	User *user = recipient->getUser();
-	recipient->handleWritable(std::to_string(RPL_TOPIC) + ' ' +
-								user->getNickname() + ' ' +
-								_name + " :" +
-								_topic + "\r\n");
-	recipient->handleWritable(std::to_string(RPL_TOPICWHOTIME) + ' ' +
-								user->getNickname() + ' ' +
-								_name + ' ' +
-								_topicSetter + ' ' +
-								_topicTime + "\r\n");
-}
 
 bool Channel::topicRequiresOperator() const
 {
@@ -156,6 +142,16 @@ bool Channel::verifyKey(const std::string& userKey) const
 bool Channel::isInviteOnly() const
 {
 	return isMode('i');
+}
+
+void Channel::addInvitee(Client *client)
+{
+	_invitations.emplace(client->getUser()->getNickname());
+}
+
+bool Channel::isInvited(Client *client) const
+{
+	return client ? _invitations.count(client->getUser()->getNickname()) : false;
 }
 
 bool Channel::isFull() const

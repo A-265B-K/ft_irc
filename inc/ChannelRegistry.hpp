@@ -13,7 +13,7 @@ class ChannelRegistry {
 
 	public:
 		int 	isValidChannelName(const std::string& channelName);
-		int		joinChannel(const std::string& channelName, Client *client, std::string key);
+		int		joinChannel(Channel **, const std::string& channelName, Client *client, std::string key);
 		int		partChannel(const std::string& channelName, Client *client);
 		Channel	*getChannel(const std::string& channelName);
 		void	removeClient(Client *client);

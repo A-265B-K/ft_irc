@@ -16,6 +16,14 @@
 
 # define RPL_UMODEIS						221
 
+# define RPL_LISTSTART						321
+# define RPL_LISTSTART_MESSAGE				"Channel :Users  Name" // double spaces deliberate
+
+# define RPL_LIST							322
+
+# define RPL_LISTEND						323
+# define RPL_LISTEND_MESSAGE				":End of /LIST"
+
 # define RPL_CHANNELMODEIS					324
 
 # define RPL_CREATIONTIME					329
@@ -26,6 +34,11 @@
 # define RPL_TOPIC							332
 
 # define RPL_TOPICWHOTIME					333
+
+# define RPL_INVITELIST						336
+
+# define RPL_ENDOFINVITELIST				337
+# define RPL_ENDOFINVITELIST_MESSAGE		":End of /INVITE list"
 
 # define RPL_INVITING						341
 
@@ -83,6 +96,9 @@
 
 # define ERR_BADCHANNELKEY					475
 # define ERR_BADCHANNELKEY_MESSAGE			":Cannot join channel (+k)"
+
+# define ERR_BADCHANMASK					476
+# define ERR_BADCHANMASK_MESSAGE			":Bad Channel Mask"
 
 # define ERR_CHANOPRIVSNEEDED				482
 # define ERR_CHANOPRIVSNEEDED_MESSAGE		":You're not a channel operator"

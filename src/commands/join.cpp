@@ -15,17 +15,38 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 		return ;
 	}
 
+	if (p.front() == "0") { // Alternative special argument "0"
+		std::string memberOf;
+
+		channelReg.forEachChannel([&, client](const std::pair<std::string, Channel *>& ch) {
+				if (ch.second->hasClient(client))
+					memberOf += (memberOf.empty() ? "" : ",") + ch.first;
+		});
+		part(client, std::deque<std::string>{memberOf});
+
+		return;
+	}
+
 	const std::list<Target> listOfTargets{Target::markTargets(p.front())};
-	std::istringstream passwords{p.size() == 2 ? p.back() : ""};
+	std::istringstream keys{p.size() >= 2 ? p[1] : ""};
 
 	for (const Target& t : listOfTargets) {
-		std::string key;
-		std::getline(passwords, key, ',');
+		if ((t.type != TargetType::REGULAR_CHANNEL && t.type != TargetType::LOCAL_CHANNEL)
+				|| t.str.find(0x07) != std::string::npos) {
+			client->response(
+					server.getName(),
+					ERR_BADCHANMASK,
+					user->getNickname() + ' ' + t.str + " " ERR_BADCHANMASK_MESSAGE
+			);
 
-		switch (channelReg.joinChannel(t.str, client, key)) {
-			case (1):
-				channelReg.getChannel(t.str)->sendTopic(client);
-				break ;
+			continue;
+		}
+
+		Channel *targetChannel;
+		std::string key;
+		std::getline(keys, key, ',');
+
+		switch (channelReg.joinChannel(&targetChannel, t.str, client, key)) {
 			case (-1):
 				client->response(server.getName(), ERR_NOSUCHCHANNEL,
 						user->getNickname() + ' ' + t.str + ' ' + ERR_NOSUCHCHANNEL_MESSAGE);
@@ -43,6 +64,12 @@ void EventLoop::join(Client *client, const std::deque<std::string>& p)
 						user->getNickname() + ' ' + t.str + " " ERR_CHANNELISFULL_MESSAGE);
 				break;
 			default:
+				const std::deque<std::string> p1{t.str};
+
+				targetChannel->broadcast(client, "JOIN", "", true);
+				if (!targetChannel->getTopic().empty())
+					topic(client, p1);
+				names(client, p1);
 				break ;
 		}
 	}

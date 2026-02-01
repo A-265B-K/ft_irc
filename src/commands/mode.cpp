@@ -87,7 +87,7 @@ void EventLoop::mode(Client *client, const std::deque<std::string>& p)
 						changedModes, invalidParam, notInChannel, modestring, pcit, p.end());
 
 				if (!changedModes.empty())
-					targetChannel->broadcast(client, "MODE", changedModes);
+					targetChannel->broadcast(client, "MODE", changedModes, true);
 
 				for (const std::pair<char, std::string>& badParam : invalidParam)
 					client->response(

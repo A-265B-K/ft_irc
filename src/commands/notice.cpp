@@ -1,41 +1,27 @@
 #include <EventLoop.hpp>
+#include <Target.hpp>
 
 void EventLoop::notice(Client *client, const std::deque<std::string>& p)
 {
-	User *user = client->getUser();
-	if (!user->isRegistered()) {
-		client->response(server.getName(), ERR_NOTREGISTERED,
-							client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
-		return ;
-	}
-	if (p.size() < 2) {
-		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							client->getName() + " NOTICE " + ERR_NEEDMOREPARAMS_MESSAGE);		
-		return ;
-	}
+	User *const user = client->getUser();
 
-	std::stringstream		sstreamParams(p.front());
-	std::string				message{":"};
-	std::string				tmp;
+	if (!user || !user->isRegistered() || p.size() < 2)
+		return;
 
-	Channel *channel;
+	const std::list<Target> listOfTargets{Target::markTargets(p[0])};
+	const std::string text{p[1]};
 
-	message += p[1];
-	/* Split parameters up, they're structured as 'channel,channel', 'user,user', 'channel,user' and so forth */
-	while (std::getline(sstreamParams, tmp, ',')) {
-		if (tmp.empty()) {
-			continue ;
-		}
-		/* If the parameters is a channel, check if it exists, if so request the list of users subscribed to that channel and add it to the users set */
-		if (channelReg.isValidChannelName(tmp)) {
-			channel = this->channelReg.getChannel(tmp);
-			if (channel) {
-				channel->broadcast(client, "NOTICE", message);
-			} else {
-				// TODO: send error code, channel does not exist.
-			}
+	for (const Target& t : listOfTargets)
+		if (t.type == TargetType::REGULAR_CHANNEL || t.type == TargetType::LOCAL_CHANNEL) {
+			Channel *const targetChannel = channelReg.getChannel(t.str);
+
+			if (targetChannel)
+				targetChannel->broadcast(client, "NOTICE", text);
 		} else {
-			// TODO: send error code
-			}
-	}
+			Client *const targetClient = clientReg.getClientByNick(t.str);
+
+			if (targetClient && targetClient->getUser()->isRegistered())
+				targetClient->replyTo(user->getNickname(), "NOTICE",
+						targetClient->getUser()->getNickname() + " :" + text);
+		}
 }

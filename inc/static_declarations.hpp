@@ -24,5 +24,6 @@
 # define ERR_PASS 3		// error: invalid password
 # define UNKNOWNFLAG 01	// error flag for MODE command (channel mode)
 # define INVALIDKEY  02 // error flag for MODE command (channel mode)
+# define KICK_DEFAULT_REASON "No reason supplied"	// default KICK motive
 
 #endif

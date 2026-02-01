@@ -25,6 +25,7 @@ class Channel {
 		std::string					_topicSetter;
 		std::string					_topicTime;
         unsigned char	           	_modes;
+		std::set<std::string>		_invitations;
 
 		static const std::string	flags; // "iklot"
 
@@ -45,27 +46,28 @@ class Channel {
 
 		void	addClient(Client *client);
 		void	removeClient(Client *client);
-		void	broadcast(const Client *sender, const std::string& command,
-					const std::string& message) const;
-		std::set<Client *> getClients();
-		int		memberCount();
-
-		const std::string& getName() const;
-		const std::string& getTimestamp() const;
-
-		bool	verifyKey(const std::string&) const;
-		bool	isInviteOnly() const;
+		int		memberCount() const;
 		bool	isFull() const;
-
-		bool	isOperator(Client *client) const;
 		bool 	hasClient(Client *client) const;
+		bool	isOperator(Client *client) const;
+
+		void	broadcast(const Client *sender, const std::string& command,
+					const std::string& message, bool toAll = false) const;
 
 		void	forEachClient(const std::function
 						<void (std::pair<Client *, int>)>&) const;	
 
+		const std::string& getName() const;
+		const std::string& getTimestamp() const;
+
+		void	addInvitee(Client *);
+		bool	isInviteOnly() const;
+		bool	isInvited(Client *) const;
+
 		bool	topicRequiresOperator() const;
-		const std::string& getTopic() const;
-		void	sendTopic(Client *recipient) const;
+		const	std::string& getTopic() const;
+		const	std::string& getTopicSetter() const;
+		const	std::string& getTopicTime() const;
 		void	setTopic(Client* setter, const std::string& topic);
 
         std::string getChannelModes(Client*) const;
@@ -74,6 +76,7 @@ class Channel {
 				std::deque<std::string>::const_iterator&,
 				const std::deque<std::string>::const_iterator&);
 
+		bool	verifyKey(const std::string&) const;
 		static bool	isValidKey(const std::string&);
 };
 
