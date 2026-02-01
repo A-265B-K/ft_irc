@@ -2,7 +2,6 @@
 #include <Target.hpp>
 
 #include <list>
-#include <utility>
 
 static void printMembers(const Client *client, const std::string& serverName,
 		const std::string& nickname, const Channel* channel)

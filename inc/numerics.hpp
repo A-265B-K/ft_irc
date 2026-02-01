@@ -16,6 +16,14 @@
 
 # define RPL_UMODEIS						221
 
+# define RPL_LISTSTART						321
+# define RPL_LISTSTART_MESSAGE				"Channel :Users  Name" // double spaces deliberate
+
+# define RPL_LIST							322
+
+# define RPL_LISTEND						323
+# define RPL_LISTEND_MESSAGE				":End of /LIST"
+
 # define RPL_CHANNELMODEIS					324
 
 # define RPL_CREATIONTIME					329
