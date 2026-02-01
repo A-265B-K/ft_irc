@@ -1,14 +1,20 @@
 #include <EventLoop.hpp>
 
 void EventLoop::ping(Client *client, const std::deque<std::string>& p) {
-	std::deque<std::string>::const_iterator it = p.begin();
+	if (p.empty()) {
+		client->response(
+				server.getName(),
+				ERR_NEEDMOREPARAMS,
+				client->getUser()->getNickname()
+						+ " MODE " ERR_NEEDMOREPARAMS_MESSAGE
+		);
 
-	std::string returnStr = "PONG ";
+	return;
+	}
 
-	while (it != p.end())
-		returnStr += *it++;
-
-	returnStr += "\r\n";
-
-	client->handleWritable(Message(returnStr));
+	client->replyTo(
+			server.getName(),
+			"PONG",
+			':' + p.front()
+	);
 }
