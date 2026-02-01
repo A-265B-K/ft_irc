@@ -22,7 +22,7 @@ void EventLoop::quit(Client *client, const std::deque<std::string>& p)
 				});
 	});
 	
-	reason = ":Quit " + reason;
+	reason = ":Quit: " + reason;
 	for (Client *const cl : peers)
 			cl->replyTo(
 				client->getName(),
