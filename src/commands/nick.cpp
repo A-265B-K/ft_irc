@@ -6,7 +6,7 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 
 	if (user->isRegistered()) {
 		client->response(server.getName(), ERR_ALREADYREGISTERED,
-						client->getName() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
+						user->getNickname() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
 		return ;
 	}
 
@@ -18,24 +18,23 @@ void EventLoop::nick(Client *client, const std::deque<std::string>& p)
 	}
 
 	if (p.size() < 1) {
-		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							client->getName() + " NICK " + ERR_NEEDMOREPARAMS_MESSAGE);		
+		client->response(server.getName(), ERR_NONICKNAMEGIVEN,
+						client->getName() + ' ' + ERR_NONICKNAMEGIVEN_MESSAGE);		
 		return ;
 	}
 
 	std::string nickname = p.front();
 
-
 	if (!user->isNicknameValid(nickname)) {
 		client->response(server.getName(), ERR_ERRONEUSNICKNAME,
-							client->getName() + ' ' + user->getNickname()
+						client->getName() + ' ' + nickname
 							+ " " ERR_ERRONEUSNICKNAME_MESSAGE);
 		return ;
 	}
 
 	if (clientReg.getClientByNick(nickname)) {
 		client->response(server.getName(), ERR_NICKNAMEINUSE,
-							client->getName() + ' ' + user->getNickname()
+						client->getName() + ' ' + user->getNickname()
 							+ " " ERR_NICKNAMEINUSE_MESSAGE);	
 		return ;
 	}

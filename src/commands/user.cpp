@@ -6,7 +6,7 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 
 	if (user->isRegistered()) {
 		client->response(server.getName(), ERR_ALREADYREGISTERED,
-						 client->getName() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
+						 user->getNickname() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
 		return ;
 	}
 
@@ -19,7 +19,7 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 
 	if (p.size() < 4) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 client->getName() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
+						client->getName() + ' ' + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
@@ -34,14 +34,6 @@ void EventLoop::user(Client *client, const std::deque<std::string>& p)
 	user->setServername(server.getName());
 	it++;
 
-	std::string realname = "";
-	while (it != p.end()) {
-		if (*it != "=") {
-			realname += *it;
-		}
-		it++;
-	}
-
-	user->setRealname(realname);
+	user->setRealname(*it == "=" ? "" : *it);
 	user->registerUser(server.getCreationTime(), server.getVersion());
 }

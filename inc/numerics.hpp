@@ -61,6 +61,9 @@
 # define ERR_UNKNOWNCOMMAND					421
 # define ERR_UNKNOWNCOMMAND_MESSAGE			":Unknown command"
 
+# define ERR_NONICKNAMEGIVEN				431
+# define ERR_NONICKNAMEGIVEN_MESSAGE		":No nickname given"
+
 # define ERR_ERRONEUSNICKNAME				432
 # define ERR_ERRONEUSNICKNAME_MESSAGE		":Disallowed characters in nickname"
 

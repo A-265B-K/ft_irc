@@ -6,13 +6,13 @@ void EventLoop::pass(Client *client, const std::deque<std::string>& p)
 
 	if (user->isRegistered()) {
 		client->response(server.getName(), ERR_ALREADYREGISTERED,
-						 client->getName() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
+						 user->getNickname() + ' ' + ERR_ALREADYREGISTERED_MESSAGE);
 		return ;
 	}
 
 	if (p.size() < 1) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 client->getName() + " KICK " + ERR_NEEDMOREPARAMS_MESSAGE);		
+						 client->getName() + " PASS " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
