@@ -1,31 +1,30 @@
 #include <EventLoop.hpp>
 
-// TODO
 void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 {
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 1) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							client->getName() + ' ' + ERR_NEEDMOREPARAMS_MESSAGE);
+							user->getNickname() + ' ' + ERR_NEEDMOREPARAMS_MESSAGE);
 		return ;
 	}
 
 	Channel *channel = channelReg.getChannel(p.front());
 	if (!channel) {
 			client->response(server.getName(), ERR_NOSUCHCHANNEL,
-							client->getName() + ' ' + 
+							user->getNickname() + ' ' + 
 							p.front() + ' ' +
 							ERR_NOSUCHCHANNEL_MESSAGE);
 		return ;
 	}
 	if (!channel->hasClient(client)) {
 			client->response(server.getName(), ERR_NOTONCHANNEL,
-							client->getName() + ' ' + 
+							user->getNickname() + ' ' + 
 							channel->getName() + ' ' +
 							ERR_NOTONCHANNEL_MESSAGE);
 		return ;
@@ -35,35 +34,36 @@ void EventLoop::topic(Client *client, const std::deque<std::string>& p)
 		std::string topic = channel->getTopic();
 		if (topic.empty()) {
 			client->response(server.getName(), RPL_NOTOPIC,
-							client->getName() + ' ' + 
+							user->getNickname() + ' ' + 
 							channel->getName() + ' ' + 
 							RPL_NOTOPIC_MESSAGE);
 			return ;
 		} else {
-			channel->sendTopic(client);
+			client->response(server.getName(), RPL_TOPIC,
+							user->getNickname() + ' ' + 
+							channel->getName() + " :" + 
+							channel->getTopic());
+			client->response(server.getName(), RPL_TOPICWHOTIME,
+							user->getNickname() + ' ' + 
+							channel->getName() + ' ' + 
+							channel->getTopicSetter() + ' ' +
+							channel->getTopicTime());
 			return ;
 		}
 	}
+
 	if (channel->topicRequiresOperator() && !channel->isOperator(client)) {
 		client->response(server.getName(), ERR_CHANOPRIVSNEEDED,
-						client->getName() + ' ' + 
+						user->getNickname() + ' ' + 
 						channel->getName() + ' ' +
 						ERR_CHANOPRIVSNEEDED_MESSAGE);
 		return ;
 	}
 
-	std::deque<std::string>::const_iterator it = p.begin();
-	it++;
-	std::string topic = "";
-	while (it != p.end())
-		topic += *it++;
-
-	channel->setTopic(client, topic);
-	std::cout << BLUE << "SET " << YELLOW << channel->getName() << BLUE << " TOPIC TO " << YELLOW << topic << RESET << std::endl;
-
-	std::set<Client *> clients = channel->getClients();
-	for (auto it : clients) {
-		Client *recipient = it;
-		channel->sendTopic(recipient);
+	const std::string oldTopic = channel->getTopic();
+	if (p[1] != oldTopic) {
+		channel->setTopic(client, p[1]);
+		std::cout << BLUE << "SET " << YELLOW << channel->getName() << BLUE << " TOPIC TO " << YELLOW << p[1] << RESET << std::endl;
+		channel->broadcast(client, "TOPIC", ":" + p[1], true);
 	}
 }
