@@ -8,12 +8,12 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 	User *user = client->getUser();
 	if (!user->isRegistered()) {
 		client->response(server.getName(), ERR_NOTREGISTERED,
-							 client->getName() + ' ' + ERR_NOTREGISTERED_MESSAGE);
+							 user->getNickname() + ' ' + ERR_NOTREGISTERED_MESSAGE);
 		return ;
 	}
 	if (p.size() < 2) {
 		client->response(server.getName(), ERR_NEEDMOREPARAMS,
-							 client->getName() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
+							 user->getNickname() + " PRIVMSG " + ERR_NEEDMOREPARAMS_MESSAGE);		
 		return ;
 	}
 
@@ -37,18 +37,20 @@ void EventLoop::privmsg(Client *client, const std::deque<std::string>& p)
 				channel->broadcast(client, "PRIVMSG", message);
 			} else {
 				client->response(server.getName(), ERR_NOSUCHCHANNEL,
-					client->getName() + ' ' + 
+					user->getNickname() + ' ' + 
 					tmp + ' ' + 
 					ERR_NOSUCHCHANNEL_MESSAGE);
 			}
 		} else {
 			recipient = this->clientReg.getClientByNick(tmp);
 			if (recipient && recipient->getUser()->isRegistered()) {
-				recipient->handleWritable(user->getNickname() + " PRIVMSG " +
-											recipient->getUser()->getNickname() + ' ' + message + CRLF);
+				recipient->replyTo(user->getNickname(), "PRIVMSG",
+											recipient->getUser()->getNickname() + ' ' + message);
 			} else {
 				client->response(server.getName(), ERR_NOSUCHNICK,
-					client->getName() + ' ' + channel->getName());
+					user->getNickname() + ' ' +
+					tmp + ' ' +
+					ERR_NOSUCHNICK_MESSAGE);
 			}
 		}
 	}
